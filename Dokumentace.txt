@@ -6,7 +6,8 @@ HouseStyle - IFJ Master Race
 	
 	nazevFunkce = Camel-Case s malym pocatecnim pismenem
         pref_	    = Pokud existuje vice f-ci, ktere spolu nejak souviseji
-                      oznaci se kratkym prefixem.
+                      oznaci se kratkym prefixem. 
+		      (scanner = sc_; parser = pr_; semantic = se_)
 	
 	Priklad:
 	math_sectiDveCisla(int a, int b);
@@ -18,7 +19,8 @@ HouseStyle - IFJ Master Race
 
 	int priklad_ptr;    <= Ukazatel konci priponou _ptr
 	int priklad_fd;     <= File descriptor konci priponou _fd	    
-	int priklad_g;      <= Globalni promenne konci priponou _g
+	int pref_priklad;   <= Globalni promenne zacinaji predponou pref_,
+	                       pref_ = (scanner = sc_; parser = pr_; semantic = se_)
 
 3) Pojmenovani struktur:
 	
@@ -63,3 +65,34 @@ HouseStyle - IFJ Master Race
 
 7) Pouzivany jazyk:
 	Anglictina (v komentarich i v kodu)
+
+Gramatika
+---------
+<prog>    -> <st-list>
+<st-list> -> <stat> EOL <st-list>
+<st-list> -> EOF
+
+<stat> -> <if-c> 
+<stat> -> <while-c>
+<stat> -> <def-c>
+
+<if-c> -> if <expr> do EOL <st-list> end
+<if-c> -> else EOL <st-list>
+
+<while-c> -> while <expr> do EOL <st-list> end
+
+<def-c>      -> def <id-func> <params-gen> <st-list> end
+<id-func>    -> <id>
+<id-func>    -> <func>
+<params-gen> -> <params-n>
+<params-gen> -> <params-b>
+<params-b>   -> (<params-b>)
+<params-b>   -> )EOL
+<params-b>   -> <params> <params-b>
+<params>     -> <id> <params>
+<params>     -> , <id> <params>
+<params-n>   -> <params>
+<params>     -> EOL
+
+
+
