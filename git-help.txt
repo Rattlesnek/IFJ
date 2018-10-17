@@ -1,0 +1,20 @@
+1) Vytvoreni souboru ~/.ssh/id_rsa.pub
+	ssh-keygen -o 
+2) Pridani ssh klice na github. Obsah vytvoreneho souboru
+   zkopiruju do
+  	 www.github.com->Settings(Profilova fotka)->SSH and GPG keys->
+  	 New SSH key
+3) Vytvoreni nove slozky
+4) Vytvoreni git slozky
+ 	 V nove slozce napisu git init
+5) Pridam informace pro git
+	 git config --global user.email "tvum email"
+	 git config --global user.name "Lukas Piwowarski"
+6) Propojim slozku s projektem na githubu
+	 git remote add origin git@github.com:Rattlesnek/IFJ.git
+7) Stahnu si aktualni verzi projektu
+	 git pull origin master
+8) Pokud chci pridat zmeni na github
+	a) git add . 	<= Pripravim zmeni na nahrani na github
+	b) git commit -m "message"  <= Napisu informace o zmene, ktere byli udelany
+        c) git push -u origin master <= Nahraju zmenenou verzi na github 
