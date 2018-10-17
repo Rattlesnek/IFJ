@@ -1,0 +1,34 @@
+# SUBOR S DERIVACIAMI
+
+# Pravidla:
+# - terminaly nesmu mat: < >
+# - neterminaly musia mat: < >
+# - derivacia je znazornena sipkou: ->
+
+<prog>    -> <st-list>
+<st-list> -> <stat> EOL <st-list>
+<st-list> -> EOF
+
+<stat> -> <if-c> 
+<stat> -> <while-c>
+<stat> -> <def-c>
+
+<if-c> -> if <expr> do EOL <st-list> end
+<if-c> -> else EOL <st-list>
+
+<while-c> -> while <expr> do EOL <st-list> end
+
+<def-c>      -> def <id-func> <params-gen> <st-list> end
+<id-func>    -> id
+<id-func>    -> func
+
+
+<params-gen> -> <params-n>
+<params-gen> -> <params-b>
+<params-b>   -> ( <params-b> )
+<params-b>   -> ) EOL
+<params-b>   -> <params> <params-b>
+<params>     -> id <params>
+<params>     -> , id <params>
+<params-n>   -> <params>
+<params>     -> EOL
