@@ -41,6 +41,13 @@ def is_terminal(item):
     return not ( item.startswith("<") and item.endswith(">") )
 
 
+def diff(first_rec, first_norm):
+    for key in first_rec.keys():
+        if sorted(first_rec[key]) != sorted(first_norm[key]):
+            return False
+    return True
+
+
 def first_search_rec(first, rules):
 
     def recursive_adding_terminals(store, key):
@@ -132,4 +139,7 @@ first_search_norm(first_norm, rules)
 print("number of cycles:", nor_cnt, end="\n\n")
 print_first(first_norm, allow_term=False, allow_no_right_side=False)
 
-           
+# diff
+print("\nDiff:", diff(first_rec, first_norm))
+
+
