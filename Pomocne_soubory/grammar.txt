@@ -5,30 +5,82 @@
 # - neterminaly musia mat: < >
 # - derivacia je znazornena sipkou: ->
 
+# STARTING NONTERMINAL = <prog>
 <prog>    -> <st-list>
-<st-list> -> <stat> EOL <st-list>
+
+<st-list> -> <stat> <st-list>
+<st-list> -> EOL <st-list>
 <st-list> -> EOF
 
-<stat> -> <if-c> 
-<stat> -> <while-c>
-<stat> -> <def-c>
 
-<if-c> -> if <expr> do EOL <st-list> end
-<if-c> -> else EOL <st-list>
 
-<while-c> -> while <expr> do EOL <st-list> end
+<stat>    -> <definition>
+<stat>    -> <command>
 
-<def-c>      -> def <id-func> <params-gen> <st-list> end
+<command> -> <while-c>
+<command> -> <if-c>
+<command> -> id = <assignment>
+# uvidime este ci tam ma byt EOL
+<command> -> <expr> EOL
+<command> -> <function-call>
+
+# uvidime este ci tam ma byt EOL
+<assignment> -> <expr> EOL 
+<assignment> -> <function-call>
+
+# END-LIST
+<end-list>  -> <command> <end-list>
+<end-list>  -> EOL <end-list>
+<end-list>  -> end
+
+
+
+# CONDITION
+<if-c>     -> if <expr> then EOL <if-list> EOL
+
+<if-list>  -> <command> <if-list>
+<if-list>  -> EOL <if-list>
+<if-list>  -> elif <expr> then EOL <if-list>
+<if-list>  -> else EOL <end-list>
+<if-list>  -> end
+
+
+
+# ITERATION
+<while-c>    -> while <expr> do EOL <end-list> EOL
+
+
+
+# FUNCTION DEFINITION
+<definition> -> def <id-func> <params-gen> <end-list> EOL
 <id-func>    -> id
 <id-func>    -> func
 
 
-<params-gen> -> <params-n>
-<params-gen> -> <params-b>
-<params-b>   -> ( <params-b> )
-<params-b>   -> ) EOL
-<params-b>   -> <params> <params-b>
-<params>     -> id <params>
-<params>     -> , id <params>
-<params-n>   -> <params>
-<params>     -> EOL
+# FUNCTION PARAMETERS
+<params-gen> -> <p-brackets>
+<params-gen> -> <p-without>
+<params-gen> -> EOL
+
+<p-brackets>          -> ( <p-inside-brackets> 
+<p-inside-brackets>   -> <id> <p-brackets-continue> 
+<p-inside-brackets>   -> ) EOL
+
+<p-brackets-continue> -> , <id> <p-brackets-continue>
+<p-brackets-continue> -> ) EOL
+
+<p-without> -> <id> <p-without-continue>
+<p-without-continue> -> , <id> <p-without-continue> 
+<p-without-continue> -> EOL
+
+
+
+# FUNCTION CALL - je ukoncena EOL z definicie parametrov
+<function-call> -> func <params-gen>
+
+
+# PARAMETERS
+<id> -> id
+<id> -> str
+<id> -> int
+<id> -> double
