@@ -42,8 +42,8 @@ typedef union token_info {
 /* NEW AND UPDATED*/
 /**
  * @brief item structure
- * @param *key dynamically allocated array of chars -> word
- * @param data number of occurences of the word
+ * @param *key dynamically allocated array of chars -> identifier
+ * @param data info about the token
  * @param *next pointer to next item
  */
 struct element
@@ -57,7 +57,7 @@ struct element
  * @brief hash table structure
  * @param size number of items in the table
  * @param array_size number of indexes in the array of pointers
- * @param *array[] of pointers to items
+ * @param *ptr[] array of pointers to items
  */
 typedef struct symtable
 {
