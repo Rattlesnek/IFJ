@@ -23,34 +23,50 @@
 ////////////////////////////////////////////////////////////////////////
 #ifndef TOKEN_H
 #define TOKEN_H
-
+#include <stdio.h>
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
 /****************************************************/
-// HASH TABLE ELEMENT PROTOTYPE
-// vymazat ked bude elem_t v hash table vytvoreny
+/* NEW AND UPDATED*/
 typedef struct element elem_t;
 
-struct element {
-    //...........
-    //...........
-    elem_t *ptr;
-};
-/****************************************************/
-
-typedef union token_info token_info_t;
-
-typedef struct token token_t;
-
-
-union token_info {
+typedef union token_info {
     elem_t *ptr;    // either ptr to info-element in hash table (use in all cases except latter two)
     int intg;       // or integer (use only when token name is "INT")
     double dbl;     // or double (use only when token name is "DBL")
+} token_info_t;
+
+/* NEW AND UPDATED*/
+/**
+ * @brief item structure
+ * @param *key dynamically allocated array of chars -> word
+ * @param data number of occurences of the word
+ * @param *next pointer to next item
+ */
+struct element
+{
+    char *key;
+    token_info_t data;
+    struct element *next;
 };
+/* NEW AND UPDATED*/
+/**
+ * @brief hash table structure
+ * @param size number of items in the table
+ * @param array_size number of indexes in the array of pointers
+ * @param *array[] of pointers to items
+ */
+typedef struct symtable
+{
+    size_t size;
+    size_t arr_size;
+    elem_t *ptr[];
+} symtable_t;
+
+
 
 struct token {
     char *name;         // token name eg. "ID", "STR", "+", "==", "EOL", ...
