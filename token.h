@@ -24,35 +24,43 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 #include <stdio.h>
+#include <stdbool.h>
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
 /****************************************************/
-/* NEW AND UPDATED*/
-typedef struct element elem_t;
+
+
+typedef enum{unknown, intg, dbl, string, id, id_f, eol, eof, bol, keyword, op} type_t; 
 
 typedef union token_info {
-    elem_t *ptr;    // either ptr to info-element in hash table (use in all cases except latter two)
+    char *string;   // either ptr to info-element in hash table (use in all cases except latter two)
     int intg;       // or integer (use only when token name is "INT")
     double dbl;     // or double (use only when token name is "DBL")
 } token_info_t;
 
-/* NEW AND UPDATED*/
+
 /**
  * @brief item structure
  * @param *key dynamically allocated array of chars -> identifier
  * @param data info about the token
  * @param *next pointer to next item
  */
-struct element
+typedef struct element
 {
     char *key;
     token_info_t data;
+    type_t token_type;
+    type_t value_type;
+    struct  element *first_param; // if element is function, this points to first parameter
+    struct  element *next_param; // if element is parameter, this points to next parameter
+    bool is_init;
+    bool is_global; //?
     struct element *next;
-};
-/* NEW AND UPDATED*/
+} elem_t;
+
 /**
  * @brief hash table structure
  * @param size number of items in the table
@@ -68,10 +76,11 @@ typedef struct symtable
 
 
 
-struct token {
+typedef struct token {
     char *name;         // token name eg. "ID", "STR", "+", "==", "EOL", ...
-    token_info_t info;  // token info 
-};
+    token_info_t info;  // token info
+    char type;          // 0 = not variable, 
+} token_t;
 
 
 ////////////////////////////////////////////////////////////////////////
