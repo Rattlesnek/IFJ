@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "token.h"
-
+#include "symtable.h"
 int main()
 {
     // 

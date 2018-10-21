@@ -23,7 +23,6 @@
 ////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <stdio.h>
-#include "token.h"
 #include "error.h"
 #include "stack.h"
 
