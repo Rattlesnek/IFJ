@@ -54,8 +54,8 @@ typedef struct element
     token_info_t data;
     type_t token_type;
     type_t value_type;
-    struct  element *first_param; // if element is function, this points to first parameter
-    struct  element *next_param; // if element is parameter, this points to next parameter
+    //struct  element *first_param; // if element is function, this points to first parameter
+    //struct  element *next_param; // if element is parameter, this points to next parameter
     bool is_init;
     bool is_global; //?
     struct element *next;
@@ -79,7 +79,7 @@ typedef struct symtable
 typedef struct token {
     char *name;         // token name eg. "ID", "STR", "+", "==", "EOL", ...
     token_info_t info;  // token info
-    char type;          // 0 = not variable, 
+   // char type;        
 } token_t;
 
 
