@@ -192,7 +192,8 @@ token_t* sc_nextChar(int c)
 
                 else if ( c == '\n')
                     state = State_EOL;
-
+                else if ( c == '#')
+                    state = State_LCOMM;
                 break;
 
             case State_EOL:
@@ -202,22 +203,34 @@ token_t* sc_nextChar(int c)
             {
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken("EOL", sc_info);
                 printf("Token-name %s\n", sc_token->name);
                 dynamicStr_clear(sc_str);
                 return sc_token; 
             }
             break;
-
+ 
+ /******************
+  *******COMMENTS*********
+**********************/
             case State_COMM:
-                if (c == 'b')
+                if (c == 'b')       //Must save 'b', what if '=bob'
+                                    //so identify 'bob' as ID
+                {
+                    if(!dynamicStr_add(sc_str, c))
+                    {
+                        dynamicStr_free(sc_str);
+                        return 0  ;
+                    }
                     state = State_COMMB;
+                }
+                    
                 else        //EOL->'=a' --Error, wrong Assignment
                 {           //return token '='
                     state = State_S;
                     sc_unget(c);
-                    sc_info.ptr = NULL;
+                    sc_info.string = NULL;
                     sc_token= tk_CreateToken("=", sc_info);
                     dynamicStr_clear(sc_str);
                     return sc_token; 
@@ -226,14 +239,165 @@ token_t* sc_nextChar(int c)
 
             case State_COMMB:
                 if (c == 'e')
+                {
+                    if(!dynamicStr_add(sc_str, c))
+                    {
+                        dynamicStr_free(sc_str);
+                        return 0  ;
+                    }
                     state = State_COMMBE;
+                }
+                    
                 else
-                {   // alread
-                    sc_unget;
+                {   
+                    sc_unget(c);
                     state = State_ID;
                 }
             break;
 
+            case State_COMMBE:
+                if (c == 'g')
+                {
+                    if(!dynamicStr_add(sc_str, c))
+                    {
+                        dynamicStr_free(sc_str);
+                        return 0  ;
+                    }
+                    state = State_COMMBEG;
+                }
+                    
+                else
+                {   
+                    sc_unget(c);
+                    state = State_ID;
+                }
+            break;
+
+            case State_COMMBEG:
+                if (c == 'i')
+                {
+                    if(!dynamicStr_add(sc_str, c))
+                    {
+                        dynamicStr_free(sc_str);
+                        return 0  ;
+                    }
+                    state = State_COMMBEGI;
+                }
+                    
+                else
+                {   
+                    sc_unget(c);
+                    state = State_ID;
+                }
+            break;
+
+            case State_COMMBEGI:
+                if (c == 'n')
+                {
+                    if(!dynamicStr_add(sc_str, c))
+                    {
+                        dynamicStr_free(sc_str);
+                        return 0  ;
+                    }
+                    state = State_COMMBEGIN;
+                }
+                    
+                else
+                {   
+                    sc_unget(c);
+                    state = State_ID;
+                }
+            break;
+
+            case State_COMMBEGIN:
+                if (c == '\n')
+                    state = State_MAY_END;
+                else if (c == ' ' || c == '\t')
+                    state = State_COMM_LINE;
+                else        // What if "=beginer"
+                {
+                    sc_unget(c);
+                    state = State_ID;
+                }
+            break;
+
+            case State_COMM_LINE: //No need to send comments as tokens, thez are just blank space
+                if ( c == '\n')
+                    state = State_MAY_END;
+                else 
+                    state = State_COMM_LINE;
+                break;
+
+            case State_MAY_END:
+                if ( c == '\n')
+                    state = State_MAY_END;
+                else if (c == '=')
+                    state = State_END_COMM;
+                else
+                    state = State_COMM_LINE;
+                break;
+
+            case State_END_COMM:
+                if (c == '\n')
+                    state = State_MAY_END;
+                if (c == 'e')       //It can be "=e?"
+                    state = State_END_COMME;
+                else
+                    state = State_COMM_LINE;
+                break;
+
+            case State_END_COMME:
+                if (c == 'n')
+                    state = State_END_COMMEN;
+                else
+                {   
+                    state = State_COMM_LINE;
+                }
+            break;
+
+            case State_END_COMMEN:
+                if (c == 'd')
+                    state = State_END_COMMEND;
+                else
+                {   
+                    state = State_COMM_LINE;
+                }
+            break;
+
+            case State_END_COMMEND:
+                if ( c == '\n')
+                {
+                   state = State_EOL;
+                   sc_unget(c);
+                   sc_info.string = NULL;
+                   sc_token = tk_CreateToken("BLOCK COMM", sc_info);
+                   return sc_token;
+                }
+                if ( c == ' ' || c == '\t')
+                    state = State_LCOMM;
+                else    
+                    state = State_COMM_LINE; 
+            break;
+
+            case State_LCOMM:
+                if ( c == '\n')
+                {
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= tk_CreateToken("LINE_COMM", sc_info);
+                    return sc_token; 
+                }
+                else
+                    state = State_LCOMM;
+            break;
+/***************
+ * ********End of Comments***********
+ * **************/
+
+/******************
+ * ******Strings*********
+ * ******************/
             case State_QUATATION1:
                 if (c == '\n')           //According to automat "OKREM EOL" - don;t knwo what to do
                 {
@@ -357,12 +521,19 @@ token_t* sc_nextChar(int c)
             case State_QUATATION2:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = sc_str->str;
+                sc_info.string = sc_str->str;
                 sc_token= tk_CreateToken("STR", sc_info);
                 printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
                 dynamicStr_clear(sc_str);
                 return sc_token;  
 
+/**********************
+ * ***********ENd of Strings***********
+ * *************************/
+
+/****************************
+ * ******ID,FUNC, INT, FLOAT************
+ * **********************/
             case State_ID:
                 if (isalpha(c) || isdigit(c))
                 {
@@ -388,7 +559,7 @@ token_t* sc_nextChar(int c)
                 {
                     state = State_S;
                     sc_unget(c);
-                    sc_info.ptr = sc_str->str;
+                    sc_info.string = sc_str->str;
                     sc_token= tk_CreateToken("ID", sc_info);
                     printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
                     dynamicStr_clear(sc_str);
@@ -399,7 +570,7 @@ token_t* sc_nextChar(int c)
             case State_FUNC:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = sc_str->str;
+                sc_info.string = sc_str->str;
                 sc_token= tk_CreateToken("FUNC", sc_info);
                 printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
                 dynamicStr_clear(sc_str);
@@ -590,8 +761,14 @@ token_t* sc_nextChar(int c)
                     return sc_token;   
                 }
                 break;
+
+/*****************************
+ * *********End of ID, FUNC, INT, FLOAT *********
+ * *********************/
+
+
 /******************************
- * ***********TODO************      Check if ELSE brach is correct?
+ * ***********LOGICAL OPERATORS and so************      Check if ELSE brach is correct?
  * ****************************/
             case State_LTN:
                 if (c == '=')
@@ -600,7 +777,7 @@ token_t* sc_nextChar(int c)
                 {
                     state = State_S;
                     sc_unget(c);
-                    sc_info.ptr = NULL;
+                    sc_info.string = NULL;
                     sc_token= tk_CreateToken("<", sc_info);
                     return sc_token;
                 }
@@ -609,7 +786,7 @@ token_t* sc_nextChar(int c)
             case State_LEQ:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken("<=", sc_info);
                 return sc_token;
                 break;
@@ -621,7 +798,7 @@ token_t* sc_nextChar(int c)
                 {
                     state = State_S;
                     sc_unget(c);
-                    sc_info.ptr = NULL;
+                    sc_info.string = NULL;
                     sc_token= tk_CreateToken(">", sc_info);
                     return sc_token;
                 }
@@ -630,7 +807,7 @@ token_t* sc_nextChar(int c)
             case State_MEQ:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken(">=", sc_info);
                 return sc_token;
                 break;
@@ -642,7 +819,7 @@ token_t* sc_nextChar(int c)
                 {
                     state = State_S;
                     sc_unget(c);
-                    sc_info.ptr = NULL;
+                    sc_info.string = NULL;
                     sc_token= tk_CreateToken("=", sc_info);
                     return sc_token;
                 }
@@ -651,7 +828,7 @@ token_t* sc_nextChar(int c)
             case State_EQ:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken("==", sc_info);
                 return sc_token;
                 break;
@@ -673,7 +850,7 @@ token_t* sc_nextChar(int c)
             case State_NEQ:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken("!=", sc_info);
                 return sc_token;
                 break;
@@ -681,7 +858,7 @@ token_t* sc_nextChar(int c)
             case State_COMMA:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken(",", sc_info);
                 return sc_token;
                 break;
@@ -689,7 +866,7 @@ token_t* sc_nextChar(int c)
             case State_LEFT_BRACKET:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken("(", sc_info);
                 return sc_token;
                 break;
@@ -697,7 +874,7 @@ token_t* sc_nextChar(int c)
             case State_RIGHT_BRACKET:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken(")", sc_info);
                 return sc_token;
                 break;
@@ -705,7 +882,7 @@ token_t* sc_nextChar(int c)
             case State_DIV:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken("/", sc_info);
                 return sc_token;
                 break;
@@ -713,7 +890,7 @@ token_t* sc_nextChar(int c)
             case State_MUL:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken("*", sc_info);
                 return sc_token;
                 break;
@@ -732,7 +909,7 @@ token_t* sc_nextChar(int c)
                 {
                     state = State_S;
                     sc_unget(c);
-                    sc_info.ptr = NULL;
+                    sc_info.string = NULL;
                     sc_token= tk_CreateToken("-", sc_info);
                     dynamicStr_clear(sc_str);
                     return sc_token;
@@ -742,7 +919,7 @@ token_t* sc_nextChar(int c)
             case State_PLUS:
                 state = State_S;
                 sc_unget(c);
-                sc_info.ptr = NULL;
+                sc_info.string = NULL;
                 sc_token= tk_CreateToken("+", sc_info);
                 return sc_token;
                 break;
