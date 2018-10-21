@@ -60,10 +60,10 @@ stack_t *stc_create()
 /**
  * @brief Resizes stack when there is no more space. 
  *
- * @param *stack   Pointer to stack
- *         new_cap New capacity of stack
- * @return FAILURE If error ocurred.
- *         SUCCESS If function ended successfuly.
+ * @param  stack_t * Pointer to stack
+ *         new_cap   New capacity of stack
+ * @return FAILURE   If error ocurred.
+ *         SUCCESS   If function ended successfuly.
  */
 int stc_resize(stack_t *stack, int new_cap)
 {
@@ -80,10 +80,10 @@ int stc_resize(stack_t *stack, int new_cap)
  * @brief Pushes new token to top of stack. If there is no more space the stack
  *        is resized.
  *
- * @param  *stack  Pointer to stack
- *         *c      Pointer to token
- * @return FAILURE If error ocurred.
- *         SUCCESS If function ended successfuly.
+ * @param  stack_t * Pointer to stack
+ *         *c        Pointer to token
+ * @return FAILURE   If error ocurred.
+ *         SUCCESS   If function ended successfuly.
  */
 int stc_push(stack_t *stack, char *c)
 {
@@ -97,24 +97,22 @@ int stc_push(stack_t *stack, char *c)
 /**
  * @brief Pops token from top of stack. 
  *
- * @param *stack Pointer to stack
- *        *c     Pointer which stores token from top of stack.
- * @return FAILURE If error ocurred.
- *         SUCCESS If function ended successfuly.
+ * @param stack_t *  Pointer to stack
+ * @return NULL      If error ocurred.
+ *         token_t * If function ended successfuly.
  */
-int stc_pop(stack_t *stack, char *c)
+char *stc_pop(stack_t *stack)
 {
     if(stack->top == EMPTY)
-        return FAILURE;
+        return NULL;
 
-    *c = *(stack->array[stack->top--]);
-    return SUCCESS;
+    return stack->array[stack->top--];
 }
 
 /**
  * @brief Frees memory allocated by stack.
  *
- * @param *stack Pointer to stack.
+ * @param stack_t * Pointer to stack.
  */
 void stc_destroy(stack_t *stack)
 {
@@ -122,7 +120,7 @@ void stc_destroy(stack_t *stack)
     free(stack);
 }
 
-#if DEBUG
+
 int main()
 {
     char array[40] = "1111111111111111111111111111111111111112";
@@ -135,15 +133,15 @@ int main()
 
     for(int i = 0; i < 40; i++)
     {
-        char c;
-        stc_pop(stack, &c);
-        printf("%d: %c\n", i, c);
+        char *c;
+        c = stc_pop(stack);
+        printf("%d: %c\n", i, *c);
     }
 
     stc_destroy(stack);
     return 0;
 }
-#endif
+
 
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
