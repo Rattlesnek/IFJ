@@ -88,7 +88,8 @@ int stc_resize(stack_t *stack, int new_cap)
 int stc_push(stack_t *stack, char *c)
 {
     if(stack->top == stack->cap - 1)
-        stc_resize(stack, stack->cap + RESIZE_STEP);
+        if(stc_resize(stack, stack->cap + RESIZE_STEP) == FAILURE)
+            return FAILURE;
 
     stack->array[++stack->top] = c;
     return SUCCESS;
