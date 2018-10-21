@@ -47,8 +47,50 @@ typedef struct stack {
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Creates new stack with capacity STACK_INIT_CAP tokens.
+ *
+ * @return NULL        If error ocurred.
+ *         stack_t *   Pointer to stack.
+ */
+stack_t *stc_create();
 
+/**
+ * @brief Resizes stack when there is no more space. 
+ *
+ * @param  stack_t * Pointer to stack
+ *         new_cap   New capacity of stack
+ * @return FAILURE   If error ocurred.
+ *         SUCCESS   If function ended successfuly.
+ */
+int stc_resize(stack_t *stack, int new_cap);
 
+/**
+ * @brief Pushes new token to top of stack. If there is no more space the stack
+ *        is resized.
+ *
+ * @param  stack_t * Pointer to stack
+ *         *c        Pointer to token
+ * @return FAILURE   If error ocurred.
+ *         SUCCESS   If function ended successfuly.
+ */
+int stc_push(stack_t *stack, char *c);
+
+/**
+ * @brief Pops token from top of stack. 
+ *
+ * @param stack_t *  Pointer to stack
+ * @return NULL      If error ocurred.
+ *         token_t * If function ended successfuly.
+ */
+char *stc_pop(stack_t *stack);
+
+/**
+ * @brief Frees memory allocated by stack.
+ *
+ * @param stack_t * Pointer to stack.
+ */
+void stc_destroy(stack_t *stack);
 
 
 
