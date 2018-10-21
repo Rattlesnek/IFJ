@@ -18,7 +18,7 @@ int main()
     // test
     printf("int:\t%d\n", token->info.intg);
     printf("double:\t%lf\n", token->info.dbl);
-    printf("ptr:\t%ld\n", (size_t) token->info.ptr);
+    printf("ptr:\t%ld\n", (size_t) token->info.string);
 
     tk_DestroyToken(token);
     
