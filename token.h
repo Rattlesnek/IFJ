@@ -22,10 +22,17 @@
 ////////////////////////////////////////////////////////////////////////
 
 /****************************************************/
+<<<<<<< HEAD
 
 
 typedef enum{unknown, intg, dbl, string, id, id_f, eol, eof, bol, keyword, op} type_t; 
 
+=======
+
+
+typedef enum{unknown, intg, dbl, string, id, id_f, eol, eof, bol, keyword, op} type_t; 
+
+>>>>>>> 599c0d76a50513793cad11942ca89d1ffc4e9c7f
 typedef union token_info {
     char *string;   // either ptr to info-element in hash table (use in all cases except latter two)
     int intg;       // or integer (use only when token name is "INT")

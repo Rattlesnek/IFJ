@@ -1,18 +1,18 @@
 /**CFile****************************************************************
 
-  FileName    [token.c]
+  FileName    [error.h]
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName [Lexical analysis]
+  PackageName [Error]
 
-  Synopsis    [Token manipulation]
+  Synopsis    [Return values]
 
-  Author      [Adam Pankuch]
+  Author      []
 
   Affiliation []
 
-  Date        [18/10/2018]
+  Date        [--/--/2018]
 
   Revision    []
 
@@ -21,52 +21,38 @@
 ////////////////////////////////////////////////////////////////////////
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
+#ifndef TEMPLATE_H
+#define TEMPLATE_H
 
-#include <stdlib.h>
-#include <string.h>
-
-#include "token.h"
-
-////////////////////////////////////////////////////////////////////////
-///                       GLOBAL VARIABLES                           ///
-////////////////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////////////////////////
-///                     FUNCTION DEFINITIONS                         ///
+///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
 
-token_t *tk_CreateToken(char *name, token_info_t info)
-{
-    token_t *token = malloc(sizeof(token_t));
-    if (token == NULL)
-        return NULL;
-    
-    token->name = malloc(sizeof(name));
-    if (token->name == NULL)
-    {
-        free(token);
-        return NULL;
-    }
+////////////////////////////////////////////////////////////////////////
+///                      MACRO DEFINITIONS                           ///
+////////////////////////////////////////////////////////////////////////
+#define ERR_LEX 1
+#define ERR_SYN 2
+#define ERR_SEM 3
+#define ERR_SEM_RUN 4
+#define ERR_SEM_FUNC 5
+#define ERR_SEM_OTHER 6
+#define ERR_ZERO_DIV 7
+#define ERR_INTERNAL 99
 
-    // add name to token
-    strcpy(token->name, name);
-    // add info to token
-    token->info = info;
-
-    return token;
-}
+////////////////////////////////////////////////////////////////////////
+///                    FUNCTION DECLARATIONS                         ///
+////////////////////////////////////////////////////////////////////////
 
 
-void tk_DestroyToken(token_t *token)
-{
-    free(token->name);
-    free(token);
-    // note that corresponding info-element in the hash table may still exist
-}
 
 
+
+
+#endif
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
 ////////////////////////////////////////////////////////////////////////
