@@ -97,18 +97,16 @@ int stc_push(stack_t *stack, char *c)
 /**
  * @brief Pops token from top of stack. 
  *
- * @param *stack Pointer to stack
- *        *c     Pointer which stores token from top of stack.
- * @return FAILURE If error ocurred.
- *         SUCCESS If function ended successfuly.
+ * @param *stack     Pointer to stack
+ * @return NULL      If error ocurred.
+ *         token_t * If function ended successfuly.
  */
-int stc_pop(stack_t *stack, char *c)
+char *stc_pop(stack_t *stack)
 {
     if(stack->top == EMPTY)
-        return FAILURE;
+        return NULL;
 
-    *c = *(stack->array[stack->top--]);
-    return SUCCESS;
+    return stack->array[stack->top--];
 }
 
 /**
@@ -122,7 +120,7 @@ void stc_destroy(stack_t *stack)
     free(stack);
 }
 
-#if DEBUG
+
 int main()
 {
     char array[40] = "1111111111111111111111111111111111111112";
@@ -135,15 +133,15 @@ int main()
 
     for(int i = 0; i < 40; i++)
     {
-        char c;
-        stc_pop(stack, &c);
-        printf("%d: %c\n", i, c);
+        char *c;
+        c = stc_pop(stack);
+        printf("%d: %c\n", i, *c);
     }
 
     stc_destroy(stack);
     return 0;
 }
-#endif
+
 
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
