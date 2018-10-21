@@ -1,5 +1,5 @@
-Syntakticka analyza
--------------------
+Precedencni syntakticka analyza
+-------------------------------
 
                                                   V S T U P
 
