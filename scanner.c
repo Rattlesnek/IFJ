@@ -57,7 +57,7 @@ int main()
     while( (c=getc(stdin)) != EOF)
     {  
         sc_nextChar(c);
-        printf("State_S %d\n", state);
+        //printf("State_S %d\n", state);
 
     }
     return 0;
@@ -232,6 +232,7 @@ token_t* sc_nextChar(int c)
                     sc_unget(c);
                     sc_info.string = NULL;
                     sc_token= tk_CreateToken("=", sc_info);
+                     printf("Token-name %s\n", sc_token->name);
                     dynamicStr_clear(sc_str);
                     return sc_token; 
                 }
@@ -349,6 +350,8 @@ token_t* sc_nextChar(int c)
             case State_END_COMME:
                 if (c == 'n')
                     state = State_END_COMMEN;
+                else if (c == '\n')
+                    state = State_MAY_END;
                 else
                 {   
                     state = State_COMM_LINE;
@@ -358,6 +361,8 @@ token_t* sc_nextChar(int c)
             case State_END_COMMEN:
                 if (c == 'd')
                     state = State_END_COMMEND;
+                else if (c == '\n')
+                    state = State_MAY_END;
                 else
                 {   
                     state = State_COMM_LINE;
@@ -371,6 +376,7 @@ token_t* sc_nextChar(int c)
                    sc_unget(c);
                    sc_info.string = NULL;
                    sc_token = tk_CreateToken("BLOCK COMM", sc_info);
+                   printf("Token-name %s\n", sc_token->name);
                    return sc_token;
                 }
                 if ( c == ' ' || c == '\t')
@@ -386,6 +392,7 @@ token_t* sc_nextChar(int c)
                     sc_unget(c);
                     sc_info.string = NULL;
                     sc_token= tk_CreateToken("LINE_COMM", sc_info);
+                     printf("Token-name %s\n", sc_token->name);
                     return sc_token; 
                 }
                 else
