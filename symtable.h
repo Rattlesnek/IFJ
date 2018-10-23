@@ -35,12 +35,16 @@
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
-typedef enum{unknown, intg, dbl, string, id, id_f, eol, eof, bol, keyword, op} type_t; 
+typedef enum{unknown, intg, dbl, string, bol} value_t;
+typedef enum{id, var, id_f} type_t;
 
+
+typedef struct element elem_t; 
 typedef union token_info {
-    char *string;   // either ptr to info-element in hash table (use in all cases except latter two)
+    elem_t *ptr;   // either ptr to info-element in hash table (use in all cases except latter two)
     int intg;       // or integer (use only when token name is "INT")
     double dbl;     // or double (use only when token name is "DBL")
+    char *string;
 } token_info_t;
 
 
@@ -50,7 +54,7 @@ typedef union token_info {
  * @param data info about the token
  * @param *next pointer to next item
  */
-typedef struct element
+struct element
 {
     char *key;
     token_info_t data;
@@ -61,7 +65,7 @@ typedef struct element
     bool is_init;
     bool is_global; //?
     struct element *next;
-} elem_t;
+} ;
 
 /**
  * @brief hash table structure

@@ -54,7 +54,7 @@ symtable_t * symtab_init(size_t size)
 	return symtab;
 }
 
-elem_t *symtab_token_add(symtable_t *symtab, token_t *token)
+elem_t *symtab_token_add(symtable_t *symtab, token_t *token) //char *name (ID, FUNC), char *key (realne jmeno promenne). 
 {
 
 	if (!symtab)
@@ -142,7 +142,7 @@ void symtab_clear(symtable_t *symtab)
 				next = elem->next;
 				if (elem->value_type == string)
 				{
-					//free(elem->data.string);
+					free(elem->data.string);
 				}
 				free(elem->key);
 				free(elem);
