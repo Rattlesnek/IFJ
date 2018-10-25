@@ -5,82 +5,106 @@
 # - neterminaly musia mat: < >
 # - derivacia je znazornena sipkou: ->
 
-# STARTING NONTERMINAL = <prog>
-<prog>    -> <st-list>
+# STARTING NONTERMINAL = <st-list>
+1.  <st-list> -> <stat> <st-list>
+2.  <st-list> -> EOL <st-list>
+3.  <st-list> -> EOF
 
-<st-list> -> <stat> <st-list>
-<st-list> -> EOL <st-list>
-<st-list> -> EOF
-
-
-
-<stat>    -> <definition>
-<stat>    -> <command>
-
-<command> -> <while-c>
-<command> -> <if-c>
-<command> -> id = <assignment>
-# uvidime este ci tam ma byt EOL
-<command> -> <expr> EOL
-<command> -> <function-call>
-
-# uvidime este ci tam ma byt EOL
-<assignment> -> <expr> EOL 
-<assignment> -> <function-call>
-
-# END-LIST
-<end-list>  -> <command> <end-list>
-<end-list>  -> EOL <end-list>
-<end-list>  -> end
-
-
-
-# CONDITION
-<if-c>     -> if <expr> then EOL <if-list> EOL
-
-<if-list>  -> <command> <if-list>
-<if-list>  -> EOL <if-list>
-<if-list>  -> elif <expr> then EOL <if-list>
-<if-list>  -> else EOL <end-list>
-<if-list>  -> end
-
+# FUNCTION DEFINITION
+4.  <stat>    -> def <id-func> <params-gen> <end-list> EOL
+# COMMANDS
+5.  <stat>    -> <command>
 
 
 # ITERATION
-<while-c>    -> while <expr> do EOL <end-list> EOL
+# po prijati "while" zapiname precedencnu analyzu na prijatie vyrazu
+6.  <command> -> while **expr** do EOL <end-list> EOL
+
+# CONDITION
+# po prijati "if" zapiname precedencnu analyzu na prijatie vyrazu
+7.  <command> -> if **expr** then EOL <if-list> EOL
 
 
+# FUNCTION CALL for func ending with ! or ?
+8.  <command> -> func <params-gen>
 
-# FUNCTION DEFINITION
-<definition> -> def <id-func> <params-gen> <end-list> EOL
-<id-func>    -> id
-<id-func>    -> func
 
+##################################################################################
+# EXPRESIONS without assignment
+# po najdeni nasledujucich tokenov na zaciatku vstupnej pasky (dostaneme zo scanneru) zapiname preced. a. na prijatie vyrazu
+# dolezite je ze v tychto pripadoch musime zahrnut aj tieto tokeny do preced. a.
+
+# tokeny: - + str int double nil
+
+9.  <command> -> **expr** EOL
+###############################################################################
+
+
+#################################################################
+# FUNCTION CALL or EXPR or ASSIGNMENT
+# po prijati id musime id zaznamenat pre pripad ze budeme musiet
+# pouzit precedencnu analyzu
+
+10. <command> -> id <func-assignment-expr>
+#################################################################
+
+# FUNCTION CALL for function other than ones ending with ! or ?
+11. <func-assignment-expr> -> <params-gen>
+
+# ASSIGNMENT or EXPR
+12. <func-assignment-expr> -> <assignment-expr>
+
+# po prijati "=" zapiname precedencnu analyzu na prijatie vyrazu
+13. <assignment-expr> -> = **expr** EOL
+
+
+#########################################################
+# vieme ze sme precitali id (mame ho ulozene pre tento pripad)
+# ak je na zaciatku pasky nejaky operator musime zacat precedencnu analyzu
+# musime do nej zahrnut aj id a operator
+# (nesmieme zabudnut id vymazat zo zasobnika prediktivnej analyzy)
+
+# aritmeticke operatory: + - * / 
+# relacne operatory: == != < <= > >= 
+
+14. <assignment-expr> -> **expr** EOL
+#########################################################
+
+# END-LIST
+15. <end-list>  -> <command> <end-list>
+16. <end-list>  -> EOL <end-list>
+17. <end-list>  -> end
+
+18. <if-list>  -> <command> <if-list>
+19. <if-list>  -> EOL <if-list>
+# po prijati "elif" zapiname precedencnu analyzu na prijatie vyrazu
+20. <if-list>  -> elif **expr** then EOL <if-list>
+21. <if-list>  -> else EOL <end-list>
+22. <if-list>  -> end 
+
+
+# FUNCTION
+23. <id-func>    -> id
+24. <id-func>    -> func
 
 # FUNCTION PARAMETERS
-<params-gen> -> <p-brackets>
-<params-gen> -> <p-without>
-<params-gen> -> EOL
+25. <params-gen> -> ( <p-brackets> 
+26. <params-gen> -> <id> <p-without>
+27. <params-gen> -> EOL
 
-<p-brackets>          -> ( <p-inside-brackets> 
-<p-inside-brackets>   -> <id> <p-brackets-continue> 
-<p-inside-brackets>   -> ) EOL
+28. <p-brackets>   -> <id> <p-brackets-continue> 
+29. <p-brackets>   -> ) EOL
 
-<p-brackets-continue> -> , <id> <p-brackets-continue>
-<p-brackets-continue> -> ) EOL
+30. <p-brackets-continue> -> , <id> <p-brackets-continue>
+31. <p-brackets-continue> -> ) EOL
 
-<p-without> -> <id> <p-without-continue>
-<p-without-continue> -> , <id> <p-without-continue> 
-<p-without-continue> -> EOL
+32. <p-without> -> , <id> <p-without> 
+33. <p-without> -> EOL
 
+# PARAMETER TYPES
+34. <id> -> id
+35. <id> -> str
+36. <id> -> int
+37. <id> -> double
+38. <id> -> nil
 
-
-# FUNCTION CALL - je ukoncena EOL z definicie parametrov
-<function-call> -> func <params-gen>
-
-
-# PARAMETERS
-<id> -> id
-<id> -> str
-<id> -> int
-<id> -> double
