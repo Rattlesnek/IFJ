@@ -28,7 +28,7 @@ def print_first(first, allow_term=True, allow_no_right_side=True):
             continue
         if not allow_no_right_side and vals == []:
             continue
-        print("{0:<14}--first-- ".format(key), end="")
+        print("{0:<25}--first-- ".format(key), end="")
         for val in sorted(vals):
             print(val, "", end="")
         print()
@@ -54,7 +54,7 @@ def first_search_rec(first, rules):
         global rec_cnt
         #print("key", key) 
         if key not in rules.keys():
-            print("== Possible error: recursion may have stopped ==")
+            print("== Possible error: recursion may have stopped == key:", key)
             return
         for item_seq in rules[key]:
             item = item_seq[0]
@@ -95,7 +95,7 @@ def first_search_norm(first, rules):
 
 
 rules = collections.defaultdict(list)
-nonterm_plus_term = set()  
+nonterm_plus_term = []  
 
 # parse file and save to rules dict and nonterm_plus_term set
 try:
@@ -104,14 +104,17 @@ try:
         line = line.strip()
         if is_comment_or_empty(line):
             left_side, right_side = line.split("->")
+            _, left_side = left_side.split(".")
             left_side = left_side.strip()
             right_side = tuple( right_side.strip().split(" ") )
             # add to rules
             rules[left_side].append(right_side)
 
-            nonterm_plus_term.add(left_side)
+            if left_side not in nonterm_plus_term:
+                nonterm_plus_term.append(left_side)
             for expr in right_side:
-                nonterm_plus_term.add(expr)
+                if expr not in nonterm_plus_term:
+                    nonterm_plus_term.append(expr)
 except IndexError:
     print("Missing file", file=sys.stderr)
     sys.exit(1)
@@ -142,4 +145,14 @@ print_first(first_norm, allow_term=False, allow_no_right_side=False)
 # diff
 print("\nDiff:", diff(first_rec, first_norm))
 
+for item in nonterm_plus_term:
+    if is_terminal(item):
+        print(item, end=" ")
+
+print("\n")
+
+for item in nonterm_plus_term:
+    if not is_terminal(item):
+        print(item, end=" ")
+print()
 
