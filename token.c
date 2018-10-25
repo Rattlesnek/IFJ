@@ -36,14 +36,13 @@
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-
-token_t *tk_CreateToken(char *name, token_info_t info)
+token_t *createToken(char *name, token_info_t info)
 {
     token_t *token = malloc(sizeof(token_t));
     if (token == NULL)
         return NULL;
     
-    token->name = malloc(sizeof(name));
+    token->name = malloc( (strlen(name) + 1) * sizeof(char) );
     if (token->name == NULL)
     {
         free(token);
@@ -59,8 +58,12 @@ token_t *tk_CreateToken(char *name, token_info_t info)
 }
 
 
-void tk_DestroyToken(token_t *token)
+void destroyToken(token_t *token)
 {
+    // if token is STR then also free info.string
+    if (strcmp(token->name, "STR") == 0)
+        free(token->info.string);
+    
     free(token->name);
     free(token);
     // note that corresponding info-element in the hash table may still exist

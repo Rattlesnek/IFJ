@@ -21,8 +21,8 @@
 ////////////////////////////////////////////////////////////////////////
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
-#ifndef symtab_h
-#define symtab_h
+#ifndef SYMTAB_H
+#define SYMTAB_H
 
 #include <ctype.h>
 #include <stdio.h>
@@ -30,23 +30,20 @@
 #include <string.h>
 #include <stdbool.h>
 
-
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
-typedef enum{unknown, intg, dbl, string, bol} value_t;
-typedef enum{id, var, id_f} type_t;
+typedef enum{UNKNOWN, INT, DBL, STR} value_t;
+typedef enum{ID, VAR, FUNC} type_t;
+// predtym:  id, var, id_f
 
 
-typedef struct element elem_t; 
-typedef union token_info {
-    elem_t *ptr;   // either ptr to info-element in hash table (use in all cases except latter two)
-    int intg;       // or integer (use only when token name is "INT")
-    double dbl;     // or double (use only when token name is "DBL")
-    char *string;
-} token_info_t;
-
+typedef union data {
+    int intg;       // either integer (when variable is type INT)
+    double dbl;     // or double (when variable is type DBL)
+    char *string;   // or string (when variable is type STR)
+} data_t;
 
 /**
  * @brief item structure
@@ -54,18 +51,18 @@ typedef union token_info {
  * @param data info about the token
  * @param *next pointer to next item
  */
-struct element
+typedef struct element
 {
     char *key;
-    token_info_t data;
+    data_t data;
     type_t token_type;
-    type_t value_type;
+    value_t value_type;
     //struct  element *first_param; // if element is function, this points to first parameter
     //struct  element *next_param; // if element is parameter, this points to next parameter
     bool is_init;
     bool is_global; //?
     struct element *next;
-} ;
+} elem_t;
 
 /**
  * @brief hash table structure
@@ -80,13 +77,6 @@ typedef struct symtable
     elem_t *ptr[];
 } symtable_t;
 
-
-
-typedef struct token {
-    char *name;         // token name eg. "ID", "STR", "+", "==", "EOL", ...
-    token_info_t info;  // token info
-   // char type;        
-} token_t;
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///

@@ -1,12 +1,21 @@
 /**CFile****************************************************************
+
   FileName    [token.h]
+
   SystemName  [IFJ - PROJECT]
+
   PackageName [Lexical analysis]
+
   Synopsis    [Token manipulation]
+
   Author      [Adam Pankuch]
+
   Affiliation []
+
   Date        [18/10/2018]
+
   Revision    []
+
 ***********************************************************************/
 
 ////////////////////////////////////////////////////////////////////////
@@ -14,13 +23,35 @@
 ////////////////////////////////////////////////////////////////////////
 #ifndef TOKEN_H
 #define TOKEN_H
+
 #include <stdio.h>
 #include <stdbool.h>
+
 #include "symtable.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief token info union
+ * 
+ */
+typedef union token_info {
+    elem_t *ptr;    // either ptr to info-element in hash table (use in all cases except latter two)
+    int intg;       // or integer (use only when token name is "INT")
+    double dbl;     // or double (use only when token name is "DBL")
+    char *string;   // or string (use only when token name is "STR")
+} token_info_t;
+
+/**
+ * @brief token structure
+ * 
+ */
+typedef struct token {
+    char *name;         // token name eg. "ID", "STR", "+", "==", "EOL", ...
+    token_info_t info;  // token info      
+} token_t;
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
@@ -38,7 +69,7 @@
  * @param info either info or ptr to corresponding info-element in hashtable
  * @return token_t* initialized token or NULL if not succesful
  */
-token_t *tk_CreateToken(char *name, token_info_t info);
+token_t *createToken(char *name, token_info_t info);
 
 
 /**
@@ -46,7 +77,7 @@ token_t *tk_CreateToken(char *name, token_info_t info);
  * 
  * @param token token to be destroyed
  */
-void tk_DestroyToken(token_t *token);
+void destroyToken(token_t *token);
 
 
 #endif

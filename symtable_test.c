@@ -1,4 +1,5 @@
 #include "symtable.h"
+#include "token.h"
 
 /*11113 is a prime number. This size is a good balance between 
 memory needed and performance so going through the table should be fairly efficient.*/
@@ -15,7 +16,7 @@ int main()
 	token->name = "FUNC";
 	token->info.string = "ahojky";
 	item = symtab_token_add(symtab, token);
-	item->value_type = string;
+	item->value_type = STR;
 
 	printf("%s\n", token->info.string);
 	printf("%d\n", item->token_type);

@@ -204,7 +204,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken("EOL", sc_info);
+                sc_token= createToken("EOL", sc_info);
                 printf("Token-name %s\n", sc_token->name);
                 dynamicStr_clear(sc_str);
                 return sc_token; 
@@ -231,7 +231,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= tk_CreateToken("=", sc_info);
+                    sc_token= createToken("=", sc_info);
                      printf("Token-name %s\n", sc_token->name);
                     dynamicStr_clear(sc_str);
                     return sc_token; 
@@ -375,7 +375,7 @@ token_t* sc_nextChar(int c)
                    state = State_EOL;
                    sc_unget(c);
                    sc_info.string = NULL;
-                   sc_token = tk_CreateToken("BLOCK COMM", sc_info);
+                   sc_token = createToken("BLOCK COMM", sc_info);
                    printf("Token-name %s\n", sc_token->name);
                    return sc_token;
                 }
@@ -391,7 +391,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= tk_CreateToken("LINE_COMM", sc_info);
+                    sc_token= createToken("LINE_COMM", sc_info);
                      printf("Token-name %s\n", sc_token->name);
                     return sc_token; 
                 }
@@ -528,8 +528,11 @@ token_t* sc_nextChar(int c)
             case State_QUATATION2:
                 state = State_S;
                 sc_unget(c);
-                sc_info.string = sc_str->str;
-                sc_token= tk_CreateToken("STR", sc_info);
+                // allocate space for string which will be stored in token info
+                sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                // copy string from dynamicStr to token info
+                strcpy(sc_info.string, sc_str->str);
+                sc_token = createToken("STR", sc_info);
                 printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
                 dynamicStr_clear(sc_str);
                 return sc_token;  
@@ -567,7 +570,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = sc_str->str;
-                    sc_token= tk_CreateToken("ID", sc_info);
+                    sc_token= createToken("ID", sc_info);
                     printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
                     dynamicStr_clear(sc_str);
                     return sc_token;  
@@ -578,7 +581,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = sc_str->str;
-                sc_token= tk_CreateToken("FUNC", sc_info);
+                sc_token= createToken("FUNC", sc_info);
                 printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
                 dynamicStr_clear(sc_str);
                 return sc_token;  
@@ -620,7 +623,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.intg = toInt(sc_str); 
-                    sc_token= tk_CreateToken("INT", sc_info);
+                    sc_token= createToken("INT", sc_info);
                     printf("Token-name %s  || Value : %d\n", sc_token->name, sc_info.intg );
                     dynamicStr_clear(sc_str);
                     return sc_token;   
@@ -664,7 +667,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.intg = 0;
-                    sc_token= tk_CreateToken("ZERO", sc_info);
+                    sc_token= createToken("ZERO", sc_info);
                     dynamicStr_clear(sc_str);
                     return sc_token;  
                 }
@@ -762,7 +765,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.dbl = toDouble(sc_str); 
-                    sc_token= tk_CreateToken("INT", sc_info);
+                    sc_token= createToken("INT", sc_info);
                     printf("Token-name %s  || Value : %f\n", sc_token->name, sc_info.dbl );
                     dynamicStr_clear(sc_str);
                     return sc_token;   
@@ -785,7 +788,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= tk_CreateToken("<", sc_info);
+                    sc_token= createToken("<", sc_info);
                     return sc_token;
                 }
                 break;
@@ -794,7 +797,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken("<=", sc_info);
+                sc_token= createToken("<=", sc_info);
                 return sc_token;
                 break;
 
@@ -806,7 +809,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= tk_CreateToken(">", sc_info);
+                    sc_token= createToken(">", sc_info);
                     return sc_token;
                 }
                 break;
@@ -815,7 +818,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken(">=", sc_info);
+                sc_token= createToken(">=", sc_info);
                 return sc_token;
                 break;
 
@@ -827,7 +830,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= tk_CreateToken("=", sc_info);
+                    sc_token= createToken("=", sc_info);
                     return sc_token;
                 }
                 break;
@@ -836,7 +839,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken("==", sc_info);
+                sc_token= createToken("==", sc_info);
                 return sc_token;
                 break;
 
@@ -858,7 +861,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken("!=", sc_info);
+                sc_token= createToken("!=", sc_info);
                 return sc_token;
                 break;
                 
@@ -866,7 +869,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken(",", sc_info);
+                sc_token= createToken(",", sc_info);
                 return sc_token;
                 break;
 
@@ -874,7 +877,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken("(", sc_info);
+                sc_token= createToken("(", sc_info);
                 return sc_token;
                 break;
 
@@ -882,7 +885,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken(")", sc_info);
+                sc_token= createToken(")", sc_info);
                 return sc_token;
                 break;
 
@@ -890,7 +893,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken("/", sc_info);
+                sc_token= createToken("/", sc_info);
                 return sc_token;
                 break;
                 
@@ -898,7 +901,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken("*", sc_info);
+                sc_token= createToken("*", sc_info);
                 return sc_token;
                 break;
 
@@ -917,7 +920,7 @@ token_t* sc_nextChar(int c)
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= tk_CreateToken("-", sc_info);
+                    sc_token= createToken("-", sc_info);
                     dynamicStr_clear(sc_str);
                     return sc_token;
                 }
@@ -927,7 +930,7 @@ token_t* sc_nextChar(int c)
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = NULL;
-                sc_token= tk_CreateToken("+", sc_info);
+                sc_token= createToken("+", sc_info);
                 return sc_token;
                 break;
         }
