@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <stdio.h>
+
 #include "error.h"
 #include "stack.h"
 
@@ -84,15 +85,31 @@ int stc_resize(stack_t *stack, int new_cap)
  * @return FAILURE   If error ocurred.
  *         SUCCESS   If function ended successfuly.
  */
-int stc_push(stack_t *stack, char *c)
+int stc_push(stack_t *stack, token_t *token)
 {
     if(stack->top == stack->cap - 1)
         if(stc_resize(stack, stack->cap + RESIZE_STEP) == FAILURE)
             return FAILURE;
 
-    stack->array[++stack->top] = c;
+    stack->array[++stack->top] = token;
     return SUCCESS;
 }
+
+/**
+ * @brief Returns token from top of the stack
+ *
+ * @param stack_t *  Pointer to stack
+ * @return NULL      If error ocurred.
+ *         token_t * If function ended successfuly.
+ */
+token_t *stc_top(stack_t *stack)
+{
+    if(stack->top == EMPTY)
+        return NULL;
+
+    return stack->array[stack->top];
+}
+
 
 /**
  * @brief Pops token from top of stack. 
@@ -101,7 +118,7 @@ int stc_push(stack_t *stack, char *c)
  * @return NULL      If error ocurred.
  *         token_t * If function ended successfuly.
  */
-char *stc_pop(stack_t *stack)
+token_t *stc_pop(stack_t *stack)
 {
     if(stack->top == EMPTY)
         return NULL;
@@ -120,7 +137,7 @@ void stc_destroy(stack_t *stack)
     free(stack);
 }
 
-
+/**
 int main()
 {
     char array[40] = "1111111111111111111111111111111111111112";
@@ -141,7 +158,7 @@ int main()
     stc_destroy(stack);
     return 0;
 }
-
+*/
 
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///

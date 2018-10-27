@@ -1,8 +1,7 @@
 CC=gcc
 CFLAGS=-std=c99 -pedantic -Wall -Wextra
 
-all: scanner symtable_test
-
+all: scanner symtable_test test
 
 scanner: scanner.c scanner.h token.c token.h dynamicStr.c dynamicStr.h
 	$(CC) $(CFLAGS) scanner.c token.c dynamicStr.c -o scanner
@@ -17,7 +16,6 @@ symtable.o: symtable.h symtable.c
 
 symtable_test:  symtable_test.o	 symtable.o 
 	gcc $(CFLAGS)  symtable_test.o symtable.o -o  symtable_test
-
 
 clean:
 	rm -f symtable_test

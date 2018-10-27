@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////
 #ifndef STACK_H
 #define STACK_H
+
 #include "token.h"
 
 ////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,7 @@
 typedef struct stack {
     int top;            /* Index of element on the top of the stack */
     int cap;            /* Max capacity of stack                    */
-    char **array;       /* Array of pointers to elements of stack   */    /* <= Predela se na token_t ** */
+    token_t **array;    /* Array of pointers to elements of stack   */    /* <= Predela se na token_t ** */
 } stack_t;
 
 ////////////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ int stc_resize(stack_t *stack, int new_cap);
  * @return FAILURE   If error ocurred.
  *         SUCCESS   If function ended successfuly.
  */
-int stc_push(stack_t *stack, char *c);
+int stc_push(stack_t *stack, token_t *token);
 
 /**
  * @brief Pops token from top of stack. 
@@ -83,7 +84,16 @@ int stc_push(stack_t *stack, char *c);
  * @return NULL      If error ocurred.
  *         token_t * If function ended successfuly.
  */
-char *stc_pop(stack_t *stack);
+token_t *stc_pop(stack_t *stack);
+
+/**
+ * @brief Returns token from top of stack
+ *
+ * @param stack_t *  Pointer to stack
+ * @return NULL      If error ocurred.
+ *         token_t * If function ended successfuly.
+ */
+token_t *stc_top(stack_t *stack);
 
 /**
  * @brief Frees memory allocated by stack.
