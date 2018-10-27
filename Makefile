@@ -1,10 +1,10 @@
 CC=gcc
 CFLAGS=-std=c99 -pedantic -Wall -Wextra
 
-all: scanner symtable_test test
+all: scanner symtable_test
 
-scanner: scanner.c scanner.h token.c token.h dynamicStr.c dynamicStr.h
-	$(CC) $(CFLAGS) scanner.c token.c dynamicStr.c -o scanner
+scanner: main.c scanner.c scanner.h token.c token.h dynamicStr.c dynamicStr.h
+	gcc $(CFLAGS)  main.c scanner.c token.c dynamicStr.c -o scanner
 
 	#-------------------------- symtable_test---------------------------
 
