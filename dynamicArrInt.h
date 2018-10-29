@@ -6,9 +6,9 @@
 
   PackageName [Data type]
 
-  Synopsis    []
+  Synopsis    [Dynamic array of integers implementation]
 
-  Author      [Adam Pankuch, Jindrich Sestak]
+  Author      [Adam Pankuch]
 
   Affiliation []
 

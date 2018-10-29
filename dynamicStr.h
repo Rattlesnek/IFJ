@@ -1,18 +1,18 @@
 /**CFile****************************************************************
 
-  FileName    []
+  FileName    [dynamicStr.h]
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName []
+  PackageName [Data type]
 
-  Synopsis    []
+  Synopsis    [Dynamic string implementation]
 
-  Author      []
+  Author      [Jindrich Sestak]
 
   Affiliation []
 
-  Date        [--/--/2018]
+  Date        [27/10/2018]
 
   Revision    []
 

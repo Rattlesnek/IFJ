@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "error.h"
 #include "stack.h"
@@ -62,18 +63,18 @@ stack_t *stc_create()
  *
  * @param  stack_t * Pointer to stack
  *         new_cap   New capacity of stack
- * @return FAILURE   If error ocurred.
- *         SUCCESS   If function ended successfuly.
+ * @return false   If error ocurred.
+ *         true    If function ended successfuly.
  */
-int stc_resize(stack_t *stack, int new_cap)
+bool stc_resize(stack_t *stack, int new_cap)
 {
     stack->array = realloc(stack->array,sizeof(char *)*(new_cap));
     if(stack == NULL)
-        return FAILURE;
+        return false;
 
     stack->cap = new_cap;
 
-    return SUCCESS;
+    return true;
 }
 
 /**
@@ -82,17 +83,17 @@ int stc_resize(stack_t *stack, int new_cap)
  *
  * @param  stack_t * Pointer to stack
  *         *c        Pointer to token
- * @return FAILURE   If error ocurred.
- *         SUCCESS   If function ended successfuly.
+ * @return false   If error ocurred.
+ *         true    If function ended successfuly.
  */
-int stc_push(stack_t *stack, token_t *token)
+bool stc_push(stack_t *stack, token_t *token)
 {
     if(stack->top == stack->cap - 1)
-        if(stc_resize(stack, stack->cap + RESIZE_STEP) == FAILURE)
-            return FAILURE;
+        if(stc_resize(stack, stack->cap + RESIZE_STEP) == false)
+            return false;
 
     stack->array[++stack->top] = token;
-    return SUCCESS;
+    return true;
 }
 
 /**

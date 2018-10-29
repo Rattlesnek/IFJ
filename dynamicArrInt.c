@@ -6,9 +6,9 @@
 
   PackageName [Data type]
 
-  Synopsis    []
+  Synopsis    [Dynamic array of integers implementation]
 
-  Author      [Adam Pankuch, Jindrich Sestak]
+  Author      [Adam Pankuch]
 
   Affiliation []
 
@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
+
 
 ////////////////////////////////////////////////////////////////////////
 ///                     FUNCTION DEFINITIONS                         ///
@@ -49,6 +50,10 @@ bool dynamicArrInt_init(dynamicArrInt_t *a)
 void dynamicArrInt_free(dynamicArrInt_t *a)
 {
 	free(a->arr);
+    
+    a->arr = NULL;
+    a->length = 0;
+    a->max = 0;
 }
 
 

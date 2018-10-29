@@ -1,18 +1,18 @@
 /**CFile****************************************************************
 
-  FileName    []
+  FileName    [dynamicStr.c]
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName []
+  PackageName [Data type]
 
-  Synopsis    []
+  Synopsis    [Dynamic string implementation]
 
-  Author      []
+  Author      [Jindrich Sestak]
 
   Affiliation []
 
-  Date        [--/--/2018]
+  Date        [27/10/2018]
 
   Revision    []
 
@@ -30,33 +30,24 @@
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
 
+
 ////////////////////////////////////////////////////////////////////////
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-/**
- * @brief Clearing string
- * 
- * @param s 
- */
+
 void dynamicStr_clear(dynamicStr_t *s)
 {
 	s->length = 0;
-	s->str[s->length] = '\0';
+	s->str[0] = '\0';
 }
 
-/**
- * @brief initialize
- * 
- * @param s 
- * @return true If succesful, otherwise false 
- */
+
 bool dynamicStr_init(dynamicStr_t *s)
 {
-	if (!(s->str = (char *) malloc(DYNAMICSTR_LEN)))
-	{
+	s->str = malloc(DYNAMICSTR_LEN * sizeof(char));
+	if (s->str == NULL)
 		return false;
-	}
 
 	dynamicStr_clear(s);
 	s->max = DYNAMICSTR_LEN;
@@ -64,20 +55,26 @@ bool dynamicStr_init(dynamicStr_t *s)
 	return true;
 }
 
+
 void dynamicStr_free(dynamicStr_t *s)
 {
 	free(s->str);
+
+	s->str = NULL;
+	s->length = 0;
+	s->max = 0;
 }
+
 
 bool dynamicStr_add(dynamicStr_t *s, char c)
 {
 	if (s->length + 1 >= s->max)
 	{
 		unsigned int new_size = s->length + DYNAMICSTR_LEN;
-		if (!(s->str = (char *) realloc(s->str, new_size)))
-		{
+		s->str = realloc(s->str, new_size * sizeof(char));
+		if (s->str == NULL)
 			return false;
-		}
+
 		s->max = new_size;
 	}
 

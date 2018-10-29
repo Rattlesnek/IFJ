@@ -24,11 +24,14 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include <stdbool.h>
+
 #include "token.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
+
 typedef struct stack {
     int top;            /* Index of element on the top of the stack */
     int cap;            /* Max capacity of stack                    */
@@ -41,8 +44,6 @@ typedef struct stack {
 #define STACK_INIT_CAP 20 /* Initial capacity of stack              */
 #define RESIZE_STEP 10    /* Used when there is no more space       */
 #define EMPTY -1          /* Top == -1 when stack is empty          */
-#define SUCCESS 1         /* Return value                           */
-#define FAILURE 0         /* Return value                           */
 
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
@@ -61,10 +62,10 @@ stack_t *stc_create();
  *
  * @param  stack_t * Pointer to stack
  *         new_cap   New capacity of stack
- * @return FAILURE   If error ocurred.
- *         SUCCESS   If function ended successfuly.
+ * @return false     If error ocurred.
+ *         true      If function ended successfuly.
  */
-int stc_resize(stack_t *stack, int new_cap);
+bool stc_resize(stack_t *stack, int new_cap);
 
 /**
  * @brief Pushes new token to top of stack. If there is no more space the stack
@@ -72,10 +73,10 @@ int stc_resize(stack_t *stack, int new_cap);
  *
  * @param  stack_t * Pointer to stack
  *         *c        Pointer to token
- * @return FAILURE   If error ocurred.
- *         SUCCESS   If function ended successfuly.
+ * @return false     If error ocurred.
+ *         true      If function ended successfuly.
  */
-int stc_push(stack_t *stack, token_t *token);
+bool stc_push(stack_t *stack, token_t *token);
 
 /**
  * @brief Pops token from top of stack. 
