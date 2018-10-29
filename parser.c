@@ -29,6 +29,7 @@
 #include "token.h"
 #include "symtable.h"
 #include "dynamicArrInt.h"
+#include "error.h"
 
 #include "parser.h"
 
@@ -52,11 +53,19 @@ int ll_tableFind(char *nonterm, char *term)
     else if (strcmp(nonterm, "[stat]") == 0)
         nonterm_idx = STAT_nonterm;
     else if (strcmp(nonterm, "[command]") == 0)
+    {
+        // special case
+        if (strcmp(term, "+") == 0 ||
+            strcmp(term, "-") == 0 ||
+            strcmp(term, "FUNC") == 0 ||
+            strcmp(term, "STR") == 0 ||
+            strcmp(term, "INT") == 0 ||
+            strcmp(term, "DBL") == 0 ||
+            strcmp(term, "nil") == 0)
+            return EXPR_INCLUDE; 
+        
         nonterm_idx = COMMAND_nonterm;
-    else if (strcmp(nonterm, "[func-assign-expr]") == 0)
-        nonterm_idx = FUNC_ASSIGN_EXPR_nonterm;
-    else if (strcmp(nonterm, "[assign-expr]") == 0)
-        nonterm_idx = ASSIGN_EXPR_nonterm;
+    }
     else if (strcmp(nonterm, "[end-list]") == 0)
         nonterm_idx = END_LIST_nonterm;
     else if (strcmp(nonterm, "[if-list]") == 0)
@@ -71,11 +80,17 @@ int ll_tableFind(char *nonterm, char *term)
         nonterm_idx = P_BRACKETS_CONT_nonterm;
     else if (strcmp(nonterm, "[p-without]") == 0)
         nonterm_idx = P_WITHOUT_nonterm;
-    else if (strcmp(nonterm, "[id]") == 0)
-        nonterm_idx = ID_nonterm;
+    else if (strcmp(nonterm, "[func-assign-expr]") == 0)
+    {
+         // special case
+        if (strcmp(term, "=") != 0)
+            return EXPR_INCLUDE_TWO;
+
+        nonterm_idx = FUNC_ASSIGN_EXPR_nonterm;
+    }
     else 
     {
-        printf("ERROR: nonterm_idx was not set");
+        fprintf(stderr, "ERROR: nonterm_idx was not set");
         return 0;
     }
 
@@ -107,19 +122,9 @@ int ll_tableFind(char *nonterm, char *term)
         term_idx = ID_term;
     else if (strcmp(term, "FUNC") == 0)
         term_idx = FUNC_term;
-    else if (strcmp(term, "nil") == 0)
-        term_idx = NIL_term;
-    else if (strcmp(term, "STR") == 0)
-        term_idx = STR_term;
-    else if (strcmp(term, "INT") == 0)
-        term_idx = INT_term;
-    else if (strcmp(term, "DBL") == 0)
-        term_idx = DBL_term;
-    else if (strcmp(term, "**expr**") == 0)
-        term_idx = EXPR_term;
     else 
     {
-        printf("ERROR: term_idx was not set");
+        fprintf(stderr, "ERROR: term_idx was not set");
         return 0;
     }
 
@@ -128,34 +133,36 @@ int ll_tableFind(char *nonterm, char *term)
 }
 
 
+
+
+
 int pr_parser()
 {
     /// INIT STRUCTURES
     if ( ! dynamicArrInt_init(&left_pars))
-        return 0; // TODO ERROR
+        return ERR_INTERNAL;
     stack_t *stack = stc_create();
     if (stack == NULL)
-        return 0; // TODO ERROR
+        goto err_internal_1;
 
 
     token_t *token;
     token_info_t info = { .ptr = NULL };
 
-    /// INITIAL PUSH
+    /// INITIAL PUSH of EOF and starting nonterminal
     token = createToken("EOF", info);
     if (token == NULL)
-        return 0; // TODO ERROR
-    stc_push(stack, token);
-    // TODO ERROR
+        goto err_internal_2;
+    stc_push(stack, token); // error cannot occur
+     
     token = createToken("[st-list]", info);
     if (token == NULL)
-        return 0; // TODO ERROR
-    stc_push(stack, token);
-    // TODO ERROR
+        goto err_internal_2;
+    stc_push(stack, token); // error cannot occur
 
-    ///////////////////
-    ///  MAIN LOPP  ///
-    ///////////////////
+    //////////////////////////////
+    ///        MAIN LOOP       ///
+    //////////////////////////////
     token_t *top; 
     token_t *act;
 
@@ -166,6 +173,11 @@ int pr_parser()
     do {
         top = stc_top(stack);
         act = sc_scanner();
+        if (strcmp(act->name, "ERR_LEX") == 0)
+            goto err_lexical;
+        else if (strcmp(act->name, "ERR_INTERNAL") == 0)
+            goto err_internal_2;
+
 
         if (strcmp(top->name, "EOF") == 0)
         {
@@ -176,11 +188,14 @@ int pr_parser()
         }
         else if (isTerminal(top->name))
         {
-            if (strcmp(top->name, act->name) == 0)
+            if (strcmp(top->name, "**expr**") == 0)
+            {
+                // SPUSTENIE PRECEDENCNEJ ANALYZY
+            }
+            else if (strcmp(top->name, act->name) == 0)
             {
                 token = stc_pop(stack);
                 destroyToken(token);
-                continue;
             }
             else
                 fail = true;
@@ -188,7 +203,15 @@ int pr_parser()
         else
         {
             rule = ll_tableFind(top->name, act->name);
-            if (rule) // in case rule == 0 -- fail
+            if (rule == EXPR_INCLUDE)
+            {
+                // SPUSTENIE PRECEDENCNEJ ANALYZY
+            }
+            else if (rule == EXPR_INCLUDE_TWO)
+            {
+                // SPUSTENIE PRECEDENCNEJ ANALYZY
+            }
+            else if (rule) // in case rule == 0 -- fail
             {
                 token = stc_pop(stack);
                 destroyToken(token);
@@ -197,11 +220,16 @@ int pr_parser()
                 while (reverted_rules[rule][i] != NULL)
                 {
                     token = createToken(reverted_rules[rule][i], info);
-                    stc_push(stack, token);
+                    if (token == NULL)
+                        goto err_internal_2;
+                    if ( ! stc_push(stack, token))
+                        goto err_internal_3;
+
                     i++;
                 }
                 
-                dynamicArrInt_add(&left_pars, rule);                 
+                if ( ! dynamicArrInt_add(&left_pars, rule)); 
+                    goto err_internal_2;                
             }
             else 
                 fail = true;
@@ -209,10 +237,45 @@ int pr_parser()
 
 
     } while (succ || fail);
+
+    if (fail)     
+        goto err_syntactic;
     
 
+    // NIECO SPRAV S left_pars
+
+
     stc_destroy(stack);
+    dynamicArrInt_free(&left_pars);
     return 0;
+
+////////////////////////////////////
+///        ERROR HANDLING        ///
+////////////////////////////////////
+err_internal_1:
+    dynamicArrInt_free(&left_pars);
+    return ERR_INTERNAL;
+
+err_internal_2:
+    dynamicArrInt_free(&left_pars);
+    stc_destroy(stack);
+    return ERR_INTERNAL;
+
+err_internal_3:
+    destroyToken(token);
+    dynamicArrInt_free(&left_pars);
+    stc_destroy(stack);
+    return ERR_INTERNAL;
+
+err_lexical:
+    dynamicArrInt_free(&left_pars);
+    stc_destroy(stack);
+    return ERR_LEX;
+
+err_syntactic:
+    dynamicArrInt_free(&left_pars);
+    stc_destroy(stack);
+    return ERR_SYN;
 }
 
 
