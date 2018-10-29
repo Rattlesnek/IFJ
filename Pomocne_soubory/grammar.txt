@@ -25,86 +25,53 @@
 7.  <command> -> if **expr** then EOL <if-list> EOL
 
 
-# FUNCTION CALL for func ending with ! or ?
-8.  <command> -> func <params-gen>
-
-
 ##################################################################################
 # EXPRESIONS without assignment
 # po najdeni nasledujucich tokenov na zaciatku vstupnej pasky (dostaneme zo scanneru) zapiname preced. a. na prijatie vyrazu
 # dolezite je ze v tychto pripadoch musime zahrnut aj tieto tokeny do preced. a.
 
-# tokeny: - + str int double nil
+# expr_include: + - FUNC STR INT DBL nil (
+# <command> -> **expr_include** EOL
 
-9.  <command> -> **expr** EOL
-###############################################################################
+8. <command> -> ID <func-assignment-expr>
 
-
-#################################################################
-# FUNCTION CALL or EXPR or ASSIGNMENT
-# po prijati id musime id zaznamenat pre pripad ze budeme musiet
-# pouzit precedencnu analyzu
-
-10. <command> -> id <func-assignment-expr>
-#################################################################
-
-# FUNCTION CALL for function other than ones ending with ! or ?
-11. <func-assignment-expr> -> <params-gen>
-
-# ASSIGNMENT or EXPR
-12. <func-assignment-expr> -> <assignment-expr>
-
-# po prijati "=" zapiname precedencnu analyzu na prijatie vyrazu
-13. <assignment-expr> -> = **expr** EOL
-
-
-#########################################################
-# vieme ze sme precitali id (mame ho ulozene pre tento pripad)
-# ak je na zaciatku pasky nejaky operator musime zacat precedencnu analyzu
-# musime do nej zahrnut aj id a operator
-# (nesmieme zabudnut id vymazat zo zasobnika prediktivnej analyzy)
-
-# aritmeticke operatory: + - * / 
-# relacne operatory: == != < <= > >= 
-
-14. <assignment-expr> -> **expr** EOL
-#########################################################
+# ak pride hocico ine ako = zapiname precedenc analyzu
+# musime zahrnut predchadzajuci token (ID) 
+# expr_include_two: arithmetic: +, -, *, /  relation: ==, !=, <, <=, >, >=
+# 
+##################################################################
 
 # END-LIST
-15. <end-list>  -> <command> <end-list>
-16. <end-list>  -> EOL <end-list>
-17. <end-list>  -> end
+9. <end-list>  -> <command> <end-list>
+10. <end-list>  -> EOL <end-list>
+11. <end-list>  -> end
 
-18. <if-list>  -> <command> <if-list>
-19. <if-list>  -> EOL <if-list>
+12. <if-list>  -> <command> <if-list>
+13. <if-list>  -> EOL <if-list>
 # po prijati "elif" zapiname precedencnu analyzu na prijatie vyrazu
-20. <if-list>  -> elif **expr** then EOL <if-list>
-21. <if-list>  -> else EOL <end-list>
-22. <if-list>  -> end 
+14. <if-list>  -> elif **expr** then EOL <if-list>
+15. <if-list>  -> else EOL <end-list>
+16. <if-list>  -> end 
 
 
 # FUNCTION
-23. <id-func>    -> id
-24. <id-func>    -> func
+17. <id-func>    -> ID
+18. <id-func>    -> FUNC
 
 # FUNCTION PARAMETERS
-25. <params-gen> -> ( <p-brackets> 
-26. <params-gen> -> <id> <p-without>
-27. <params-gen> -> EOL
+19. <params-gen> -> ( <p-brackets> 
+20. <params-gen> -> ID <p-without>
+21. <params-gen> -> EOL
 
-28. <p-brackets>   -> <id> <p-brackets-continue> 
-29. <p-brackets>   -> ) EOL
+22. <p-brackets>   -> ID <p-brackets-continue> 
+23. <p-brackets>   -> ) EOL
 
-30. <p-brackets-continue> -> , <id> <p-brackets-continue>
-31. <p-brackets-continue> -> ) EOL
+24. <p-brackets-continue> -> , ID <p-brackets-continue>
+25. <p-brackets-continue> -> ) EOL
 
-32. <p-without> -> , <id> <p-without> 
-33. <p-without> -> EOL
+26. <p-without> -> , ID <p-without> 
+27. <p-without> -> EOL
 
-# PARAMETER TYPES
-34. <id> -> id
-35. <id> -> str
-36. <id> -> int
-37. <id> -> double
-38. <id> -> nil
 
+# <func-assignment-expr> -> **expr_include_two** EOL
+28. <func-assignment-expr> -> = **expr** EOL

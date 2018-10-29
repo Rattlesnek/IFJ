@@ -42,8 +42,8 @@ for key in rules.keys():
         for item in rules[key][num]:
             if not is_terminal(item):
                 item = "\"[" + item[1:-1] + "]\""
-                print(item, end=" ")
+                print(item, ", ", sep="", end="")
             else:
                 item = "\"" + item + "\""
-                print(item, end=" ")
+                print(item, ", ", sep="", end="")
         print("},")
