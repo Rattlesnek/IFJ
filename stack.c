@@ -134,6 +134,10 @@ token_t *stc_pop(stack_t *stack)
  */
 void stc_destroy(stack_t *stack)
 {
+    token_t *token;
+    while ((token = stc_pop(stack)) != NULL)
+        destroyToken(token);
+    
     free(stack->array);
     free(stack);
 }
