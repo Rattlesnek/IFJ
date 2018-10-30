@@ -43,10 +43,17 @@ dynamicArrInt_t left_pars; // left analysis of program
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Find index of corresponding rule in ll_table
+ * 
+ * @param nonterm name of nonterminal
+ * @param term name of terminal
+ * @return int index of rule
+ */
 int ll_tableFind(char *nonterm, char *term)
 {
-    int nonterm_idx;
-    int term_idx;
+    int nonterm_idx = 0;
+    int term_idx = 0;
 
     if (strcmp(nonterm, "[st-list]") == 0)
         nonterm_idx = ST_LIST_nonterm;
@@ -57,6 +64,7 @@ int ll_tableFind(char *nonterm, char *term)
         // special case
         if (strcmp(term, "+") == 0 ||
             strcmp(term, "-") == 0 ||
+            strcmp(term, "(") == 0 ||
             strcmp(term, "FUNC") == 0 ||
             strcmp(term, "STR") == 0 ||
             strcmp(term, "INT") == 0 ||
@@ -88,11 +96,6 @@ int ll_tableFind(char *nonterm, char *term)
 
         nonterm_idx = FUNC_ASSIGN_EXPR_nonterm;
     }
-    else 
-    {
-        fprintf(stderr, "ERROR: nonterm_idx was not set");
-        return 0;
-    }
 
     if (strcmp(term, "if") == 0)
         term_idx = IF_term;
@@ -122,20 +125,17 @@ int ll_tableFind(char *nonterm, char *term)
         term_idx = ID_term;
     else if (strcmp(term, "FUNC") == 0)
         term_idx = FUNC_term;
-    else 
-    {
-        fprintf(stderr, "ERROR: term_idx was not set");
-        return 0;
-    }
 
     // return value from corresponding bucket in ll_table
     return ll_table[nonterm_idx][term_idx];
 }
 
 
-
-
-
+/**
+ * @brief Parser - Syntactic analysis
+ * 
+ * @return int return value
+ */
 int pr_parser()
 {
     /// INIT STRUCTURES
@@ -160,11 +160,13 @@ int pr_parser()
         goto err_internal_2;
     stc_push(stack, token); // error cannot occur
 
-    //////////////////////////////
-    ///        MAIN LOOP       ///
-    //////////////////////////////
+    /////////////////////////////////////
+    ///            MAIN LOOP          ///
+    /////////////////////////////////////
     token_t *top; 
     token_t *act;
+
+    token_t *id_tmp;
 
     bool succ = false;
     bool fail = false;
@@ -190,7 +192,14 @@ int pr_parser()
         {
             if (strcmp(top->name, "**expr**") == 0)
             {
-                // SPUSTENIE PRECEDENCNEJ ANALYZY
+                // destroy token: "**expr**"
+                token = stc_pop(stack);
+                destroyToken(token);
+                
+                // SPUSTENIE PRECEDENCNEJ ANALYZY 
+                // definicia: int preced(token_t *token1, token_t *token2)
+
+                // preced(NULL, NULL);
             }
             else if (strcmp(top->name, act->name) == 0)
             {
@@ -203,13 +212,28 @@ int pr_parser()
         else
         {
             rule = ll_tableFind(top->name, act->name);
+            // { "EOL", "[func-assign-expr]" "ID", }
+            if (rule == 8)
+                id_tmp = createToken("ID", act->info);
+
             if (rule == EXPR_INCLUDE)
             {
-                // SPUSTENIE PRECEDENCNEJ ANALYZY
+                // destroy token: "[command]"
+                token = stc_pop(stack);
+                destroyToken(token);
+
+                // SPUSTENIE PRECEDENCNEJ ANALYZY 
+                // preced(act, NULL);
+
             }
             else if (rule == EXPR_INCLUDE_TWO)
             {
+                // destroy token: "[func-assign-expr]"
+                token = stc_pop(stack);
+                destroyToken(token);
+                
                 // SPUSTENIE PRECEDENCNEJ ANALYZY
+                // preced(id_tmp, act);
             }
             else if (rule) // in case rule == 0 -- fail
             {
@@ -247,11 +271,11 @@ int pr_parser()
 
     stc_destroy(stack);
     dynamicArrInt_free(&left_pars);
-    return 0;
+    return SUCCESS;
 
-////////////////////////////////////
-///        ERROR HANDLING        ///
-////////////////////////////////////
+///////////////////////////////////////
+///         ERROR HANDLING          ///
+///////////////////////////////////////
 err_internal_1:
     dynamicArrInt_free(&left_pars);
     return ERR_INTERNAL;

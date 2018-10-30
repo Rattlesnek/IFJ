@@ -108,7 +108,7 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
     { "[command]", },
     { "EOL", "[end-list]", "EOL", "do", "**expr**", "while", },
     { "EOL", "[if-list]", "EOL", "then", "**expr**", "if", },
-    { "EOL", "**expr**", "=", "ID", },
+    { "EOL", "[func-assign-expr]" "ID", },
     { "[end-list]", "[command]", },
     { "[end-list]", "EOL", },
     { "end", },
@@ -128,7 +128,7 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
     { "EOL", ")", },
     { "[p-without]", "ID", ",", },
     { "EOL", },
-    { "EOL", "**expr**", "=", }
+    { "**expr**", "=", }
 };
 
 ////////////////////////////////////////////////////////////////////////
