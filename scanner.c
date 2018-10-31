@@ -117,7 +117,7 @@ char* inKeyword(char *str, char **keywords)
  */
 token_t* scanner()
 {
-  token_info_t sc_info;
+    token_info_t sc_info;
     token_t *sc_token;
     printf("Start\n");
     dynamicStr_init(sc_str);
@@ -130,7 +130,7 @@ token_t* scanner()
                     state = State_LTN;
                 else if (c == '>')
                     state = State_MTN;
-                else if (c == ' ' || c == '\t') //isspace okrem eol
+                else if (isspace(c) && c != '\n')
                     state = State_S;
                 else if (c == '=')
                     state = State_ASSIGN;
@@ -156,40 +156,29 @@ token_t* scanner()
                 else if (c == '-')
                 {
                     state = State_MINUS;
-                    if(!dynamicStr_add(sc_str, c))
-                    {   
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                    if(!dynamicStr_add(sc_str, c)) 
+                        goto err_internal;
                 }
                     
                 else if (c == '0')
                 {
                     state = State_INT0;
-                    if(!dynamicStr_add(sc_str, c))
-                    {   
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                    if(!dynamicStr_add(sc_str, c))   
+                        goto err_internal;
                 }
                     
                 else if (isdigit(c))
                 {
                     state = State_INT;
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
                 }
                     
                 else if (isalpha(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_ID;
                 } 
 
@@ -213,119 +202,97 @@ token_t* scanner()
                 return sc_token; 
             }
             break;
- 
- /******************
-  *******COMMENTS*********
-**********************/
+ ///////////////////////////////////////
+///             COMMENTS            ///
+///////////////////////////////////////
             case State_COMM:
-                if (c == 'b')       //Must save 'b', what if '=bob'
-                                    //so identify 'bob' as ID
+                if (c == 'b')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_COMMB;
                 }
                     
-                else        //EOL->'=a' --Error, wrong Assignment
-                {           //return token '='
-                    state = State_S;
+                else 
+                {
+                    goto err_lexical;
+                   /* state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
                     sc_token= createToken("=", sc_info);
                     printf("Token-name %s\n", sc_token->name);
                     dynamicStr_clear(sc_str);
                     return sc_token; 
-                }
+                */}
             break;
 
             case State_COMMB:
                 if (c == 'e')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_COMMBE;
                 }
                     
-                else
-                {   
-                    sc_unget(c);
-                    state = State_ID;
-                }
+                else 
+                    goto err_lexical;
             break;
 
             case State_COMMBE:
                 if (c == 'g')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_COMMBEG;
                 }
                     
-                else
-                {   
-                    sc_unget(c);
-                    state = State_ID;
-                }
+                else   
+                    goto err_lexical;
+                
             break;
 
             case State_COMMBEG:
                 if (c == 'i')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_COMMBEGI;
                 }
                     
-                else
-                {   
-                    sc_unget(c);
-                    state = State_ID;
-                }
+                else   
+                    goto err_lexical;
+
             break;
 
             case State_COMMBEGI:
                 if (c == 'n')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+ 
                     state = State_COMMBEGIN;
                 }
                     
-                else
-                {   
-                    sc_unget(c);
-                    state = State_ID;
-                }
+                else   
+                    goto err_lexical;
+                
             break;
 
             case State_COMMBEGIN:
                 if (c == '\n')
                     state = State_MAY_END;
-                else if (c == ' ' || c == '\t')
+                else if (isspace(c) && c != '\n')
                     state = State_COMM_LINE;
-                else        // What if "=beginer"
-                {
-                    sc_unget(c);
-                    state = State_ID;
-                }
+                else 
+                    goto err_lexical;
+
             break;
 
-            case State_COMM_LINE: //No need to send comments as tokens, thez are just blank space
+            case State_COMM_LINE:
                 if ( c == '\n')
                     state = State_MAY_END;
                 else 
@@ -344,7 +311,7 @@ token_t* scanner()
             case State_END_COMM:
                 if (c == '\n')
                     state = State_MAY_END;
-                if (c == 'e')       //It can be "=e?"
+                if (c == 'e')  
                     state = State_END_COMME;
                 else
                     state = State_COMM_LINE;
@@ -355,10 +322,8 @@ token_t* scanner()
                     state = State_END_COMMEN;
                 else if (c == '\n')
                     state = State_MAY_END;
-                else
-                {   
+                else  
                     state = State_COMM_LINE;
-                }
             break;
 
             case State_END_COMMEN:
@@ -366,23 +331,21 @@ token_t* scanner()
                     state = State_END_COMMEND;
                 else if (c == '\n')
                     state = State_MAY_END;
-                else
-                {   
+                else  
                     state = State_COMM_LINE;
-                }
             break;
 
             case State_END_COMMEND:
                 if ( c == '\n')
                 {
-                   state = State_EOL;
+                   state = State_S;
                    sc_unget(c);
                    sc_info.string = NULL;
                    sc_token = createToken("BLOCK COMM", sc_info);
                    printf("Token-name %s\n", sc_token->name);
                    return sc_token;
                 }
-                if ( c == ' ' || c == '\t')
+                if ( isspace(c) && c != '\n')
                     state = State_LCOMM;
                 else    
                     state = State_COMM_LINE; 
@@ -401,18 +364,14 @@ token_t* scanner()
                 else
                     state = State_LCOMM;
             break;
-/***************
- * ********End of Comments***********
- * **************/
 
-/******************
- * ******Strings*********
- * ******************/
+///////////////////////////////////////
+///             STRINGS            ///
+///////////////////////////////////////
             case State_QUATATION1:
-                if (c == '\n')           //According to automat "OKREM EOL" - don;t knwo what to do
-                {
-                   state = State_S;
-                }
+                if (c == '\n')   
+                   goto err_lexical;
+                
                 else if (c == '\\')     // Char '\' add after we know it means something
                 {
                     state = State_SPEC_CHAR;
@@ -422,10 +381,8 @@ token_t* scanner()
                 else 
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_QUATATION1;
                 }
                 break;
@@ -434,35 +391,25 @@ token_t* scanner()
                 if (c == 'n' || c == 't' || c == 's' || c == '\\')
                 {   
                     if(!dynamicStr_add(sc_str, '\\'))   //First I add '\\'
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                      if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_QUATATION1;
                 }
                 else if (c == 'x')
                 {
                     if(!dynamicStr_add(sc_str, '\\')) //First I add '\\'
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_HEX;
                 }
-                else        //Now I know that '\?' means nothing and shouldn't be taken as char ('nothings is there')
-                {
-                    state = State_QUATATION1;
-                }
+                else
+                    goto err_lexical;
                     
                 break;
 
@@ -470,60 +417,43 @@ token_t* scanner()
                 if ((c >= 'A' && c <= 'F') || isdigit(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_HEX_NUM;
                 } 
                 else
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
-                    state = State_S;
-                }
+                    goto err_lexical;
             break;
 
             case State_HEX_NUM:
                 if ((c == 'A' && c <= 'F') || isdigit(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_HEX_NUM_END;
                 }
-                else if (c == '\n')  //According to automat "OKREM EOL" - don;t knwo what to do
-                {
-                    state = State_S;
-                }
+                else if (c == '\n')
+                    goto err_lexical;
+
                 else
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_QUATATION1;
                 }
             break;
 
             case State_HEX_NUM_END:
-                if (c == '\n')  //According to automat "OKREM EOL" - don;t knwo what to do
-                {               //Maybe clear sc_str
-                    state = State_S;
-                }
+                if (c == '\n') 
+                    goto err_lexical;
+
                 else
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_QUATATION1;
                 }
             break;
@@ -540,31 +470,23 @@ token_t* scanner()
                 dynamicStr_clear(sc_str);
                 return sc_token;  
 
-/**********************
- * ***********ENd of Strings***********
- * *************************/
-
-/****************************
- * ******ID,FUNC, INT, FLOAT************
- * **********************/
+///////////////////////////////////////
+///        ID, FUNC INT, FLOAT      ///
+///////////////////////////////////////
             case State_ID:
                 if (isalpha(c) || isdigit(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_ID;
                 }
 
                 else if (c == '?' || c == '!')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+
                     state = State_FUNC;
                 }
                 else 
@@ -584,9 +506,11 @@ token_t* scanner()
                         }
                     else
                     {
+                        // allocate space for string which will be stored in element (viz. "STR")
+                        // copy string from dynamicStr to token info
                         //tE_CreateElement("ID", real_name);  
                         sc_token= createToken(name, sc_info);
-                        printf("Token-name %s  || Value : %s\n", sc_token->name, sc_info.string );
+                        printf("Token-name %s\n", sc_token->name);
                         dynamicStr_clear(sc_str);
                         return sc_token;  
                     }
@@ -598,9 +522,11 @@ token_t* scanner()
                 state = State_S;
                 sc_unget(c);
                 sc_info.string = sc_str->str;
+                // allocate space for string which will be stored in element (viz. "STR")
+                // copy string from dynamicStr to token info
                 //tE_CreateELement("FUNC", real_name);
                 sc_token= createToken("FUNC", sc_info);
-                printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
+                printf("Token-name %s \n", sc_token->name);
                 dynamicStr_clear(sc_str);
                 return sc_token;  
 
@@ -609,30 +535,24 @@ token_t* scanner()
                 if (isdigit(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_INT;
                 }
                     
                 else if (tolower(c) == 'e')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_EXP;
                 }
                     
                 else if (c == '.')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_DOT;
                 }
 
@@ -648,39 +568,24 @@ token_t* scanner()
                 }
                 break;
 
-/******************************
- * ***********TODO************     What to do when "00"
- * ****************************/
             case State_INT0:
                 if (c == '.')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_DOT;
                 }
                     
                 else if (tolower(c) == 'e')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_EXP;
                 }
-                    
-                else if (c == '0')      //Don't know what to do if "00"
-                {                       //Maybe ungetc and try this character
-                                        //Clear sc_str
-                    state = State_S;
-                    dynamicStr_clear(sc_str);
-                    printf("Wrong stoDoubleuence of chars");
-                }  
 
-                else
+                else if (isspace(c))
                 {
                     state = State_S;
                     sc_unget(c);
@@ -690,92 +595,66 @@ token_t* scanner()
                     dynamicStr_clear(sc_str);
                     return sc_token;  
                 }
+                else
+                    goto err_lexical;
                 break;
 
-/******************************
- * ***********TODO************      What to do when "0.?"
- * ****************************/
             case State_DOT:
                 if (isdigit(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_FLOAT;
                 }
                     
                 else
-                {
-                    state = State_S;            //Don't know what to do if "0.?"
-                    dynamicStr_clear(sc_str);   //Maybe ungetc and try this character
-                    printf("Wrong stoDoubleuence of chars");    //Clear sc_str    
-                                                                
-                }
+                    goto err_lexical;
+
                 break;
-/******************************
- * ***********TODO************      What to do when "0e?"
- * ****************************/
+
             case State_EXP:
                 if (isdigit(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_FLOAT;
                 }
                     
                 else if (c == '+' || c == '-')
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_EXPS;
                 }
             
-                else 
-                {
-                    state = State_S;            //Don't know what to do if "0.?"
-                    dynamicStr_clear(sc_str);   //Maybe ungetc and try this character
-                    printf("Wrong stoDoubleuence of chars");    //Clear sc_strtc and try this character
-                }
+                else
+                    goto err_lexical;
+
                 break;
 
-/******************************
- * ***********TODO************      What to do when "0e-?"
- * ****************************/
             case State_EXPS:
                 if (isdigit(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_FLOAT;
                 }
                     
                 else 
-                {
-                    state = State_S;            //Don't know what to do if "0.?"
-                    dynamicStr_clear(sc_str);   //Maybe ungetc and try this character
-                    printf("Wrong stoDoubleuence of chars");    //Clear sc_strtc and try this character
-                }
+                    goto err_lexical;
+
                 break;
 
             case State_FLOAT:
                 if (isdigit(c))
                 {
                     if(!dynamicStr_add(sc_str, c))
-                    {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
-                    }
+                        goto err_internal;
+                    
                     state = State_FLOAT;
                 }
                     
@@ -791,14 +670,9 @@ token_t* scanner()
                 }
                 break;
 
-/*****************************
- * *********End of ID, FUNC, INT, FLOAT *********
- * *********************/
-
-
-/******************************
- * ***********LOGICAL OPERATORS and so************      Check if ELSE brach is correct?
- * ****************************/
+///////////////////////////////////////
+/// LOGICAL AND NUMERICAL OPERATORS ///
+///////////////////////////////////////
             case State_LTN:
                 if (c == '=')
                     state = State_LEQ;
@@ -941,8 +815,7 @@ token_t* scanner()
                 {
                     if(!dynamicStr_add(sc_str, c))
                     {
-                        dynamicStr_free(sc_str);
-                        return 0  ;
+                        goto err_internal;
                     }
                     state = State_INT;
                 }
@@ -968,7 +841,29 @@ token_t* scanner()
                 break;
         }
     }
-    return NULL;
+    if (c == '\n')
+    {   
+        dynamicStr_free(sc_str);
+        sc_info.string = NULL;
+        sc_token= createToken("EOF", sc_info);
+        return sc_token;
+    }
+
+///////////////////////////////////////
+///         ERROR HANDLING          ///
+///////////////////////////////////////
+err_lexical:
+    sc_unget(c);
+    dynamicStr_clear(sc_str); 
+    sc_info.string = NULL;
+    sc_token = createToken("ERR_LEX", sc_info);          
+    return sc_token;
+
+err_internal:
+    dynamicStr_free(sc_str);
+    sc_info.string = NULL;
+    sc_token = createToken("ERR_INTERNAL", sc_info);          
+    return sc_token;
 }
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
