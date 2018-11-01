@@ -13,11 +13,16 @@ int main()
     dynamicStr_init(sc_str);
 
     queue_t *que = que_create();
-    for ( int i = 0; i < 20; i++)
-        scanner(sc_str, que);
+
+    symtable_t *symtable = symtab_init(10);
+
+    for ( int i = 0; i < 40; i++)
+        scanner(sc_str, que, symtable);
 
     dynamicStr_free(sc_str);
 
     que_destroy(que);
+
+    symtab_free(symtable);
     return 0;
 }

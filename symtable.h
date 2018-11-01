@@ -167,7 +167,7 @@ bool symtab_remove(symtable_t *t, const char *key);
  * @param *t pointer to the hash table
  * @param pointer to new or found item
  */
-//struct element *symtab_token_add(symtable_t *t, token_t *token);
+//elem_t *symtab_elem_add(symtable_t *symtab, char *name /*(ID, FUNC)*/, char *key /*(realne jmeno promenne).*/) 
 
 
 

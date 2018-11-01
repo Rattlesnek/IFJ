@@ -4,7 +4,7 @@ CFLAGS=-std=c99 -pedantic -Wall -Wextra
 all: scanner symtable_test
 
 scanner: main.c scanner.c scanner.h token.c token.h dynamicStr.c dynamicStr.h queue.c queue.h
-	gcc $(CFLAGS)  main.c scanner.c token.c dynamicStr.c queue.c -o scanner
+	gcc $(CFLAGS)  main.c scanner.c token.c dynamicStr.c queue.c symtable.c -o scanner
 
 	#-------------------------- symtable_test---------------------------
 
