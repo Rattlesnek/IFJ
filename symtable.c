@@ -85,10 +85,12 @@ elem_t *symtab_elem_add(symtable_t *symtab, char *name /*(ID, FUNC)*/, char *key
 	{
 		elem->token_type = ID;
 		elem->value_type = UNKNOWN;
+		elem->is_init = false;
 	}
 	else if (strcmp(key, "FUNC") == 0)
 	{
 		elem->token_type = FUNC;
+		elem->value_type = UNKNOWN;
 	}
 	elem->data.intg = 0;
 	elem->next = NULL;
