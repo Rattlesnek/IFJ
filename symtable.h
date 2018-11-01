@@ -30,15 +30,13 @@
 #include <string.h>
 #include <stdbool.h>
 
-//#include "token.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
-typedef enum{UNKNOWN, INT, DBL, STR} value_t;
+typedef enum{UNKNOWN, INTG, DBL, STR} value_t;
 typedef enum{ID, VAR, FUNC} type_t;
-// predtym:  id, var, id_f
 
 
 typedef union data {
@@ -97,6 +95,15 @@ typedef struct symtable
 size_t symtab_hash_function(const char *str);
 
 /**
+ * @brief      adds element into the symtable
+ * @param      symtab  pointer to the target symtab
+ * @param      name    type of the ID
+ * @param      key     Real value of the variable
+ * @return     returns a pointer to the element
+ */
+elem_t *symtab_elem_add(symtable_t *symtab, char *name, char *key);
+
+/**
  * @brief gives the number of items in the table
  * @param *t pointer to the hash table
  * @return number of items in the table
@@ -142,7 +149,7 @@ void symtab_foreach(symtable_t *t, void (*func) (elem_t *elem));
  * @param *t pointer to the hash table
  * @return NULL if the item was not found, pointer to he item if the item was found
  */
-struct element *symtab_find(symtable_t *t, const char *key);
+elem_t *symtab_find(symtable_t *t, const char *key);
 
 /**
  * @brief removes the item from the linked list based on the match of keys

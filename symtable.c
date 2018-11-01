@@ -54,15 +54,15 @@ symtable_t * symtab_init(size_t size)
 	return symtab;
 }
 
-elem_t *symtab_token_add(symtable_t *symtab, token_t *token) //char *name (ID, FUNC), char *key (realne jmeno promenne). 
+elem_t *symtab_elem_add(symtable_t *symtab, char *name /*(ID, FUNC)*/, char *key /*(realne jmeno promenne).*/) 
 {
 
 	if (!symtab)
 	{
 		return NULL;
 	}
-	size_t index = symtab_hash_function(token->info.string) % symtab_bucket_count(symtab);
-	elem_t *elem = symtab_find(symtab, token->info.string);
+	size_t index = symtab_hash_function(key) % symtab_bucket_count(symtab);
+	elem_t *elem = symtab_find(symtab, key);
 
 	if (elem)
 	{
@@ -74,22 +74,23 @@ elem_t *symtab_token_add(symtable_t *symtab, token_t *token) //char *name (ID, F
 	{
 		return NULL;
 	}
-	elem->key = (char*)malloc(sizeof(char) * strlen(token->info.string) + 1);
+	elem->key = (char*)malloc(sizeof(char) * strlen(key) + 1);
 	if (!elem->key)
 	{	
 		free(elem);
 		return NULL;
 	}	
-	strcpy(elem->key, token->info.string);
-	if (strcmp(token->name, "ID") == 0)
+	strcpy(elem->key, key);
+	if (strcmp(name, "ID") == 0)
 	{
-		elem->token_type = id;
+		elem->token_type = ID;
+		elem->value_type = UNKNOWN;
 	}
-	else if (strcmp(token->name, "FUNC") == 0)
+	else if (strcmp(key, "FUNC") == 0)
 	{
-		elem->token_type = id_f;
+		elem->token_type = FUNC;
 	}
-	elem->data.string = NULL;
+	elem->data.intg = 0;
 	elem->next = NULL;
 	symtab->size = symtab->size + 1;
 	if (symtab->ptr[index] == NULL)
@@ -140,7 +141,7 @@ void symtab_clear(symtable_t *symtab)
 			while(elem)
 			{
 				next = elem->next;
-				if (elem->value_type == string)
+				if (elem->value_type == STR)
 				{
 					free(elem->data.string);
 				}
