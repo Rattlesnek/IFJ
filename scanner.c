@@ -31,14 +31,13 @@
 #include "scanner.h"
 #include "dynamicStr.h"
 #include "error.h"
+#include "queue.h"
 
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
 int state = State_S;
-dynamicStr_t str;
-dynamicStr_t *sc_str = &str;
 char *keywords[] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while", "elif"};
 int KeywordLen = 11;
 
@@ -115,739 +114,847 @@ char* inKeyword(char *str, char **keywords)
  * @param c character to be read
  * @return token_t* token to be returned
  */
-token_t* scanner()
+token_t* scanner(dynamicStr_t *sc_str, queue_t *que)
 {
     token_info_t sc_info;
     token_t *sc_token;
     printf("Start\n");
-    dynamicStr_init(sc_str);
     int c = 0;
-    while( (c=getc(stdin)) != EOF)
-    { 
-        switch(state){
-            case State_S:    
-                if (c == '<')
-                    state = State_LTN;
-                else if (c == '>')
-                    state = State_MTN;
-                else if (isspace(c) && c != '\n')
+    /*if ( sc_global != NULL)
+    {
+        if (sc_token_count == 0)
+        {
+            sc_token_count++;
+            state = State_S;
+            printf("Token-name %s\n", sc_global->name);
+            return sc_global;
+        }
+        else
+        {
+            sc_token_count = 0;
+            sc_global = NULL;
+        }
+    }
+    */
+   if (que_empty(que))
+   { 
+        while( (c=getc(stdin)) != EOF)
+        { 
+            switch(state){
+                case State_S:    
+                    if (c == '<')
+                        state = State_LTN;
+                    else if (c == '>')
+                        state = State_MTN;
+                    else if (isspace(c) && c != '\n')
+                        state = State_S;
+                    else if (c == '=')
+                        state = State_ASSIGN;
+                    else if (c == '!')
+                        state = State_EXLAMATION;
+                    else if (c == ',')
+                        state = State_COMMA;
+                    else if (c == '(')
+                        state = State_LEFT_BRACKET;
+                    else if (c ==')')
+                        state = State_RIGHT_BRACKET;
+                    else if (c == '/')
+                        state = State_DIV;
+                    else if (c == '*')
+                        state = State_MUL;
+                    else if (c == '+')
+                        state = State_PLUS;
+                    else if (c == ' ' || c == '\t')
+                        state = State_S;
+                    else if (c == '"')
+                        state = State_QUATATION1;
+
+                    else if (c == '-')
+                    {
+                        state = State_MINUS;
+                        if(!dynamicStr_add(sc_str, c)) 
+                            goto err_internal;
+                    }
+                        
+                    else if (c == '0')
+                    {
+                        state = State_INT0;
+                        if(!dynamicStr_add(sc_str, c))   
+                            goto err_internal;
+                    }
+                        
+                    else if (isdigit(c))
+                    {
+                        state = State_INT;
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                    }
+                        
+                    else if (isalpha(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_ID;
+                    } 
+
+                    else if ( c == '\n')
+                        state = State_EOL;
+                    else if ( c == '#')
+                        state = State_LCOMM;
+                    break;
+
+                case State_EOL:
+                if ( c == '=')
+                    state = State_COMM;
+                else
+                {
                     state = State_S;
-                else if (c == '=')
-                    state = State_ASSIGN;
-                else if (c == '!')
-                    state = State_EXLAMATION;
-                else if (c == ',')
-                    state = State_COMMA;
-                else if (c == '(')
-                    state = State_LEFT_BRACKET;
-                else if (c ==')')
-                    state = State_RIGHT_BRACKET;
-                else if (c == '/')
-                    state = State_DIV;
-                else if (c == '*')
-                    state = State_MUL;
-                else if (c == '+')
-                    state = State_PLUS;
-                else if (c == ' ' || c == '\t')
-                    state = State_S;
-                else if (c == '"')
-                    state = State_QUATATION1;
-
-                else if (c == '-')
-                {
-                    state = State_MINUS;
-                    if(!dynamicStr_add(sc_str, c)) 
-                        goto err_internal;
-                }
-                    
-                else if (c == '0')
-                {
-                    state = State_INT0;
-                    if(!dynamicStr_add(sc_str, c))   
-                        goto err_internal;
-                }
-                    
-                else if (isdigit(c))
-                {
-                    state = State_INT;
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                }
-                    
-                else if (isalpha(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_ID;
-                } 
-
-                else if ( c == '\n')
-                    state = State_EOL;
-                else if ( c == '#')
-                    state = State_LCOMM;
-                break;
-
-            case State_EOL:
-            if ( c == '=')
-                state = State_COMM;
-            else
-            {
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken("EOL", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                dynamicStr_clear(sc_str);
-                return sc_token; 
-            }
-            break;
- ///////////////////////////////////////
-///             COMMENTS            ///
-///////////////////////////////////////
-            case State_COMM:
-                if (c == 'b')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_COMMB;
-                }
-                    
-                else 
-                {
-                    goto err_lexical;
-                   /* state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= createToken("=", sc_info);
+                    sc_token= createToken("EOL", sc_info);
                     printf("Token-name %s\n", sc_token->name);
                     dynamicStr_clear(sc_str);
                     return sc_token; 
-                */}
-            break;
-
-            case State_COMMB:
-                if (c == 'e')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_COMMBE;
                 }
-                    
-                else 
-                    goto err_lexical;
-            break;
+                break;
+    ///////////////////////////////////////
+    ///             COMMENTS            ///
+    ///////////////////////////////////////
+                case State_COMM:
+                    if (c == 'b')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
 
-            case State_COMMBE:
-                if (c == 'g')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_COMMBEG;
-                }
-                    
-                else   
-                    goto err_lexical;
-                
-            break;
-
-            case State_COMMBEG:
-                if (c == 'i')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_COMMBEGI;
-                }
-                    
-                else   
-                    goto err_lexical;
-
-            break;
-
-            case State_COMMBEGI:
-                if (c == 'n')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
- 
-                    state = State_COMMBEGIN;
-                }
-                    
-                else   
-                    goto err_lexical;
-                
-            break;
-
-            case State_COMMBEGIN:
-                if (c == '\n')
-                    state = State_MAY_END;
-                else if (isspace(c) && c != '\n')
-                    state = State_COMM_LINE;
-                else 
-                    goto err_lexical;
-
-            break;
-
-            case State_COMM_LINE:
-                if ( c == '\n')
-                    state = State_MAY_END;
-                else 
-                    state = State_COMM_LINE;
+                        state = State_COMMB;
+                    }
+                        
+                    else 
+                    {
+                        goto err_lexical;
+                    /* state = State_S;
+                        sc_unget(c);
+                        sc_info.string = NULL;
+                        sc_token= createToken("=", sc_info);
+                        printf("Token-name %s\n", sc_token->name);
+                        dynamicStr_clear(sc_str);
+                        return sc_token; 
+                    */}
                 break;
 
-            case State_MAY_END:
-                if ( c == '\n')
-                    state = State_MAY_END;
-                else if (c == '=')
-                    state = State_END_COMM;
-                else
-                    state = State_COMM_LINE;
+                case State_COMMB:
+                    if (c == 'e')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_COMMBE;
+                    }
+                        
+                    else 
+                        goto err_lexical;
                 break;
 
-            case State_END_COMM:
-                if (c == '\n')
-                    state = State_MAY_END;
-                if (c == 'e')  
-                    state = State_END_COMME;
-                else
-                    state = State_COMM_LINE;
+                case State_COMMBE:
+                    if (c == 'g')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_COMMBEG;
+                    }
+                        
+                    else   
+                        goto err_lexical;
+                    
                 break;
 
-            case State_END_COMME:
-                if (c == 'n')
-                    state = State_END_COMMEN;
-                else if (c == '\n')
-                    state = State_MAY_END;
-                else  
-                    state = State_COMM_LINE;
-            break;
+                case State_COMMBEG:
+                    if (c == 'i')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
 
-            case State_END_COMMEN:
-                if (c == 'd')
-                    state = State_END_COMMEND;
-                else if (c == '\n')
-                    state = State_MAY_END;
-                else  
-                    state = State_COMM_LINE;
-            break;
+                        state = State_COMMBEGI;
+                    }
+                        
+                    else   
+                        goto err_lexical;
 
-            case State_END_COMMEND:
-                if ( c == '\n')
-                {
-                   state = State_S;
-                   sc_unget(c);
-                   sc_info.string = NULL;
-                   sc_token = createToken("BLOCK COMM", sc_info);
-                   printf("Token-name %s\n", sc_token->name);
-                   return sc_token;
-                }
-                if ( isspace(c) && c != '\n')
-                    state = State_LCOMM;
-                else    
-                    state = State_COMM_LINE; 
-            break;
+                break;
 
-            case State_LCOMM:
-                if ( c == '\n')
-                {
+                case State_COMMBEGI:
+                    if (c == 'n')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+    
+                        state = State_COMMBEGIN;
+                    }
+                        
+                    else   
+                        goto err_lexical;
+                    
+                break;
+
+                case State_COMMBEGIN:
+                    if (c == '\n')
+                        state = State_MAY_END;
+                    else if (isspace(c) && c != '\n')
+                        state = State_COMM_LINE;
+                    else 
+                        goto err_lexical;
+
+                break;
+
+                case State_COMM_LINE:
+                    if ( c == '\n')
+                        state = State_MAY_END;
+                    else 
+                        state = State_COMM_LINE;
+                    break;
+
+                case State_MAY_END:
+                    if ( c == '\n')
+                        state = State_MAY_END;
+                    else if (c == '=')
+                        state = State_END_COMM;
+                    else
+                        state = State_COMM_LINE;
+                    break;
+
+                case State_END_COMM:
+                    if (c == '\n')
+                        state = State_MAY_END;
+                    if (c == 'e')  
+                        state = State_END_COMME;
+                    else
+                        state = State_COMM_LINE;
+                    break;
+
+                case State_END_COMME:
+                    if (c == 'n')
+                        state = State_END_COMMEN;
+                    else if (c == '\n')
+                        state = State_MAY_END;
+                    else  
+                        state = State_COMM_LINE;
+                break;
+
+                case State_END_COMMEN:
+                    if (c == 'd')
+                        state = State_END_COMMEND;
+                    else if (c == '\n')
+                        state = State_MAY_END;
+                    else  
+                        state = State_COMM_LINE;
+                break;
+
+                case State_END_COMMEND:
+                    if ( c == '\n')
+                    {
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= createToken("LINE_COMM", sc_info);
+                    sc_token = createToken("BLOCK COMM", sc_info);
                     printf("Token-name %s\n", sc_token->name);
-                    return sc_token; 
-                }
-                else
-                    state = State_LCOMM;
-            break;
-
-///////////////////////////////////////
-///             STRINGS            ///
-///////////////////////////////////////
-            case State_QUATATION1:
-                if (c == '\n')   
-                   goto err_lexical;
-                
-                else if (c == '\\')     // Char '\' add after we know it means something
-                {
-                    state = State_SPEC_CHAR;
-                }
-                else if (c == '"')
-                    state = State_QUATATION2;
-                else 
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_QUATATION1;
-                }
+                    return sc_token;
+                    }
+                    if ( isspace(c) && c != '\n')
+                        state = State_LCOMM;
+                    else    
+                        state = State_COMM_LINE; 
                 break;
 
-            case State_SPEC_CHAR:
-                if (c == 'n' || c == 't' || c == 's' || c == '\\')
-                {   
-                    if(!dynamicStr_add(sc_str, '\\'))   //First I add '\\'
-                        goto err_internal;
-
-                     if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_QUATATION1;
-                }
-                else if (c == 'x')
-                {
-                    if(!dynamicStr_add(sc_str, '\\')) //First I add '\\'
-                        goto err_internal;
-
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_HEX;
-                }
-                else
-                    goto err_lexical;
-                    
+                case State_LCOMM:
+                    if ( c == '\n')
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.string = NULL;
+                        sc_token= createToken("LINE_COMM", sc_info);
+                        printf("Token-name %s\n", sc_token->name);
+                        return sc_token; 
+                    }
+                    else
+                        state = State_LCOMM;
                 break;
 
-            case State_HEX:
-                if ((c >= 'A' && c <= 'F') || isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_HEX_NUM;
-                } 
-                else
+    ///////////////////////////////////////
+    ///             STRINGS            ///
+    ///////////////////////////////////////
+                case State_QUATATION1:
+                    if (c == '\n')   
                     goto err_lexical;
-            break;
-
-            case State_HEX_NUM:
-                if ((c == 'A' && c <= 'F') || isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_HEX_NUM_END;
-                }
-                else if (c == '\n')
-                    goto err_lexical;
-
-                else
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_QUATATION1;
-                }
-            break;
-
-            case State_HEX_NUM_END:
-                if (c == '\n') 
-                    goto err_lexical;
-
-                else
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-
-                    state = State_QUATATION1;
-                }
-            break;
-
-            case State_QUATATION2:
-                state = State_S;
-                sc_unget(c);
-                // allocate space for string which will be stored in token info
-                sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
-                // copy string from dynamicStr to token info
-                strcpy(sc_info.string, sc_str->str);
-                sc_token = createToken("STR", sc_info);
-                printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
-                dynamicStr_clear(sc_str);
-                return sc_token;  
-
-///////////////////////////////////////
-///        ID, FUNC INT, FLOAT      ///
-///////////////////////////////////////
-            case State_ID:
-                if (isalpha(c) || isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
                     
-                    state = State_ID;
-                }
+                    else if (c == '\\')     // Char '\' add after we know it means something
+                    {
+                        state = State_SPEC_CHAR;
+                    }
+                    else if (c == '"')
+                        state = State_QUATATION2;
+                    else 
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
 
-                else if (c == '?' || c == '!')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
+                        state = State_QUATATION1;
+                    }
+                    break;
 
-                    state = State_FUNC;
-                }
-                else 
-                {
+                case State_SPEC_CHAR:
+                    if (c == 'n' || c == 't' || c == 's' || c == '\\')
+                    {   
+                        if(!dynamicStr_add(sc_str, '\\'))   //First I add '\\'
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_QUATATION1;
+                    }
+                    else if (c == 'x')
+                    {
+                        if(!dynamicStr_add(sc_str, '\\')) //First I add '\\'
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_HEX;
+                    }
+                    else
+                        goto err_lexical;
+                        
+                    break;
+
+                case State_HEX:
+                    if ((c >= 'A' && c <= 'F') || isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_HEX_NUM;
+                    } 
+                    else
+                        goto err_lexical;
+                break;
+
+                case State_HEX_NUM:
+                    if ((c == 'A' && c <= 'F') || isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_HEX_NUM_END;
+                    }
+                    else if (c == '\n')
+                        goto err_lexical;
+
+                    else
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_QUATATION1;
+                    }
+                break;
+
+                case State_HEX_NUM_END:
+                    if (c == '\n') 
+                        goto err_lexical;
+
+                    else
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_QUATATION1;
+                    }
+                break;
+
+                case State_QUATATION2:
                     state = State_S;
                     sc_unget(c);
-                    char *name = "ID";
-                    sc_info.string = sc_str->str;
-                    if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )
+                    // allocate space for string which will be stored in token info
+                    sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                    // copy string from dynamicStr to token info
+                    strcpy(sc_info.string, sc_str->str);
+                    sc_token = createToken("STR", sc_info);
+                    printf("Token-name %s  || Value : %s\n", sc_token->name, sc_str->str );
+                    dynamicStr_clear(sc_str);
+                    return sc_token;  
+
+    ///////////////////////////////////////
+    ///        ID, FUNC INT, FLOAT      ///
+    ///////////////////////////////////////
+                case State_ID:
+                    if (isalpha(c) || isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_ID;
+                    }
+
+                    else if (c == '?')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_FUNC;
+                    }
+
+                    else if ( c == '!')
+                    {
+                        state = State_IDEXL;
+                    }
+
+                    else 
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        char *name = "ID";
+                        if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )
+                            {
+                                name = inKeyword(sc_str->str, keywords);
+                                sc_info.ptr = NULL;
+                                sc_token= createToken(name, sc_info);
+                                printf("Token-name %s\n", sc_token->name);
+                                dynamicStr_clear(sc_str);
+                                return sc_token; 
+                            }
+                        else
                         {
-                            name = inKeyword(sc_str->str, keywords);
+                            // allocate space for string which will be stored in element (viz. "STR")
+                            // copy string from dynamicStr to token info
+                            //tE_CreateElement("ID", real_name);  
                             sc_info.ptr = NULL;
                             sc_token= createToken(name, sc_info);
                             printf("Token-name %s\n", sc_token->name);
                             dynamicStr_clear(sc_str);
-                            return sc_token; 
+                            return sc_token;  
                         }
-                    else
+                    
+                }
+                break;
+
+                case State_IDEXL:
+                    if ( c == '\n')
                     {
+                        if(!dynamicStr_add(sc_str, '!'))
+                            goto err_internal;
+
+                        
+                        token_info_t sc_info2;
+                        sc_info2.ptr = NULL;
+                        token_t *sc_token2 = createToken("EOL", sc_info2);
+                        que_up(que, sc_token2);
+
+                        state = State_S;
+                        sc_info.ptr = NULL;
+                        // allocate space for string which will be stored in element (viz. "STR")
+                        // copy string from dynamicStr to token info
+                        //tE_CreateELement("FUNC", real_name);
+                        sc_token= createToken("FUNC", sc_info);
+                        printf("Token-name %s \n", sc_token->name);
+                        dynamicStr_clear(sc_str);
+                        return sc_token;  
+                    }
+
+                    else if ( c == '=')
+                    {
+                        token_info_t sc_info2;
+                        sc_info2.ptr = NULL;
+                        token_t *sc_token2 = createToken("!=", sc_info2);
+                        que_up(que, sc_token2);
+
+                        char *name = "ID";
+                        if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )
+                            goto err_lexical;
                         // allocate space for string which will be stored in element (viz. "STR")
                         // copy string from dynamicStr to token info
                         //tE_CreateElement("ID", real_name);  
+                        sc_info.ptr = NULL;
                         sc_token= createToken(name, sc_info);
                         printf("Token-name %s\n", sc_token->name);
                         dynamicStr_clear(sc_str);
                         return sc_token;  
                     }
-                
-            }
-            break;
 
-            case State_FUNC:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = sc_str->str;
-                // allocate space for string which will be stored in element (viz. "STR")
-                // copy string from dynamicStr to token info
-                //tE_CreateELement("FUNC", real_name);
-                sc_token= createToken("FUNC", sc_info);
-                printf("Token-name %s \n", sc_token->name);
-                dynamicStr_clear(sc_str);
-                return sc_token;  
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_FUNC;
+                    }
+                    break;
 
-
-            case State_INT:
-                if (isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_INT;
-                }
-                    
-                else if (tolower(c) == 'e')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_EXP;
-                }
-                    
-                else if (c == '.')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_DOT;
-                }
-
-                else
-                {
+                case State_FUNC:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.intg = toInt(sc_str); 
-                    sc_token= createToken("INT", sc_info);
-                    printf("Token-name %s  || Value : %d\n", sc_token->name, sc_info.intg );
-                    dynamicStr_clear(sc_str);
-                    return sc_token;   
-                }
-                break;
-
-            case State_INT0:
-                if (c == '.')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_DOT;
-                }
-                    
-                else if (tolower(c) == 'e')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_EXP;
-                }
-
-                else if (isspace(c))
-                {
-                    state = State_S;
-                    sc_unget(c);
-                    sc_info.intg = 0;
-                    sc_token= createToken("ZERO", sc_info);
-                    printf("Token-name %s\n", sc_token->name);
+                    sc_info.ptr = NULL;
+                    // allocate space for string which will be stored in element (viz. "STR")
+                    // copy string from dynamicStr to token info
+                    //tE_CreateELement("FUNC", real_name);
+                    sc_token= createToken("FUNC", sc_info);
+                    printf("Token-name %s \n", sc_token->name);
                     dynamicStr_clear(sc_str);
                     return sc_token;  
-                }
-                else
-                    goto err_lexical;
-                break;
 
-            case State_DOT:
-                if (isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_FLOAT;
-                }
-                    
-                else
-                    goto err_lexical;
 
-                break;
-
-            case State_EXP:
-                if (isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_FLOAT;
-                }
-                    
-                else if (c == '+' || c == '-')
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_EXPS;
-                }
-            
-                else
-                    goto err_lexical;
-
-                break;
-
-            case State_EXPS:
-                if (isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_FLOAT;
-                }
-                    
-                else 
-                    goto err_lexical;
-
-                break;
-
-            case State_FLOAT:
-                if (isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
-                        goto err_internal;
-                    
-                    state = State_FLOAT;
-                }
-                    
-                else
-                {
-                    state = State_S;
-                    sc_unget(c);
-                    sc_info.dbl = toDouble(sc_str); 
-                    sc_token= createToken("Float", sc_info);
-                    printf("Token-name %s  || Value : %f\n", sc_token->name, sc_info.dbl );
-                    dynamicStr_clear(sc_str);
-                    return sc_token;   
-                }
-                break;
-
-///////////////////////////////////////
-/// LOGICAL AND NUMERICAL OPERATORS ///
-///////////////////////////////////////
-            case State_LTN:
-                if (c == '=')
-                    state = State_LEQ;
-                else
-                {
-                    state = State_S;
-                    sc_unget(c);
-                    sc_info.string = NULL;
-                    sc_token= createToken("<", sc_info);
-                    printf("Token-name %s\n", sc_token->name);
-                    return sc_token;
-                }
-                break;
-
-            case State_LEQ:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken("<=", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-
-            case State_MTN:
-                if (c == '=')
-                    state = State_MEQ;
-                else
-                {
-                    state = State_S;
-                    sc_unget(c);
-                    sc_info.string = NULL;
-                    sc_token= createToken(">", sc_info);
-                    printf("Token-name %s\n", sc_token->name);
-                    return sc_token;
-                }
-                break;
-
-            case State_MEQ:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken(">=", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-
-            case State_ASSIGN:
-                if (c == '=')
-                    state = State_EQ;
-                else
-                {
-                    state = State_S;
-                    sc_unget(c);
-                    sc_info.string = NULL;
-                    sc_token= createToken("=", sc_info);
-                    printf("Token-name %s\n", sc_token->name);
-                    return sc_token;
-                }
-                break;
-
-            case State_EQ:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken("==", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-
-/***********************
- * *********TODO*********       Check if "!" is allowed as neg
- **********************/
-            case State_EXLAMATION:
-                if (c == '=')
-                    state = State_NEQ;
-                else
-                {
-                    state = State_S;
-                    sc_unget(c);        //not defined symbol "!"
-                }
-                    
-                break;
-            
-            case State_NEQ:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken("!=", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-                
-            case State_COMMA:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken(",", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-
-            case State_LEFT_BRACKET:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken("(", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-
-            case State_RIGHT_BRACKET:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken(")", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-
-            case State_DIV:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken("/", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-                
-            case State_MUL:
-                state = State_S;
-                sc_unget(c);
-                sc_info.string = NULL;
-                sc_token= createToken("*", sc_info);
-                printf("Token-name %s\n", sc_token->name);
-                return sc_token;
-                break;
-
-            case State_MINUS:
-                if (isdigit(c))
-                {
-                    if(!dynamicStr_add(sc_str, c))
+                case State_INT:
+                    if (isdigit(c))
                     {
-                        goto err_internal;
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_INT;
                     }
-                    state = State_INT;
-                }
-                else
-                {
+                        
+                    else if (tolower(c) == 'e')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_EXP;
+                    }
+                        
+                    else if (c == '.')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_DOT;
+                    }
+
+                    else
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.intg = toInt(sc_str); 
+                        sc_token= createToken("INT", sc_info);
+                        printf("Token-name %s  || Value : %d\n", sc_token->name, sc_info.intg );
+                        dynamicStr_clear(sc_str);
+                        return sc_token;   
+                    }
+                    break;
+
+                case State_INT0:
+                    if (c == '.')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_DOT;
+                    }
+                        
+                    else if (tolower(c) == 'e')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_EXP;
+                    }
+
+                    else if (isspace(c))
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.intg = 0;
+                        sc_token= createToken("ZERO", sc_info);
+                        printf("Token-name %s\n", sc_token->name);
+                        dynamicStr_clear(sc_str);
+                        return sc_token;  
+                    }
+                    else
+                        goto err_lexical;
+                    break;
+
+                case State_DOT:
+                    if (isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_FLOAT;
+                    }
+                        
+                    else
+                        goto err_lexical;
+
+                    break;
+
+                case State_EXP:
+                    if (isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_FLOAT;
+                    }
+                        
+                    else if (c == '+' || c == '-')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_EXPS;
+                    }
+                
+                    else
+                        goto err_lexical;
+
+                    break;
+
+                case State_EXPS:
+                    if (isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_FLOAT;
+                    }
+                        
+                    else 
+                        goto err_lexical;
+
+                    break;
+
+                case State_FLOAT:
+                    if (isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_FLOAT;
+                    }
+                        
+                    else
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.dbl = toDouble(sc_str); 
+                        sc_token= createToken("Float", sc_info);
+                        printf("Token-name %s  || Value : %f\n", sc_token->name, sc_info.dbl );
+                        dynamicStr_clear(sc_str);
+                        return sc_token;   
+                    }
+                    break;
+
+    ///////////////////////////////////////
+    /// LOGICAL AND NUMERICAL OPERATORS ///
+    ///////////////////////////////////////
+                case State_LTN:
+                    if (c == '=')
+                        state = State_LEQ;
+                    else
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.string = NULL;
+                        sc_token= createToken("<", sc_info);
+                        printf("Token-name %s\n", sc_token->name);
+                        return sc_token;
+                    }
+                    break;
+
+                case State_LEQ:
                     state = State_S;
                     sc_unget(c);
                     sc_info.string = NULL;
-                    sc_token= createToken("-", sc_info);
+                    sc_token= createToken("<=", sc_info);
                     printf("Token-name %s\n", sc_token->name);
-                    dynamicStr_clear(sc_str);
                     return sc_token;
-                }
-                break;
+                    break;
 
-            case State_PLUS:
-                state = State_S;
-                sc_unget(c);
+                case State_MTN:
+                    if (c == '=')
+                        state = State_MEQ;
+                    else
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.string = NULL;
+                        sc_token= createToken(">", sc_info);
+                        printf("Token-name %s\n", sc_token->name);
+                        return sc_token;
+                    }
+                    break;
+
+                case State_MEQ:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken(">=", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+
+                case State_ASSIGN:
+                    if (c == '=')
+                        state = State_EQ;
+                    else
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.string = NULL;
+                        sc_token= createToken("=", sc_info);
+                        printf("Token-name %s\n", sc_token->name);
+                        return sc_token;
+                    }
+                    break;
+
+                case State_EQ:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken("==", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+
+    /***********************
+     * *********TODO*********       Check if "!" is allowed as neg
+     **********************/
+                case State_EXLAMATION:
+                    if (c == '=')
+                        state = State_NEQ;
+                    else
+                    {
+                        state = State_S;
+                        sc_unget(c);        //not defined symbol "!"
+                    }
+                        
+                    break;
+                
+                case State_NEQ:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken("!=", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+                    
+                case State_COMMA:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken(",", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+
+                case State_LEFT_BRACKET:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken("(", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+
+                case State_RIGHT_BRACKET:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken(")", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+
+                case State_DIV:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken("/", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+                    
+                case State_MUL:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken("*", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+
+                case State_MINUS:
+                    if (isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                        {
+                            goto err_internal;
+                        }
+                        state = State_INT;
+                    }
+                    else
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.string = NULL;
+                        sc_token= createToken("-", sc_info);
+                        printf("Token-name %s\n", sc_token->name);
+                        dynamicStr_clear(sc_str);
+                        return sc_token;
+                    }
+                    break;
+
+                case State_PLUS:
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken("+", sc_info);
+                    printf("Token-name %s\n", sc_token->name);
+                    return sc_token;
+                    break;
+            }
+        }
+
+        if (c == EOF)
+        {   
+            //printf("EOF state\n");
+            //switch (state):
+              //  case State_S:
+           /// if (state == State_S)
+           // {
                 sc_info.string = NULL;
-                sc_token= createToken("+", sc_info);
+                sc_token= createToken("EOF", sc_info);
                 printf("Token-name %s\n", sc_token->name);
                 return sc_token;
-                break;
+          //  }
+           /* else
+            {
+                state = State_S;
+                sc_info.string = NULL;
+                sc_token= createToken("EOF", sc_info);
+                printf("Token-name %s\n", sc_token->name);
+                dynamicStr_clear(sc_str);
+                return sc_token; 
+
+         */       //ungetc('\n', stdin);
+                //scanner(sc_str, que);
+
+               /* sc_info.string = NULL;
+                sc_token= createToken("EOF", sc_info);
+                printf("Token-name %s\n", sc_token->name);
+                return sc_token;
+                
+            }
+            */
         }
-    }
-    if (c == '\n')
-    {   
-        dynamicStr_free(sc_str);
-        sc_info.string = NULL;
-        sc_token= createToken("EOF", sc_info);
-        return sc_token;
-    }
+   }
+   else
+   {
+       state = State_S;
+       token_t *sc_token3 = que_get(que);
+       printf("Token-name %s\n", sc_token3->name);
+       return sc_token3;
+       //return que_get(que);
+   }
 
 ///////////////////////////////////////
 ///         ERROR HANDLING          ///

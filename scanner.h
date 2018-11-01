@@ -33,6 +33,7 @@ typedef enum
 {
     State_S,        ///Starting state
 	State_ID, /// Identifier
+	State_IDEXL, //When "ID!"
 	State_FUNC, //Function
 
 	State_INT, /// Integer number
@@ -94,7 +95,7 @@ typedef enum
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
-
+token_t* scanner();
 
 
 
