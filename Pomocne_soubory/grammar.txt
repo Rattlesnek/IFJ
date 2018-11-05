@@ -6,24 +6,21 @@
 # - derivacia je znazornena sipkou: ->
 
 # STARTING NONTERMINAL = <st-list>
-1.  <st-list> -> <stat> <st-list>
-2.  <st-list> -> EOL <st-list>
-3.  <st-list> -> EOF
+1. <st-list> -> <stat> <EOL-EOF>
+2. <st-list> -> EOL <st-list>
+3. <st-list> -> EOF
 
-# FUNCTION DEFINITION
-4.  <stat>    -> def <id-func> <params-gen> <end-list> EOL
-# COMMANDS
-5.  <stat>    -> <command>
+4. <EOL-EOF> -> EOL <st-list>
+5. <EOL-EOF> -> EOF
 
 
-# ITERATION
-# po prijati "while" zapiname precedencnu analyzu na prijatie vyrazu
-6.  <command> -> while **expr** do EOL <end-list> EOL
+6. <stat>    -> def <id-func> <params-gen> <end-list>
+7. <stat>    -> <command>
 
-# CONDITION
-# po prijati "if" zapiname precedencnu analyzu na prijatie vyrazu
-7.  <command> -> if **expr** then EOL <if-list> EOL
 
+8. <command> -> while **expr** do EOL <end-list>
+9. <command> -> if **expr** then EOL <if-list>
+10. <command> -> ID <func-assignment-expr>
 
 ##################################################################################
 # EXPRESIONS without assignment
@@ -33,45 +30,46 @@
 # expr_include: + - FUNC STR INT DBL nil (
 # <command> -> **expr_include** EOL
 
-8. <command> -> ID <func-assignment-expr>
-
 # ak pride hocico ine ako = zapiname precedenc analyzu
 # musime zahrnut predchadzajuci token (ID) 
 # expr_include_two: arithmetic: +, -, *, /  relation: ==, !=, <, <=, >, >=
 # 
-##################################################################
+##################################################################################
+
+
+11. <func-assignment-expr> -> = **expr**
+
 
 # END-LIST
-9. <end-list>  -> <command> <end-list>
-10. <end-list>  -> EOL <end-list>
-11. <end-list>  -> end
+12. <end-list>  -> <command> EOL <end-list>
+13. <end-list>  -> EOL <end-list>
+14. <end-list>  -> end
 
-12. <if-list>  -> <command> <if-list>
-13. <if-list>  -> EOL <if-list>
+15. <if-list>  -> <command> EOL <if-list>
+16. <if-list>  -> EOL <if-list>
 # po prijati "elif" zapiname precedencnu analyzu na prijatie vyrazu
-14. <if-list>  -> elif **expr** then EOL <if-list>
-15. <if-list>  -> else EOL <end-list>
-16. <if-list>  -> end 
+17. <if-list>  -> elif **expr** then EOL <if-list>
+18. <if-list>  -> else EOL <end-list>
+19. <if-list>  -> end 
 
 
 # FUNCTION
-17. <id-func>    -> ID
-18. <id-func>    -> FUNC
+20. <id-func>    -> ID
+21. <id-func>    -> FUNC
 
 # FUNCTION PARAMETERS
-19. <params-gen> -> ( <p-brackets> 
-20. <params-gen> -> ID <p-without>
-21. <params-gen> -> EOL
+22. <params-gen> -> ( <p-brackets> 
+23. <params-gen> -> ID <p-without>
+24. <params-gen> -> EOL
 
-22. <p-brackets>   -> ID <p-brackets-continue> 
-23. <p-brackets>   -> ) EOL
+25. <p-brackets>   -> ID <p-brackets-continue> 
+26. <p-brackets>   -> ) EOL
 
-24. <p-brackets-continue> -> , ID <p-brackets-continue>
-25. <p-brackets-continue> -> ) EOL
+27. <p-brackets-continue> -> , ID <p-brackets-continue>
+28. <p-brackets-continue> -> ) EOL
 
-26. <p-without> -> , ID <p-without> 
-27. <p-without> -> EOL
+29. <p-without> -> , ID <p-without> 
+30. <p-without> -> EOL
 
 
-# <func-assignment-expr> -> **expr_include_two** EOL
-28. <func-assignment-expr> -> = **expr** EOL
+
