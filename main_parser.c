@@ -4,8 +4,15 @@
 #include "token.h"
 #include "symtable.h"
 #include "scanner.h"
+#include "stack.h"
 #include "dynamicStr.h"
+#include "dynamicArrInt.h"
 #include "queue.h"
+#include "parser.h"
+
+#include "error.h"
+
+dynamicArrInt_t left_pars; // left analysis of program
 
 int main()
 {
@@ -16,22 +23,13 @@ int main()
     queue_t *que = que_create();
     symtable_t *symtable = symtab_init(10);
 
-
-    token_t *token = NULL;
-
-    do {
-        if (token != NULL)
-            destroyToken(token);
-        
-        token = scanner_get(sc_str, que, symtable);
-        
-    } while (strcmp(token->name, "EOF") != 0);
-
-    destroyToken(token);
+    int ret = parser(sc_str, que, symtable);
+    
+    if (ret == 0)
+        printf("SUCCESS\n");
 
     dynamicStr_free(sc_str);
     que_destroy(que);
     symtab_free(symtable);
-
     return 0;
 }

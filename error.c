@@ -1,12 +1,12 @@
 /**CFile****************************************************************
 
-  FileName    [error.h]
+  FileName    []
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName [Error]
+  PackageName []
 
-  Synopsis    [Return values]
+  Synopsis    []
 
   Author      []
 
@@ -21,38 +21,47 @@
 ////////////////////////////////////////////////////////////////////////
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
-#ifndef ERROR_H
-#define ERROR_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 
-////////////////////////////////////////////////////////////////////////
-///                         BASIC TYPES                              ///
-////////////////////////////////////////////////////////////////////////
+#include "error.h"
 
 
 ////////////////////////////////////////////////////////////////////////
-///                      MACRO DEFINITIONS                           ///
-////////////////////////////////////////////////////////////////////////
-#define SUCCESS 0
-#define ERR_LEX 1
-#define ERR_SYN 2
-#define ERR_SEM 3
-#define ERR_SEM_RUN 4
-#define ERR_SEM_FUNC 5
-#define ERR_SEM_OTHER 6
-#define ERR_ZERO_DIV 7
-#define ERR_INTERNAL 99
-
-////////////////////////////////////////////////////////////////////////
-///                    FUNCTION DECLARATIONS                         ///
+///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
 
-void error_msg(const char *fmt, ...);
 
-void print_flush(const char *fmt, ...);
+////////////////////////////////////////////////////////////////////////
+///                     FUNCTION DEFINITIONS                         ///
+////////////////////////////////////////////////////////////////////////
 
-#endif
+void print_flush(const char *fmt, ...)
+{
+  va_list arg;
+
+  va_start(arg, fmt);
+  vfprintf(stdout, fmt, arg);
+  va_end(arg);
+
+  fflush(stdout);
+}
+
+
+void error_msg(const char *fmt, ...)
+{
+  va_list arg;
+
+  fprintf(stderr, "ERROR: ");
+
+  va_start(arg, fmt);
+  vfprintf(stderr, fmt, arg);
+  va_end(arg);
+
+}
+
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
 ////////////////////////////////////////////////////////////////////////
