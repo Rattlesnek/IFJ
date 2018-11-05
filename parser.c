@@ -22,20 +22,82 @@
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
+#include "parser.h"
+
 #include <stdbool.h>
+//////////////////////
+#include <unistd.h> 
 
 #include "scanner.h"
+
 #include "stack.h"
+#include "queue.h"
+
 #include "token.h"
 #include "symtable.h"
+
 #include "dynamicArrInt.h"
+#include "dynamicStr.h"
+
 #include "error.h"
 
-#include "parser.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
+
+// LL-Grammar table
+int ll_table[LL_ROWS][LL_COLS] = {
+    // if/els/elif/end/whi/def/EOL/EOF/ =/ (/  )/  ,/  ID/ FUNC
+    {   1,	0,	0,	0,	1,	1,	2,	3,	0,	0,	0,	0,	1,	0,	},  // [st-list]
+    {   0,	0,	0,	0,	0,	0,	4,	5,	0,	0,	0,	0,	0,	0,	},  // [EOF-EOL]
+    {   7,	0,	0,	0,	7,	6,	0,	0,	0,	0,	0,	0,	7,	0,	},  // [stat]
+    {   9,	0,	0,	0,	8,	0,	0,	0,	0,	0,	0,	0,	10,	0,	},  // [command]
+    {   0,	0,	0,	0,	0,	0,	0,	0,	11,	0,	0,	0,	0,	0,	},  // [func-assign-expr]
+    {   12,	0,	0,	14,	12,	0,	13,	0,	0,	0,	0,	0,  12,	0,	},  // [end-list]
+    {   15,	18,	17,	19,	15,	0,	16,	0,	0,	0,	0,	0,	15,	0,	},  // [if-list]
+    {   0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,  0,	20,	21,	},  // [id-func]
+    {   0,	0,	0,	0,	0,	0,	24,	0,	0,	22,	0,	0,	23,	0,	},  // [params-gen]
+    {   0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	0,	25,	0,	},  // [p-brackets]
+    {   0,	0,  0,	0,	0,	0,	0,	0,	0,	0,	28,	27,	0,	0,	},  // [p-brackets-cont]
+    {   0,	0,	0,	0,	0,	0,	30,	0,	0,	0,	0,	29,	0,	0,	}   // [p-without]
+};
+
+
+char *reverted_rules[RULES_ROWS][RULES_COLS] = {
+    {  NULL, }, // empty rule   
+    { "[EOL-EOF]", "[stat]", },
+    { "[st-list]", "EOL", },
+    {  NULL, }, 
+    { "[st-list]", "EOL", },
+    {  NULL, }, 
+    { "[end-list]", "[params-gen]", "[id-func]", "def", },
+    { "[command]", },
+    { "[end-list]", "EOL", "do", "**expr**", "while", },
+    { "[if-list]", "EOL", "then", "**expr**", "if", },
+    { "[func-assignment-expr]", "ID", },
+    { "**expr**", "=", },
+    { "[end-list]", "EOL", "[command]", },
+    { "[end-list]", "EOL", },
+    { "end", },
+    { "[if-list]", "EOL", "[command]", },
+    { "[if-list]", "EOL", },
+    { "[if-list]", "EOL", "then", "**expr**", "elif", },
+    { "[end-list]", "EOL", "else", },
+    { "end", },
+    { "ID", },
+    { "FUNC", },
+    { "[p-brackets]", "(", },
+    { "[p-without]", "ID", },
+    { "EOL", },
+    { "[p-brackets-continue]", "ID", },
+    { "EOL", ")", },
+    { "[p-brackets-continue]", "ID", ",", },
+    { "EOL", ")", },
+    { "[p-without]", "ID", ",", },
+    { "EOL", },
+};
+
 
 dynamicArrInt_t left_pars; // left analysis of program
 
@@ -57,6 +119,8 @@ int ll_tableFind(char *nonterm, char *term)
 
     if (strcmp(nonterm, "[st-list]") == 0)
         nonterm_idx = ST_LIST_nonterm;
+    else if (strcmp(nonterm, "[EOF-EOL]") == 0)
+        nonterm_idx = EOF_EOL_nonterm;
     else if (strcmp(nonterm, "[stat]") == 0)
         nonterm_idx = STAT_nonterm;
     else if (strcmp(nonterm, "[command]") == 0)
@@ -74,6 +138,14 @@ int ll_tableFind(char *nonterm, char *term)
         
         nonterm_idx = COMMAND_nonterm;
     }
+    else if (strcmp(nonterm, "[func-assign-expr]") == 0)
+    {
+         // special case
+        if (strcmp(term, "=") != 0)
+            return EXPR_INCLUDE_TWO;
+
+        nonterm_idx = FUNC_ASSIGN_EXPR_nonterm;
+    }
     else if (strcmp(nonterm, "[end-list]") == 0)
         nonterm_idx = END_LIST_nonterm;
     else if (strcmp(nonterm, "[if-list]") == 0)
@@ -88,14 +160,7 @@ int ll_tableFind(char *nonterm, char *term)
         nonterm_idx = P_BRACKETS_CONT_nonterm;
     else if (strcmp(nonterm, "[p-without]") == 0)
         nonterm_idx = P_WITHOUT_nonterm;
-    else if (strcmp(nonterm, "[func-assign-expr]") == 0)
-    {
-         // special case
-        if (strcmp(term, "=") != 0)
-            return EXPR_INCLUDE_TWO;
-
-        nonterm_idx = FUNC_ASSIGN_EXPR_nonterm;
-    }
+    
 
     if (strcmp(term, "if") == 0)
         term_idx = IF_term;
@@ -136,8 +201,9 @@ int ll_tableFind(char *nonterm, char *term)
  * 
  * @return int return value
  */
-int pr_parser()
+int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
 {
+    print_flush("Parser started\n"); 
     /// INIT STRUCTURES
     if ( ! dynamicArrInt_init(&left_pars))
         return ERR_INTERNAL;
@@ -149,6 +215,7 @@ int pr_parser()
     token_t *token;
     token_info_t info = { .ptr = NULL };
 
+    print_flush("Initial push\n");
     /// INITIAL PUSH of EOF and starting nonterminal
     token = createToken("EOF", info);
     if (token == NULL)
@@ -170,19 +237,32 @@ int pr_parser()
 
     bool succ = false;
     bool fail = false;
+    bool get = true;
     int rule;
    
     do {
+        //////////////////////
+        usleep(1 * 100000);
+        //////////////////////
+
         top = stc_top(stack);
-        act = sc_scanner();
-        if (strcmp(act->name, "ERR_LEX") == 0)
-            goto err_lexical;
-        else if (strcmp(act->name, "ERR_INTERNAL") == 0)
-            goto err_internal_2;
+        if (get)
+        {   
+            act = scanner_get(sc_str, que, symtable);
+        
+            if (strcmp(act->name, "ERR_LEX") == 0)
+                goto err_lexical;
+            else if (strcmp(act->name, "ERR_INTERNAL") == 0)
+                goto err_internal_2;
+            
+            print_flush("scanner_get: %s\n", act->name);
+            get = false;
+        }
 
 
         if (strcmp(top->name, "EOF") == 0)
         {
+            print_flush("EOF on stack reached\n");
             if (strcmp(act->name, "EOF") == 0)
                 succ = true;
             else
@@ -192,19 +272,32 @@ int pr_parser()
         {
             if (strcmp(top->name, "**expr**") == 0)
             {
+                print_flush("********EXPR********\n");
                 // destroy token: "**expr**"
                 token = stc_pop(stack);
                 destroyToken(token);
-                
-                // SPUSTENIE PRECEDENCNEJ ANALYZY 
-                // definicia: int preced(token_t *token1, token_t *token2)
 
-                // preced(NULL, NULL);
+                scanner_unget(que, act);
+                // SPUSTENIE PRECEDENCNEJ ANALYZY 
+                //////////////////////////////////////////////////
+                do {
+                    act = scanner_get(sc_str, que, symtable);
+                    print_flush("Expr handling: %s\n", act->name);
+                } while(strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 );
+
+                scanner_unget(que, act);
+                /////////////////////////////////////////////////
+                get = true;
+
+                print_flush("********END********\n");
             }
             else if (strcmp(top->name, act->name) == 0)
             {
                 token = stc_pop(stack);
                 destroyToken(token);
+                print_flush("top == act: %s\n", act->name);
+
+                get = true;
             }
             else
                 fail = true;
@@ -212,31 +305,55 @@ int pr_parser()
         else
         {
             rule = ll_tableFind(top->name, act->name);
-            // { "EOL", "[func-assign-expr]" "ID", }
-            if (rule == 8)
-                id_tmp = createToken("ID", act->info);
-
+            if (rule == 10) // ????????????
+                id_tmp = createToken("ID", act->info); 
+ 
             if (rule == EXPR_INCLUDE)
             {
+                print_flush("********EXPR********\n");
                 // destroy token: "[command]"
                 token = stc_pop(stack);
                 destroyToken(token);
 
+                scanner_unget(que, act);
                 // SPUSTENIE PRECEDENCNEJ ANALYZY 
-                // preced(act, NULL);
+                //////////////////////////////////////////
+                do {
+                    act = scanner_get(sc_str, que, symtable);
+                    print_flush("Expr handling: %s\n", act->name);
+                } while(strcmp(act->name, "EOL") != 0);
 
+                scanner_unget(que, act);
+                ////////////////////////////////////////
+
+                print_flush("********END********\n");
+                get = true;
             }
             else if (rule == EXPR_INCLUDE_TWO)
             {
+                print_flush("********EXPR********\n");
                 // destroy token: "[func-assign-expr]"
                 token = stc_pop(stack);
                 destroyToken(token);
                 
+                scanner_unget(que, id_tmp);
+                scanner_unget(que, act);
                 // SPUSTENIE PRECEDENCNEJ ANALYZY
-                // preced(id_tmp, act);
+                //////////////////////////////////////////
+                do {
+                    act = scanner_get(sc_str, que, symtable);
+                    print_flush("Expr handling: %s\n", act->name);
+                } while(strcmp(act->name, "EOL") != 0);
+
+                scanner_unget(que, act);
+                /////////////////////////////////////////
+
+                print_flush("********END********\n");
+                get = true;
             }
             else if (rule) // in case rule == 0 -- fail
             {
+                print_flush("top: %s\tact: %s\n", top->name, act->name);
                 token = stc_pop(stack);
                 destroyToken(token);
 
@@ -252,22 +369,21 @@ int pr_parser()
                     i++;
                 }
                 
-                if ( ! dynamicArrInt_add(&left_pars, rule)); 
+                if ( ! dynamicArrInt_add(&left_pars, rule))
                     goto err_internal_2;                
             }
             else 
                 fail = true;
         }
 
-
-    } while (succ || fail);
+    } while (succ == false && fail == false);
 
     if (fail)     
         goto err_syntactic;
     
 
     // NIECO SPRAV S left_pars
-
+    
 
     stc_destroy(stack);
     dynamicArrInt_free(&left_pars);
@@ -278,27 +394,32 @@ int pr_parser()
 ///////////////////////////////////////
 err_internal_1:
     dynamicArrInt_free(&left_pars);
+    error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_internal_2:
     dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
+    error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_internal_3:
     destroyToken(token);
     dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
+    error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_lexical:
     dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
+    error_msg("lexical\n");
     return ERR_LEX;
 
 err_syntactic:
     dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
+    error_msg("syntactic\n");
     return ERR_SYN;
 }
 
