@@ -22,17 +22,19 @@
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
 
 #include "token.h"
-#include "scanner.h"
 #include "dynamicStr.h"
 #include "error.h"
 #include "queue.h"
 #include "symtable.h"
+
+#include "scanner.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -108,13 +110,20 @@ char* inKeyword(char *str, char **keywords)
     return "ID";
 }
 
+
+bool scanner_unget(queue_t *que, token_t *token)
+{
+    return que_up(que, token);
+}
+
+
 /**
  * @brief Scanner of the input, generates tokens (Lexical analysis)
  * 
  * @param c character to be read
  * @return token_t* token to be returned
  */
-token_t* scanner(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
+token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
 {
     token_info_t sc_info;
     token_t *sc_token;

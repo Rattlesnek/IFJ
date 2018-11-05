@@ -24,8 +24,11 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
-#include <stdio.h>
 #include "symtable.h"
+#include "queue.h"
+#include "dynamicStr.h"
+#include "token.h"
+
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
@@ -95,10 +98,11 @@ typedef enum
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
-token_t* scanner();
 
 
+token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable);
 
+bool scanner_unget(queue_t *que, token_t *token);
 
 
 #endif
