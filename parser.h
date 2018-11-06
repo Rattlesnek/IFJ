@@ -49,7 +49,7 @@ typedef enum {
     PARAMS_GEN_nonterm,
     P_BRACKETS_nonterm,
     P_BRACKETS_CONT_nonterm,
-    P_WITHOUT_nonterm,
+    P_WITHOUT_nonterm
 } nonterminals_t;
 
 // terminal indexes to LL-gramar table
@@ -68,6 +68,7 @@ typedef enum {
     COMMA_term,
     ID_term, 
     FUNC_term,
+    EXPR_term
 } terminals_t;
 
 
@@ -79,7 +80,7 @@ typedef enum {
 #define EXPR_INCLUDE_TWO -2
 
 #define LL_ROWS 12
-#define LL_COLS 14
+#define LL_COLS 15
 
 #define RULES_ROWS 31
 #define RULES_COLS 7
@@ -106,6 +107,17 @@ static inline int isTerminal(char *name)
 }
 
 
+static inline int isExpr(char *term)
+{
+    return (strcmp(term, "+") == 0 ||
+            strcmp(term, "-") == 0 ||
+            strcmp(term, "(") == 0 ||
+            strcmp(term, "FUNC") == 0 ||
+            strcmp(term, "STR") == 0 ||
+            strcmp(term, "INT") == 0 ||
+            strcmp(term, "DBL") == 0 ||
+            strcmp(term, "nil") == 0);
+}
 
 
 #endif

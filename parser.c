@@ -48,19 +48,19 @@
 
 // LL-Grammar table
 int ll_table[LL_ROWS][LL_COLS] = {
-    // if/els/elif/end/whi/def/EOL/EOF/ =/ (/  )/  ,/  ID/ FUNC
-    {   1,	0,	0,	0,	1,	1,	2,	3,	0,	0,	0,	0,	1,	0,	},  // [st-list]
-    {   0,	0,	0,	0,	0,	0,	4,	5,	0,	0,	0,	0,	0,	0,	},  // [EOF-EOL]
-    {   7,	0,	0,	0,	7,	6,	0,	0,	0,	0,	0,	0,	7,	0,	},  // [stat]
-    {   9,	0,	0,	0,	8,	0,	0,	0,	0,	0,	0,	0,	10,	0,	},  // [command]
-    {   0,	0,	0,	0,	0,	0,	0,	0,	11,	0,	0,	0,	0,	0,	},  // [func-assign-expr]
-    {   12,	0,	0,	14,	12,	0,	13,	0,	0,	0,	0,	0,  12,	0,	},  // [end-list]
-    {   15,	18,	17,	19,	15,	0,	16,	0,	0,	0,	0,	0,	15,	0,	},  // [if-list]
-    {   0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,  0,	20,	21,	},  // [id-func]
-    {   0,	0,	0,	0,	0,	0,	24,	0,	0,	22,	0,	0,	23,	0,	},  // [params-gen]
-    {   0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	0,	25,	0,	},  // [p-brackets]
-    {   0,	0,  0,	0,	0,	0,	0,	0,	0,	0,	28,	27,	0,	0,	},  // [p-brackets-cont]
-    {   0,	0,	0,	0,	0,	0,	30,	0,	0,	0,	0,	29,	0,	0,	}   // [p-without]
+    // if/els/elif/end/whi/def/EOL/EOF/ =/ (/  )/  ,/  ID/ FUNC/expr
+    {   1,	0,	0,	0,	1,	1,	2,	3,	0,	0,	0,	0,	1,	1,	1,  },  // [st-list]
+    {   0,	0,	0,	0,	0,	0,	4,	5,	0,	0,	0,	0,	0,	0,	0,	},  // [EOF-EOL]
+    {   7,	0,	0,	0,	7,	6,	0,	0,	0,	0,	0,	0,	7,	7,	7,	},  // [stat]
+    {   9,	0,	0,	0,	8,	0,	0,	0,	0,	0,	0,	0,	10,	0,	0,	},  // [command]
+    {   0,	0,	0,	0,	0,	0,	0,	0,	11,	0,	0,	0,	0,	0,	0,	},  // [func-assign-expr]
+    {   12,	0,	0,	14,	12,	0,	13,	0,	0,	0,	0,	0,  12,	12,	12,	},  // [end-list]
+    {   15,	18,	17,	19,	15,	0,	16,	0,	0,	0,	0,	0,	15,	15,	15,	},  // [if-list]
+    {   0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,  0,	20,	21,	0,	},  // [id-func]
+    {   0,	0,	0,	0,	0,	0,	24,	0,	0,	22,	0,	0,	23,	0,	0,	},  // [params-gen]
+    {   0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	0,	25,	0,	0,	},  // [p-brackets]
+    {   0,	0,  0,	0,	0,	0,	0,	0,	0,	0,	28,	27,	0,	0,	0,	},  // [p-brackets-cont]
+    {   0,	0,	0,	0,	0,	0,	30,	0,	0,	0,	0,	29,	0,	0,	0,	}   // [p-without]
 };
 
 
@@ -75,7 +75,7 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
     { "[command]", },
     { "[end-list]", "EOL", "do", "**expr**", "while", },
     { "[if-list]", "EOL", "then", "**expr**", "if", },
-    { "[func-assignment-expr]", "ID", },
+    { "[func-assign-expr]", "ID", },
     { "**expr**", "=", },
     { "[end-list]", "EOL", "[command]", },
     { "[end-list]", "EOL", },
@@ -90,9 +90,9 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
     { "[p-brackets]", "(", },
     { "[p-without]", "ID", },
     { "EOL", },
-    { "[p-brackets-continue]", "ID", },
+    { "[p-brackets-cont]", "ID", },
     { "EOL", ")", },
-    { "[p-brackets-continue]", "ID", ",", },
+    { "[p-brackets-cont]", "ID", ",", },
     { "EOL", ")", },
     { "[p-without]", "ID", ",", },
     { "EOL", },
@@ -126,14 +126,7 @@ int ll_tableFind(char *nonterm, char *term)
     else if (strcmp(nonterm, "[command]") == 0)
     {
         // special case
-        if (strcmp(term, "+") == 0 ||
-            strcmp(term, "-") == 0 ||
-            strcmp(term, "(") == 0 ||
-            strcmp(term, "FUNC") == 0 ||
-            strcmp(term, "STR") == 0 ||
-            strcmp(term, "INT") == 0 ||
-            strcmp(term, "DBL") == 0 ||
-            strcmp(term, "nil") == 0)
+        if (isExpr(term))
             return EXPR_INCLUDE; 
         
         nonterm_idx = COMMAND_nonterm;
@@ -161,7 +154,7 @@ int ll_tableFind(char *nonterm, char *term)
     else if (strcmp(nonterm, "[p-without]") == 0)
         nonterm_idx = P_WITHOUT_nonterm;
     
-
+    
     if (strcmp(term, "if") == 0)
         term_idx = IF_term;
     else if (strcmp(term, "else") == 0)
@@ -190,6 +183,11 @@ int ll_tableFind(char *nonterm, char *term)
         term_idx = ID_term;
     else if (strcmp(term, "FUNC") == 0)
         term_idx = FUNC_term;
+    else if (isExpr(term)) // has to be behind strcmp(term, "FUNC") otherwise wont work
+        term_idx = EXPR_term;
+
+
+    printf("nonterm_idx: %d\tterm_idx: %d\n", nonterm_idx, term_idx);
 
     // return value from corresponding bucket in ll_table
     return ll_table[nonterm_idx][term_idx];
@@ -203,7 +201,7 @@ int ll_tableFind(char *nonterm, char *term)
  */
 int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
 {
-    print_flush("Parser started\n"); 
+    printf("Parser started\n"); 
     /// INIT STRUCTURES
     if ( ! dynamicArrInt_init(&left_pars))
         return ERR_INTERNAL;
@@ -215,7 +213,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
     token_t *token;
     token_info_t info = { .ptr = NULL };
 
-    print_flush("Initial push\n");
+    printf("Initial push\n");
     /// INITIAL PUSH of EOF and starting nonterminal
     token = createToken("EOF", info);
     if (token == NULL)
@@ -242,37 +240,42 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
    
     do {
         //////////////////////
-        usleep(1 * 100000);
+        //usleep(1 * 100000);
         //////////////////////
 
         top = stc_top(stack);
         if (get)
         {   
             act = scanner_get(sc_str, que, symtable);
-        
+            printf("scanner_get: %s\n", act->name);
+            
             if (strcmp(act->name, "ERR_LEX") == 0)
                 goto err_lexical;
             else if (strcmp(act->name, "ERR_INTERNAL") == 0)
                 goto err_internal_2;
             
-            print_flush("scanner_get: %s\n", act->name);
             get = false;
         }
 
 
         if (strcmp(top->name, "EOF") == 0)
         {
-            print_flush("EOF on stack reached\n");
             if (strcmp(act->name, "EOF") == 0)
+            {
+                printf("EOF reached on both stack and scanner\n");
                 succ = true;
+            }
             else
+            {
+                printf("EOF reached on stack but not from scanner\n");
                 fail = true;
+            }
         }
         else if (isTerminal(top->name))
         {
             if (strcmp(top->name, "**expr**") == 0)
             {
-                print_flush("********EXPR********\n");
+                printf("********** EXPR **********\n");
                 // destroy token: "**expr**"
                 token = stc_pop(stack);
                 destroyToken(token);
@@ -282,25 +285,30 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 //////////////////////////////////////////////////
                 do {
                     act = scanner_get(sc_str, que, symtable);
-                    print_flush("Expr handling: %s\n", act->name);
-                } while(strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 );
+                    printf("expr handling: %s\n", act->name);
+                } while(strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
 
                 scanner_unget(que, act);
                 /////////////////////////////////////////////////
                 get = true;
 
-                print_flush("********END********\n");
+                printf("********** END ***********\n");
             }
             else if (strcmp(top->name, act->name) == 0)
             {
+                printf("top == act: %s\n", act->name);
+                
                 token = stc_pop(stack);
                 destroyToken(token);
-                print_flush("top == act: %s\n", act->name);
-
+                
                 get = true;
             }
             else
+            {
+                printf("top != name ... top: %s\tact: %s\n", top->name, act->name);
                 fail = true;
+            }
+                
         }
         else
         {
@@ -310,7 +318,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
  
             if (rule == EXPR_INCLUDE)
             {
-                print_flush("********EXPR********\n");
+                printf("********** EXPR **********\n");
                 // destroy token: "[command]"
                 token = stc_pop(stack);
                 destroyToken(token);
@@ -320,18 +328,18 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 //////////////////////////////////////////
                 do {
                     act = scanner_get(sc_str, que, symtable);
-                    print_flush("Expr handling: %s\n", act->name);
-                } while(strcmp(act->name, "EOL") != 0);
+                    printf("expr handling: %s\n", act->name);
+                } while(strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
 
                 scanner_unget(que, act);
                 ////////////////////////////////////////
 
-                print_flush("********END********\n");
+                printf("********** END ***********\n");
                 get = true;
             }
             else if (rule == EXPR_INCLUDE_TWO)
             {
-                print_flush("********EXPR********\n");
+                printf("********** EXPR **********\n");
                 // destroy token: "[func-assign-expr]"
                 token = stc_pop(stack);
                 destroyToken(token);
@@ -342,18 +350,18 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 //////////////////////////////////////////
                 do {
                     act = scanner_get(sc_str, que, symtable);
-                    print_flush("Expr handling: %s\n", act->name);
-                } while(strcmp(act->name, "EOL") != 0);
+                    printf("expr handling: %s\n", act->name);
+                } while(strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
 
                 scanner_unget(que, act);
                 /////////////////////////////////////////
 
-                print_flush("********END********\n");
+                printf("********** END ***********\n");
                 get = true;
             }
             else if (rule) // in case rule == 0 -- fail
             {
-                print_flush("top: %s\tact: %s\n", top->name, act->name);
+                printf("top: %s\tact: %s\n", top->name, act->name);
                 token = stc_pop(stack);
                 destroyToken(token);
 
@@ -372,8 +380,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 if ( ! dynamicArrInt_add(&left_pars, rule))
                     goto err_internal_2;                
             }
-            else 
+            else
+            {
+                printf("no corresponding rule ... top: %s\tact: %s\n", top->name, act->name);
                 fail = true;
+            } 
         }
 
     } while (succ == false && fail == false);
