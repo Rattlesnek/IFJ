@@ -23,7 +23,7 @@ int main()
         if (token != NULL)
             destroyToken(token);
         
-        token = scanner_get(sc_str, que, symtable);
+        token = scanner_get(sc_str, que);
         
     } while (strcmp(token->name, "EOF") != 0);
 
