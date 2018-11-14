@@ -156,6 +156,14 @@ char stc_topTerm(stack_sa_t *stack)
             return _id_;
         else if(tmp->term == _empt_)
             return _empt_;
+        else if(tmp->term == _lbrc_)
+            return _lbrc_;
+        else if(tmp->term == _rbrc_)
+            return _rbrc_;
+        else if(tmp->term == _mins_)
+            return _mins_;
+        else if(tmp->term == _div_)
+            return _div_;
     }
 
     return EMPTY;
@@ -185,11 +193,22 @@ bool stc_pushAfter(stack_sa_t *stack, table_elem_t term, table_elem_t rule)
         new->lptr = tmp;
         new->rptr = NULL;
         tmp->rptr = new;
+        stack->top = new;
     }
 
     return false;
 }
 
+void stc_print(stack_sa_t *stack)
+{
+    printf("=> sa_prec: STACK:\n");
+    for(stack_item_t *tmp = stack->top; tmp != NULL; tmp = tmp->lptr)
+    {
+        printf("%d\n", tmp->term);
+    }
+
+    return;
+}
 #if 0
 int main()
 {

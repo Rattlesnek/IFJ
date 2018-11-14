@@ -32,9 +32,17 @@
 ////////////////////////////////////////////////////////////////////////
 typedef enum {
     _plus_,     /* Terminal     */
-    _mult_,
-    _id_,
-    _empt_,
+    _mult_,     // *
+    _lbrc_,     // (
+    _rbrc_,     // )
+    _id_,       // id 
+    _mins_,     // - 
+    _div_,      // /
+    _rel_,      // < > <= >=
+    _str_,      // str
+    _func_,     // f-ce() 
+    _coma_,     // , 
+    _empt_,     // $
     
     _E_,        /* Non-Terminal */
     _L_,
@@ -51,8 +59,8 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
-#define PREC_TABLE_ROWS 4   /* Max number of rows in prec_table */
-#define PREC_TABLE_COLS 4   /* Max number of cols in prec_table */
+#define PREC_TABLE_ROWS 17   /* Max number of rows in prec_table */
+#define PREC_TABLE_COLS 17   /* Max number of cols in prec_table */
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
