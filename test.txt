@@ -1,0 +1,7 @@
+
+ahoj = 4
+if if ahoj > 3 then
+    ahoj = 2
+else
+    ahoj = 5
+end

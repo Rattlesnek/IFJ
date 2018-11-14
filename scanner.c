@@ -124,8 +124,9 @@ bool scanner_unget(queue_t *que, token_t *token)
  * @param c character to be read
  * @return token_t* token to be returned
  */
-token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
+token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 {
+    dynamicStr_clear(sc_str);
     token_info_t sc_info;
     token_t *sc_token;
     int c = 0;
@@ -210,7 +211,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                             goto err_internal;
 
                         printf("Token-name: %s\n", sc_token->name);
-                        dynamicStr_clear(sc_str);
                         return sc_token; 
                     }
                     break;
@@ -481,7 +481,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         goto err_internal;
 
                     printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
-                    dynamicStr_clear(sc_str);
+                    
                     return sc_token;  
 
     ///////////////////////////////////////
@@ -522,21 +522,17 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                                 if (sc_token == NULL)
                                     goto err_internal;
 
-                                printf("Token-name: %s\n", sc_token->name);
-                                dynamicStr_clear(sc_str);
+                                printf("Token-name: %s\n", sc_token->name); 
                                 return sc_token; 
                             }
                         else
                         {
-                            elem_t *ptr = symtab_elem_add(symtable, "ID", sc_str->str);
-                            sc_info.ptr = ptr;
-                            
+                            sc_info.ptr = NULL;
                             sc_token= createToken("ID", sc_info);
                             if (sc_token == NULL)
                                 goto err_internal;
     
                             printf("Token-name: %s\n", sc_token->name);
-                            dynamicStr_clear(sc_str);
                             return sc_token;  
                         }
                     
@@ -556,14 +552,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         que_up(que, sc_token2);
 
                         state = State_S;
-                        elem_t *ptr = symtab_elem_add(symtable, "FUNC", sc_str->str);
-                        sc_info.ptr = ptr;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("FUNC", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
                         printf("Token-name: %s \n", sc_token->name);
-                        dynamicStr_clear(sc_str);
                         return sc_token;  
                     }
 
@@ -578,14 +572,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )
                             goto err_lexical;
 
-                        elem_t *ptr = symtab_elem_add(symtable, "ID", sc_str->str);
-                        sc_info.ptr = ptr; 
+                        sc_info.ptr = NULL; 
                         sc_token= createToken(name, sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
                         printf("Token-name: %s\n", sc_token->name);
-                        dynamicStr_clear(sc_str);
                         return sc_token;  
                     }
 
@@ -599,14 +591,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 case State_FUNC:
                     state = State_S;
                     sc_unget(c);
-                    elem_t *ptr = symtab_elem_add(symtable, "FUNC", sc_str->str);
-                    sc_info.ptr = ptr;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("FUNC", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
                     printf("Token-name: %s \n", sc_token->name);
-                    dynamicStr_clear(sc_str);
                     return sc_token;  
 
 
@@ -645,7 +635,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                             goto err_internal;
 
                         printf("Token-name: %s  || Value : %d\n", sc_token->name, sc_info.intg );
-                        dynamicStr_clear(sc_str);
                         return sc_token;   
                     }
                     break;
@@ -677,7 +666,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                             goto err_internal;
 
                         printf("Token-name: %s\n", sc_token->name);
-                        dynamicStr_clear(sc_str);
                         return sc_token;  
                     }
                     else
@@ -748,7 +736,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                             goto err_internal;
 
                         printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );
-                        dynamicStr_clear(sc_str);
                         return sc_token;   
                     }
                     break;
@@ -943,7 +930,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                             goto err_internal;
 
                         printf("Token-name: %s\n", sc_token->name);
-                        dynamicStr_clear(sc_str);
                         return sc_token;
                     }
                     break;
@@ -984,7 +970,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         goto err_internal;
 
                     printf("Token-name: %s\n", sc_token->name);
-                    dynamicStr_clear(sc_str);
                     return sc_token;  
                 
 
@@ -1019,7 +1004,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         goto err_internal;
 
                     printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
-                    dynamicStr_clear(sc_str);
                     return sc_token;  
 
                 case State_ID:
@@ -1034,19 +1018,16 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                                 goto err_internal;
     
                             printf("Token-name: %s\n", sc_token->name);
-                            dynamicStr_clear(sc_str);
                             return sc_token; 
                         }
                     else
                     {
-                        elem_t *ptr = symtab_elem_add(symtable, "ID", sc_str->str);
-                        sc_info.ptr = ptr;  
+                        sc_info.ptr = NULL;  
                         sc_token= createToken(name, sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
                         printf("Token-name: %s\n", sc_token->name);
-                        dynamicStr_clear(sc_str);
                         return sc_token;  
                     }
 
@@ -1060,26 +1041,22 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                     que_up(que, sc_token2);
 
                     state = State_S;
-                    elem_t *elem_ptr = symtab_elem_add(symtable, "FUNC", sc_str->str);
-                    sc_info.ptr = elem_ptr;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("FUNC", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
                     printf("Token-name: %s \n", sc_token->name);
-                    dynamicStr_clear(sc_str);
                     return sc_token;  
 
                 case State_FUNC:
                     state = State_S;
-                    elem_t *ptr = symtab_elem_add(symtable, "FUNC", sc_str->str);
-                    sc_info.ptr = ptr;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("FUNC", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
                     printf("Token-name: %s \n", sc_token->name);
-                    dynamicStr_clear(sc_str);
                     return sc_token; 
 
                 case State_INT:
@@ -1090,7 +1067,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         goto err_internal;
 
                     printf("Token-name: %s  || Value : %d\n", sc_token->name, sc_info.intg );
-                    dynamicStr_clear(sc_str);
                     return sc_token; 
 
                 case State_INT0:
@@ -1101,7 +1077,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         goto err_internal;
 
                     printf("Token-name: %s\n", sc_token->name);
-                    dynamicStr_clear(sc_str);
                     return sc_token;  
 
                 case State_FLOAT:
@@ -1111,8 +1086,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );
-                    dynamicStr_clear(sc_str);
+                    printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );;
                     return sc_token;   
 
                 case State_LTN:
@@ -1243,7 +1217,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         goto err_internal;
 
                     printf("Token-name: %s\n", sc_token->name);
-                    dynamicStr_clear(sc_str);
                     return sc_token;
 
                 case State_PLUS:
