@@ -194,6 +194,47 @@ int ll_tableFind(char *nonterm, char *term)
 }
 
 
+void print_element(elem_t *element)
+{
+    printf("Element %d %s\n", element->token_type, element->key);
+}
+
+
+bool createTempID(token_t **token_tmp, char **key_tmp, dynamicStr_t *sc_str)
+{
+    *key_tmp = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+    if (*key_tmp == NULL)
+        return false;
+    strcpy(*key_tmp, sc_str->str);
+
+    token_info_t info = { .ptr = NULL };
+    *token_tmp = createToken("ID", info);
+    if (*token_tmp == NULL)
+    {
+        free(*key_tmp);
+        return false;
+    }
+
+    return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
+{
+    token_t *act = scanner_get(sc_str, que);
+    if (strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0)
+    {
+        do {
+            destroyToken(act);
+            act = scanner_get(sc_str, que);
+            printf("expr handling: %s\n", act->name);
+        } while(strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
+    }
+    scanner_unget(que, act, sc_str->str);
+}
+///////////////////////////////////////////////////////////////////////////////
+
+
 /**
  * @brief Parser - Syntactic analysis
  * 
@@ -201,7 +242,20 @@ int ll_tableFind(char *nonterm, char *term)
  */
 int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
 {
+    token_t *top; 
+    token_t *act;
+
+    token_t *id_token_tmp = NULL;
+    char *id_key_tmp = NULL;
+
+    bool succ = false;
+    bool fail = false;
+    bool get = true;
+    int rule;
+    
+
     printf("Parser started\n"); 
+
     /// INIT STRUCTURES
     if ( ! dynamicArrInt_init(&left_pars))
         return ERR_INTERNAL;
@@ -225,28 +279,16 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
         goto err_internal_2;
     stc_push(stack, token); // error cannot occur
 
+
     /////////////////////////////////////
     ///            MAIN LOOP          ///
     /////////////////////////////////////
-    token_t *top; 
-    token_t *act;
-
-    token_t *id_tmp;
-
-    bool succ = false;
-    bool fail = false;
-    bool get = true;
-    int rule;
-   
     do {
-        //////////////////////
-        //usleep(1 * 100000);
-        //////////////////////
 
         top = stc_top(stack);
         if (get)
         {   
-            act = scanner_get(sc_str, que, symtable);
+            act = scanner_get(sc_str, que);
             printf("scanner_get: %s\n", act->name);
             
             if (strcmp(act->name, "ERR_LEX") == 0)
@@ -263,11 +305,15 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
             if (strcmp(act->name, "EOF") == 0)
             {
                 printf("EOF reached on both stack and scanner\n");
+                
+                destroyToken(act);
                 succ = true;
             }
             else
             {
                 printf("EOF reached on stack but not from scanner\n");
+               
+                destroyToken(act);
                 fail = true;
             }
         }
@@ -280,15 +326,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 token = stc_pop(stack);
                 destroyToken(token);
 
-                scanner_unget(que, act);
+                scanner_unget(que, act, sc_str->str);
+                
                 // SPUSTENIE PRECEDENCNEJ ANALYZY 
                 //////////////////////////////////////////////////
-                do {
-                    act = scanner_get(sc_str, que, symtable);
-                    printf("expr handling: %s\n", act->name);
-                } while(strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
-
-                scanner_unget(que, act);
+                precedenc_analysis_temp(sc_str, que);
                 /////////////////////////////////////////////////
                 get = true;
 
@@ -300,12 +342,15 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 
                 token = stc_pop(stack);
                 destroyToken(token);
+                destroyToken(act);
                 
                 get = true;
             }
             else
             {
                 printf("top != name ... top: %s\tact: %s\n", top->name, act->name);
+                
+                destroyToken(act);
                 fail = true;
             }
                 
@@ -313,8 +358,30 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
         else
         {
             rule = ll_tableFind(top->name, act->name);
-            if (rule == 10) // ????????????
-                id_tmp = createToken("ID", act->info); 
+            if (rule == 10) // [command] -> ID [func-assign-expr] ????????????
+            {
+                if ( ! createTempID(&id_token_tmp, &id_key_tmp, sc_str))
+                    goto err_internal_2;
+                printf("id_tmp load %s: %s\n", id_token_tmp->name, id_key_tmp);
+            }
+            if (rule == 11) // [func-assign-expr] -> = **expr** ????????????
+            {
+                printf("ADD variable %s\n", id_key_tmp);
+                symtab_elem_add(symtable, "ID", id_key_tmp);
+                
+                destroyToken(id_token_tmp);
+                free(id_key_tmp);
+                id_token_tmp = NULL;
+                id_key_tmp = NULL;
+                // add ID element id_tmp
+            }
+            if (rule == 20 || rule == 21)
+            {   
+                printf("ADD function %s\n", sc_str->str);
+                // add FUNC element
+                symtab_elem_add(symtable, act->name, sc_str->str);
+            }
+
  
             if (rule == EXPR_INCLUDE)
             {
@@ -323,15 +390,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 token = stc_pop(stack);
                 destroyToken(token);
 
-                scanner_unget(que, act);
+                scanner_unget(que, act, sc_str->str);
+                
                 // SPUSTENIE PRECEDENCNEJ ANALYZY 
                 //////////////////////////////////////////
-                do {
-                    act = scanner_get(sc_str, que, symtable);
-                    printf("expr handling: %s\n", act->name);
-                } while(strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
-
-                scanner_unget(que, act);
+                precedenc_analysis_temp(sc_str, que);
                 ////////////////////////////////////////
 
                 printf("********** END ***********\n");
@@ -344,16 +407,14 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 token = stc_pop(stack);
                 destroyToken(token);
                 
-                scanner_unget(que, id_tmp);
-                scanner_unget(que, act);
+                scanner_unget(que, id_token_tmp, id_key_tmp);
+                free(id_key_tmp);
+                id_key_tmp = NULL;
+                scanner_unget(que, act, sc_str->str);
+                
                 // SPUSTENIE PRECEDENCNEJ ANALYZY
                 //////////////////////////////////////////
-                do {
-                    act = scanner_get(sc_str, que, symtable);
-                    printf("expr handling: %s\n", act->name);
-                } while(strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
-
-                scanner_unget(que, act);
+                precedenc_analysis_temp(sc_str, que);
                 /////////////////////////////////////////
 
                 printf("********** END ***********\n");
@@ -383,6 +444,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
             else
             {
                 printf("no corresponding rule ... top: %s\tact: %s\n", top->name, act->name);
+
+                destroyToken(act);
                 fail = true;
             } 
         }
@@ -391,8 +454,9 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
 
     if (fail)     
         goto err_syntactic;
-    
 
+
+    symtab_foreach(symtable, print_element);
     // NIECO SPRAV S left_pars
     
 
@@ -409,25 +473,44 @@ err_internal_1:
     return ERR_INTERNAL;
 
 err_internal_2:
+    if (id_key_tmp != NULL)
+        free(id_key_tmp);
+    if (id_token_tmp != NULL)
+        free(id_token_tmp);
+    destroyToken(act);
     dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_internal_3:
+    if (id_key_tmp != NULL)
+        free(id_key_tmp);
+    if (id_token_tmp != NULL)
+        free(id_token_tmp);
     destroyToken(token);
+    destroyToken(act);
     dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_lexical:
+    if (id_key_tmp != NULL)
+        free(id_key_tmp);
+    if (id_token_tmp != NULL)
+        free(id_token_tmp);
+    destroyToken(act);
     dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
     error_msg("lexical\n");
     return ERR_LEX;
 
 err_syntactic:
+    if (id_key_tmp != NULL)
+        free(id_key_tmp);
+    if (id_token_tmp != NULL)
+        free(id_token_tmp);
     dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
     error_msg("syntactic\n");

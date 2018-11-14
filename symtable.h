@@ -64,6 +64,42 @@ typedef struct element
     struct element *next;
 } elem_t;
 
+
+
+/*
+
+typedef struct function {
+    char *key;
+    bool is_defined;
+    //struct  element *first_param; // if element is function, this points to first parameter
+    //struct  element *next_param; // if element is parameter, this points to next parameter
+} func_t;
+
+
+typedef struct variable {
+    char *key;
+    // parameters of functions
+} var_t;
+
+
+/**
+ * @brief item structure
+ * @param *key dynamically allocated array of chars -> identifier
+ * @param data info about the token
+ * @param *next pointer to next item
+ */
+/*
+typedef struct element
+{
+    char *key;
+    type_t token_type;
+
+ 
+    struct element *next;
+} elem_t;
+*/
+
+
 /**
  * @brief hash table structure
  * @param size number of items in the table

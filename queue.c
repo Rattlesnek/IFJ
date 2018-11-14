@@ -37,9 +37,8 @@
 queue_t *que_create()
 {
     queue_t *queue = malloc(sizeof(queue_t));
-    
-    for (int i = 0; i < QUEUE_SIZE; i++)
-        queue->array[i] = NULL;
+    if (queue == NULL)
+        return NULL;
 
     queue->f_index = 0;
     queue->b_index = 0;
@@ -66,13 +65,20 @@ int que_full(queue_t* queue)
 }
 
 
-bool que_up(queue_t *queue, token_t *token)
+bool que_up(queue_t *queue, token_t *token, char *name)
 {
 	if (que_full(queue))
 	    return false;
 
+    que_elem_t element;
+    element.token = token;
+    element.name = malloc((strlen(name) + 1)  * sizeof(char));
+    if (element.name == NULL)
+        return false;
+    strcpy(element.name, name);
+
 	// add to b_index
-	queue->array[queue->b_index] = token;
+	queue->array[queue->b_index] = element;
 	// shifts b_index
 	queue->b_index = nextIndex(queue->b_index);
     
@@ -80,12 +86,14 @@ bool que_up(queue_t *queue, token_t *token)
 }
 
 
-token_t *que_get(queue_t *queue)
+token_t *que_get(queue_t *queue, char **name)
 {
 	if (que_empty(queue))
         return NULL;
 
-    token_t *token = queue->array[queue->f_index];
+    token_t *token = queue->array[queue->f_index].token;
+    *name = queue->array[queue->f_index].name;
+
 	queue->f_index = nextIndex(queue->f_index);
 
     return token;

@@ -35,10 +35,16 @@
 // QUEUE_SIZE has to be 3 so that max nuber of elements in it is 2
 #define QUEUE_SIZE 3
 
+typedef struct que_elem {
+    token_t *token;
+    char *name;
+} que_elem_t;
+
+
 typedef struct queue {
     int f_index;            // Index of first element in queue 
     int b_index;            // Index of last element in queue                
-    token_t *array[QUEUE_SIZE];    // Array of pointers to elements of queue   
+    que_elem_t array[QUEUE_SIZE];    // Array of pointers to elements of queue   
 } queue_t;
 
 ////////////////////////////////////////////////////////////////////////
@@ -61,10 +67,10 @@ int que_empty(queue_t* queue);
 int que_full(queue_t* queue);
 
 
-bool que_up(queue_t *queue, token_t *token);
+bool que_up(queue_t *queue, token_t *token, char *name);
 
 
-token_t *que_get(queue_t *queue);
+token_t *que_get(queue_t *queue, char **name);
 
 
 void que_destroy(queue_t *queue);
