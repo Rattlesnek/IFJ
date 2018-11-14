@@ -913,25 +913,15 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     break;
 
                 case State_MINUS:
-                    if (isdigit(c))
-                    {
-                        if(!dynamicStr_add(sc_str, c))
-                            goto err_internal;
+                    state = State_S;
+                    sc_unget(c);
+                    sc_info.string = NULL;
+                    sc_token= createToken("-", sc_info);
+                    if (sc_token == NULL)
+                        goto err_internal;
 
-                        state = State_INT;
-                    }
-                    else
-                    {
-                        state = State_S;
-                        sc_unget(c);
-                        sc_info.string = NULL;
-                        sc_token= createToken("-", sc_info);
-                        if (sc_token == NULL)
-                            goto err_internal;
-
-                        printf("Token-name: %s\n", sc_token->name);
-                        return sc_token;
-                    }
+                    printf("Token-name: %s\n", sc_token->name);
+                    return sc_token;
                     break;
 
                 case State_PLUS:
