@@ -34,7 +34,7 @@
 #define INVALID_TOKEN -1
 
 char sa_prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
-/*         +      *     (     )     i     -     /     rel    str    f     ,    $  */
+/*         +      *     (     )     i     -     /     rel    str    f     ,    $
 /*  +  */{ '>' , '<' , '<' , '>' , '<' , '>' , '<' ,  '>' , '<' , '<' , '>' , '>' }, 
 /*  *  */{ '>' , '>' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , '<' , '>' , '>' },
 /*  (  */{ '<' , '<' , '<' , '=' , '<' , '<' , '<' ,  '<' , 'X' , '<' , '=' , 'X' },
@@ -42,8 +42,8 @@ char sa_prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
 /*  i  */{ '>' , '>' , 'X' , '>' , 'X' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
 /*  -  */{ '>' , '<' , '<' , '>' , '<' , '>' , '<' ,  '>' , 'X' , 'X' , '>' , '>' },
 /*  /  */{ '>' , '<' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
-/* rel */{ '<' , '<' , '<' , '>' , '<' , '<' , '<' ,  'X' , '<' , 'X' , '>' , '>' },
-/* str */{ '>' , 'X' , 'X' , 'X' , 'X' , 'X' , 'X' ,  '>' , 'X' , 'X' , 'X' , '>' },
+/* rel */{ '<' , '<' , '<' , '>' , '<' , '<' , '<' ,  'X' , 'X' , 'X' , '>' , '>' },
+/* str */{ '>' , 'X' , 'X' , 'X' , 'X' , 'X' , 'X' ,  'X' , 'X' , 'X' , 'X' , '>' },
 /*  f  */{ 'X' , 'X' , '=' , 'X' , 'X' , 'X' , 'X' ,  'X' , 'X' , 'X' , 'X' , 'X' },
 /*  ,  */{ '<' , '<' , '<' , '=' , '<' , '<' , '<' ,  '<' , '<' , '<' , '=' , 'X' },
 /*  $  */{ '<' , '<' , '<' , 'X' , '<' , '<' , '<' ,  '<' , '<' , '<' , 'X' , 'X' }
@@ -79,11 +79,9 @@ char sa_getTokenIndex(token_t *token)
         return _plus_;
     else if(strcmp(token->name, "*") == 0)
         return _mult_;
-    else if(strcmp(token->name, "ID") == 0)
+    else if(strcmp(token->name, "id") == 0)
         return _id_;
     else if(strcmp(token->name, "INT") == 0)
-        return _id_;
-    else if(strcmp(token->name, "DBL") == 0)
         return _id_;
     else if(strcmp(token->name, "(") == 0)
         return _lbrc_;
@@ -95,18 +93,6 @@ char sa_getTokenIndex(token_t *token)
         return _div_;
     else if(strcmp(token->name, "STR") == 0)
         return _str_;
-    else if(strcmp(token->name, "<=") == 0)
-        return _rel_;
-    else if(strcmp(token->name, ">=") == 0)
-        return _rel_;
-    else if(strcmp(token->name, "==") == 0)
-        return _rel_;
-    else if(strcmp(token->name, "!=") == 0)
-        return _rel_;
-    else if(strcmp(token->name, "<") == 0)
-        return _rel_;
-    else if(strcmp(token->name, ">") == 0)
-        return _rel_;
     else if(sa_isEndToken(token))
         return _empt_;
 
@@ -130,6 +116,11 @@ static inline bool sa_detectSucEnd(stack_sa_t *stack, table_elem_t token)
     return (sa_isNonTerm(stack->top->term) 
             && stack->top->lptr->term == _empt_ 
             && token == _empt_);
+}
+
+static inline bool sa_detectFailEnd(stack_sa_t *stack, table_elem_t token)
+{
+    return (stc_topTerm(stack) != EMPTY && token == _empt_);
 }
 
 /* 
@@ -156,19 +147,6 @@ bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
         stack_top_term = stc_topTerm(stack);
     
         token_term = sa_getTokenIndex(token);
-#if 0
-        if(token_term == _id_)
-        {
-            elem_t *elem = symtab_find(symtable, token->name);
-            if(elem == NULL)
-            {
-                token_term = _func_;
-                symtab_elem_add(symtable, "FUNC", sc_str->str);
-            }
-            else if()
-        }
-#endif
-
         printf("=> sa_prec: Token_term %d\n", token_term);
         printf("=> sa_prec: Stack topTerm %d\n", stack_top_term);
         rule = sa_prec_table[stack_top_term][token_term];
@@ -204,61 +182,28 @@ bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                         return false;
 
                     stc_push(stack, _E_);
+
                     break;
 
-                /* S -> str */
-                case _str_:
+                /* E -> E + E */
+                case _plus_:
                     term = stc_popTop(stack);
-                    if(term != _str_)
+                    if(term != _E_)
                         return false;
+
+                    term = stc_popTop(stack);
+                    if(term != _plus_)
+                        return false;
+
+                    term = stc_popTop(stack);
+                    if(term != _E_)
+                        return false;  
 
                     term = stc_popTop(stack);
                     if(term != _sml_)
                         return false;
 
-                    stc_push(stack, _S_);
-                    break;
-
-                /* E -> E + E && E -> S + S */
-                case _plus_:
-                    term = stc_popTop(stack);
-                    if(term == _E_)
-                    {
-                        term = stc_popTop(stack);
-                        if(term != _plus_)
-                            return false;
-
-                        term = stc_popTop(stack);
-                        if(term != _E_)
-                            return false;  
-
-                        term = stc_popTop(stack);
-                        if(term != _sml_)
-                            return false;
-
-                        stc_push(stack, _E_);
-                    }
-                    else if(term == _S_) 
-                    {
-                        term = stc_popTop(stack);
-                        if(term != _plus_)
-                            return false;
-
-                        term = stc_popTop(stack);
-                        if(term != _S_)
-                            return false;
-
-                        term = stc_popTop(stack);
-                        if(term != _sml_)
-                            return false;
-
-                        stc_push(stack, _S_);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
+                    stc_push(stack, _E_);
                     break;
 
                 /* E -> E * E */
@@ -324,7 +269,6 @@ bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                     stc_push(stack, _E_);
                     break;
 
-                /* E -> E / E */
                 case _div_:
                     term = stc_popTop(stack);
                     if(term != _E_)
@@ -344,48 +288,6 @@ bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
 
                     stc_push(stack, _E_);
                     break;
-
-                /* L -> E rel E && L -> S rel S */
-                case _rel_:
-                    term = stc_popTop(stack);
-
-                    if(term == _E_)
-                    {
-                        term = stc_popTop(stack);
-                        if(term != _rel_)
-                            return false;
-
-                        term = stc_popTop(stack);
-                        if(term != _E_)
-                            return false;
-
-                        term = stc_popTop(stack);  
-                        if(term != _sml_)
-                            return false;
-                    }
-                    else if(term == _S_)
-                    {
-
-                        term = stc_popTop(stack);
-                        if(term != _rel_)
-                            return false;
-
-                        term = stc_popTop(stack);
-                        if(term != _S_)
-                            return false;
-
-                        term = stc_popTop(stack);  
-                        if(term != _sml_)
-                            return false;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                    stc_push(stack, _L_);
-                    break;
-
             }
             stc_print(stack);
             
@@ -398,7 +300,7 @@ bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
 
         if(sa_detectSucEnd(stack, token_term))
             return true;
-
+    
         token = scanner_get(sc_str, que);
     }
 
