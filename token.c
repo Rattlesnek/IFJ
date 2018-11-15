@@ -60,6 +60,9 @@ token_t *createToken(char *name, token_info_t info)
 
 void destroyToken(token_t *token)
 {
+    if (token == NULL)
+        return;
+
     // if token is STR then also free info.string
     if (strcmp(token->name, "STR") == 0)
         free(token->info.string);
