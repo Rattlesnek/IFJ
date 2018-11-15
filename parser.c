@@ -65,41 +65,38 @@ int ll_table[LL_ROWS][LL_COLS] = {
 
 
 char *reverted_rules[RULES_ROWS][RULES_COLS] = {
-    {  NULL, }, // empty rule   
-    { "[EOL-EOF]", "[stat]", },
-    { "[st-list]", "EOL", },
-    {  NULL, }, 
-    { "[st-list]", "EOL", },
-    {  NULL, }, 
-    { "[end-list]", "[params-gen]", "[id-func]", "def", },
-    { "[command]", },
-    { "[end-list]", "EOL", "do", "**expr**", "while", },
-    { "[if-list]", "EOL", "then", "**expr**", "if", },
-    { "[func-assign-expr]", "ID", },
-    { "**expr**", "=", },
-    { "[end-list]", "EOL", "[command]", },
-    { "[end-list]", "EOL", },
-    { "end", },
-    { "[if-list]", "EOL", "[command]", },
-    { "[if-list]", "EOL", },
-    { "[if-list]", "EOL", "then", "**expr**", "elif", },
-    { "[end-list]", "EOL", "else", },
-    { "end", },
-    { "ID", },
-    { "FUNC", },
-    { "[p-brackets]", "(", },
-    { "[p-without]", "ID", },
-    { "EOL", },
-    { "[p-brackets-cont]", "ID", },
-    { "EOL", ")", },
-    { "[p-brackets-cont]", "ID", ",", },
-    { "EOL", ")", },
-    { "[p-without]", "ID", ",", },
-    { "EOL", },
+    /*RULE_0*/              {  NULL, }, // empty rule   
+    /*ST_LIST_1*/           { "[EOL-EOF]", "[stat]", },
+    /*ST_LIST_2*/           { "[st-list]", "EOL", },
+    /*ST_LIST_3*/           {  NULL, }, 
+    /*EOL_EOF_4*/           { "[st-list]", "EOL", },
+    /*EOL_EOF_5*/           {  NULL, }, 
+    /*STAT_6*/              { "[end-list]", "[params-gen]", "[id-func]", "def", },
+    /*STAT_7*/              { "[command]", },
+    /*COMMAND_8*/           { "[end-list]", "EOL", "do", "**expr**", "while", },
+    /*COMMAND_9*/           { "[if-list]", "EOL", "then", "**expr**", "if", },
+    /*COMMAND_10*/          { "[func-assign-expr]", "ID", },
+    /*FUNC_ASSIGN_EXPR_11*/ { "**expr**", "=", },
+    /*END_LIST_12*/         { "[end-list]", "EOL", "[command]", },
+    /*END_LIST_13*/         { "[end-list]", "EOL", },
+    /*END_LIST_14*/         { "end", },
+    /*IF_LIST_15*/          { "[if-list]", "EOL", "[command]", },
+    /*IF_LIST_16*/          { "[if-list]", "EOL", },
+    /*IF_LIST_17*/          { "[if-list]", "EOL", "then", "**expr**", "elif", },
+    /*IF_LIST_18*/          { "[end-list]", "EOL", "else", },
+    /*IF_LIST_19*/          { "end", },
+    /*ID_FUNC_20*/          { "ID", },
+    /*ID_FUNC_21*/          { "FUNC", },
+    /*PARAMS_GEN_22*/       { "[p-brackets]", "(", },
+    /*PARAMS_GEN_23*/       { "[p-without]", "ID", },
+    /*PARAMS_GEN_24*/       { "EOL", },
+    /*P_BRACKETS_25*/       { "[p-brackets-cont]", "ID", },
+    /*P_BRACKETS_26*/       { "EOL", ")", },
+    /*P_BRACKETS_CONT_27*/  { "[p-brackets-cont]", "ID", ",", },
+    /*P_BRACKETS_CONT_28*/  { "EOL", ")", },
+    /*P_WITHOUT_29*/        { "[p-without]", "ID", ",", },
+    /*P_WITHOUT_30*/        { "EOL", },
 };
-
-
-dynamicArrInt_t left_pars; // left analysis of program
 
 ////////////////////////////////////////////////////////////////////////
 ///                     FUNCTION DEFINITIONS                         ///
@@ -194,32 +191,79 @@ int ll_tableFind(char *nonterm, char *term)
 }
 
 
-void print_element(elem_t *element)
+void print_fun(elem_t *element)
 {
-    printf("Element %d %s\n", element->token_type, element->key);
+    printf("FUN %s\n", element->func.key);
 }
 
 
-bool createTempID(token_t **token_tmp, char **key_tmp, dynamicStr_t *sc_str)
+void print_var(elem_t *element)
+{
+    printf("VAR %s\n", element->var.key);
+}
+
+
+bool createTempID(char **key_tmp, dynamicStr_t *sc_str)
 {
     *key_tmp = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
     if (*key_tmp == NULL)
         return false;
     strcpy(*key_tmp, sc_str->str);
 
-    token_info_t info = { .ptr = NULL };
-    *token_tmp = createToken("ID", info);
-    if (*token_tmp == NULL)
-    {
-        free(*key_tmp);
-        return false;
-    }
-
     return true;
 }
 
+
+void destroyTempID(char **key_tmp)
+{
+    if (*key_tmp != NULL)
+    {
+        free(*key_tmp);
+        *key_tmp = NULL;
+    }
+}
+
+
+bool pushRevertedRules(stack_t *stack, int rule)
+{
+    int i = 0;
+    token_t token;
+    token_info_t info = { .ptr = NULL };
+
+    while (reverted_rules[rule][i] != NULL)
+    {
+        token = createToken(reverted_rules[rule][i], info);
+        if (token == NULL)
+            return false;
+        if ( ! stc_push(stack, token))
+        {
+            destroyToken(token);
+            return false;
+        }
+        i++;
+    }       
+
+    return true;     
+}
+
+
+
+void freeAll(stack_t *stack, symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab, char **key_tmp, token_t *act, token_t *token)
+{
+    stc_destroy(stack);
+    symtab_free(gl_var_tab);
+    symtab_free(fun_tab);
+    if (lc_var_tab != NULL)
+        symtab_free(lc_var_tab);
+
+    destroyTempID(key_tmp);
+    destroyToken(act);
+    destroyToken(token);
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
-void precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
+bool precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
 {
     token_t *act = scanner_get(sc_str, que);
     if (strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0)
@@ -231,6 +275,8 @@ void precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
         } while(strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
     }
     scanner_unget(que, act, sc_str->str);
+    
+    return true;
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -240,12 +286,14 @@ void precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
  * 
  * @return int return value
  */
-int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
+int parser(dynamicStr_t *sc_str, queue_t *que)
 {
-    token_t *top; 
-    token_t *act;
+    printf("Parser started\n"); 
+    
+    // DEFINE VARIABLES
+    token_t *top = NULL; 
+    token_t *act = NULL;
 
-    token_t *id_token_tmp = NULL;
     char *id_key_tmp = NULL;
 
     bool succ = false;
@@ -253,36 +301,43 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
     bool get = true;
     int rule;
     
+    stack_t *stack;
+    symtable_t *fun_tab;
+    symtable_t *gl_var_tab;
+    symtable_t *lc_var_tab = NULL;
 
-    printf("Parser started\n"); 
 
     /// INIT STRUCTURES
-    if ( ! dynamicArrInt_init(&left_pars))
-        return ERR_INTERNAL;
-    stack_t *stack = stc_create();
+    *stack = stc_create();
     if (stack == NULL)
+        return ERR_INTERNAL;
+    gl_var_tab = symtab_init(10, VARIABLES);
+    if (gl_var_tab = NULL)
         goto err_internal_1;
+    fun_tab = symtab_init(10, FUNCTIONS);
+    if (fun_tab = NULL)
+        goto err_internal_2;
 
 
+    /// INITIAL PUSH of EOF and starting nonterminal
     token_t *token;
     token_info_t info = { .ptr = NULL };
 
-    printf("Initial push\n");
-    /// INITIAL PUSH of EOF and starting nonterminal
     token = createToken("EOF", info);
     if (token == NULL)
-        goto err_internal_2;
+        goto err_internal_3;
     stc_push(stack, token); // error cannot occur
      
     token = createToken("[st-list]", info);
     if (token == NULL)
-        goto err_internal_2;
+        goto err_internal_3;
     stc_push(stack, token); // error cannot occur
 
+    token = NULL;
 
-    /////////////////////////////////////
-    ///            MAIN LOOP          ///
-    /////////////////////////////////////
+    /////////////////////////////////////////
+    ///             MAIN LOOP             ///
+    /////////////////////////////////////////
     do {
 
         top = stc_top(stack);
@@ -294,7 +349,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
             if (strcmp(act->name, "ERR_LEX") == 0)
                 goto err_lexical;
             else if (strcmp(act->name, "ERR_INTERNAL") == 0)
-                goto err_internal_2;
+                goto err_internal_main;
             
             get = false;
         }
@@ -305,15 +360,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
             if (strcmp(act->name, "EOF") == 0)
             {
                 printf("EOF reached on both stack and scanner\n");
-                
-                destroyToken(act);
                 succ = true;
             }
             else
             {
                 printf("EOF reached on stack but not from scanner\n");
-               
-                destroyToken(act);
                 fail = true;
             }
         }
@@ -325,6 +376,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 // destroy token: "**expr**"
                 token = stc_pop(stack);
                 destroyToken(token);
+                token = NULL;
 
                 scanner_unget(que, act, sc_str->str);
                 
@@ -342,15 +394,15 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 
                 token = stc_pop(stack);
                 destroyToken(token);
+                token = NULL;
                 destroyToken(act);
+                act = NULL;
                 
                 get = true;
             }
             else
             {
                 printf("top != name ... top: %s\tact: %s\n", top->name, act->name);
-                
-                destroyToken(act);
                 fail = true;
             }
                 
@@ -358,28 +410,25 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
         else
         {
             rule = ll_tableFind(top->name, act->name);
-            if (rule == 10) // [command] -> ID [func-assign-expr] ????????????
+            if (rule == COMMAND_10) // [command] -> ID [func-assign-expr] ????????????
             {
-                if ( ! createTempID(&id_token_tmp, &id_key_tmp, sc_str))
-                    goto err_internal_2;
-                printf("id_tmp load %s: %s\n", id_token_tmp->name, id_key_tmp);
+                if ( ! createTempID(&id_key_tmp, sc_str))
+                    goto err_internal_main;
+                printf("id_tmp load %s: %s\n", id_key_tmp);
             }
-            if (rule == 11) // [func-assign-expr] -> = **expr** ????????????
+            if (rule == FUNC_ASSIGN_EXPR_11) // [func-assign-expr] -> = **expr** ????????????
             {
                 printf("ADD variable %s\n", id_key_tmp);
-                symtab_elem_add(symtable, "ID", id_key_tmp);
+                //symtab_elem_add(symtable, id_key_tmp);
                 
-                destroyToken(id_token_tmp);
-                free(id_key_tmp);
-                id_token_tmp = NULL;
-                id_key_tmp = NULL;
+                destroyTempID(&id_key_tmp);
                 // add ID element id_tmp
             }
-            if (rule == 20 || rule == 21)
+            if (rule == ID_FUNC_20 || rule == ID_FUNC_21)
             {   
                 printf("ADD function %s\n", sc_str->str);
                 // add FUNC element
-                symtab_elem_add(symtable, act->name, sc_str->str);
+                //symtab_elem_add(symtable, sc_str->str);
             }
 
  
@@ -389,6 +438,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 // destroy token: "[command]"
                 token = stc_pop(stack);
                 destroyToken(token);
+                token = NULL;
 
                 scanner_unget(que, act, sc_str->str);
                 
@@ -406,10 +456,10 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 // destroy token: "[func-assign-expr]"
                 token = stc_pop(stack);
                 destroyToken(token);
+                token = NULL;
                 
-                scanner_unget(que, id_token_tmp, id_key_tmp);
-                free(id_key_tmp);
-                id_key_tmp = NULL;
+                scanner_unget(que, createToken("ID", info), id_key_tmp);
+                destroyTempID(&id_key_tmp);
                 scanner_unget(que, act, sc_str->str);
                 
                 // SPUSTENIE PRECEDENCNEJ ANALYZY
@@ -425,94 +475,68 @@ int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable)
                 printf("top: %s\tact: %s\n", top->name, act->name);
                 token = stc_pop(stack);
                 destroyToken(token);
+                token = NULL;
 
-                int i = 0;
-                while (reverted_rules[rule][i] != NULL)
-                {
-                    token = createToken(reverted_rules[rule][i], info);
-                    if (token == NULL)
-                        goto err_internal_2;
-                    if ( ! stc_push(stack, token))
-                        goto err_internal_3;
-
-                    i++;
-                }
-                
-                if ( ! dynamicArrInt_add(&left_pars, rule))
-                    goto err_internal_2;                
+                if ( ! pushRevertedRules(stack, rule))
+                    goto err_internal_main;          
             }
             else
             {
                 printf("no corresponding rule ... top: %s\tact: %s\n", top->name, act->name);
-
-                destroyToken(act);
                 fail = true;
             } 
         }
 
     } while (succ == false && fail == false);
+    /////////////////////////////////////////
+    ///         END OF MAIN LOOP          ///
+    /////////////////////////////////////////
 
     if (fail)     
         goto err_syntactic;
 
 
-    symtab_foreach(symtable, print_element);
-    // NIECO SPRAV S left_pars
+    symtab_foreach(gl_var_tab, print_var);
+    symtab_foreach(fun_tab, print_fun);
     
 
-    stc_destroy(stack);
-    dynamicArrInt_free(&left_pars);
+    // free all alocated elements
+    free_all(stack, gl_var_tab, fun_tab, &id_key_tmp, act, token);
     return SUCCESS;
 
 ///////////////////////////////////////
 ///         ERROR HANDLING          ///
 ///////////////////////////////////////
 err_internal_1:
-    dynamicArrInt_free(&left_pars);
+    stc_destroy(stack);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_internal_2:
-    if (id_key_tmp != NULL)
-        free(id_key_tmp);
-    if (id_token_tmp != NULL)
-        free(id_token_tmp);
-    destroyToken(act);
-    dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
+    symtab_free(gl_var_tab);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_internal_3:
-    if (id_key_tmp != NULL)
-        free(id_key_tmp);
-    if (id_token_tmp != NULL)
-        free(id_token_tmp);
-    destroyToken(token);
-    destroyToken(act);
-    dynamicArrInt_free(&left_pars);
     stc_destroy(stack);
+    symtab_free(gl_var_tab);
+    symtab_free(fun_tab);
+    error_msg("internal\n");
+    return ERR_INTERNAL;
+
+err_internal_main:
+    free_all(stack, gl_var_tab, fun_tab, &id_key_tmp, act, token);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_lexical:
-    if (id_key_tmp != NULL)
-        free(id_key_tmp);
-    if (id_token_tmp != NULL)
-        free(id_token_tmp);
-    destroyToken(act);
-    dynamicArrInt_free(&left_pars);
-    stc_destroy(stack);
+    free_all(stack, gl_var_tab, fun_tab, &id_key_tmp, act, token);
     error_msg("lexical\n");
     return ERR_LEX;
 
 err_syntactic:
-    if (id_key_tmp != NULL)
-        free(id_key_tmp);
-    if (id_token_tmp != NULL)
-        free(id_token_tmp);
-    dynamicArrInt_free(&left_pars);
-    stc_destroy(stack);
+    free_all(stack, gl_var_tab, fun_tab, &id_key_tmp, act, token);
     error_msg("syntactic\n");
     return ERR_SYN;
 }
