@@ -33,8 +33,7 @@ void print_var(elem_t *element)
 int main()
 {
 
-	elem_t *item = NULL;
-	symtable_t *symtab = symtab_init(MAX, VARIABLES);
+	symtable_t *symtab = symtab_init(MAX, FUNCTIONS);
 
 	symtab_elem_add(symtab, "test1");
 
@@ -42,6 +41,28 @@ int main()
 	symtab_foreach(symtab, print_var);
 
 	symtab_remove(symtab, "test1");
+
+	symtab_foreach(symtab, print_var);
+	symtab_elem_add(symtab, "test1");
+	symtab_elem_add(symtab, "test1");
+	symtab_elem_add(symtab, "test1");
+	symtab_elem_add(symtab, "test2");
+	symtab_elem_add(symtab, "test3");
+	symtab_elem_add(symtab, "test4");
+	symtab_elem_add(symtab, "test5");
+	symtab_elem_add(symtab, "test7");
+	symtab_elem_add(symtab, "test7");
+	symtab_elem_add(symtab, "test9");
+	
+
+	elem_t *tmp = symtab_elem_add(symtab, "test8");
+	tmp->func.n_params = 10;
+	tmp->func.is_defined = true;
+	tmp->func.params = "a,b,c,d,e,f,g,h,i,j";
+	printf("%d\n", tmp->func.n_params);
+	printf("%d\n", tmp->func.is_defined);
+	printf("%s\n", tmp->func.params);
+
 
 	symtab_foreach(symtab, print_var);
 	//printf("%d\n", item->token_type);
