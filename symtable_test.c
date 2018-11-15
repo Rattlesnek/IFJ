@@ -57,15 +57,17 @@ int main()
 
 	elem_t *tmp = symtab_elem_add(symtab, "test8");
 	tmp->func.n_params = 10;
-	tmp->func.is_defined = true;
+	tmp->func.is_defined = false;
 	tmp->func.params = "a,b,c,d,e,f,g,h,i,j";
 	printf("%d\n", tmp->func.n_params);
-	printf("%d\n", tmp->func.is_defined);
+
+	printf("Should be 0: %d\n", tmp->func.is_defined);
+	symtab_update(symtab, true, "test8");
+	printf("UPDATING PARAM 'is_defined' \nShould be 1 now: %d\n", tmp->func.is_defined);
+
 	printf("%s\n", tmp->func.params);
 
-
 	symtab_foreach(symtab, print_var);
-	//printf("%d\n", item->token_type);
 	symtab_free(symtab);
 	return 0;
 }

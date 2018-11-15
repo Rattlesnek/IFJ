@@ -127,7 +127,26 @@ elem_t *symtab_elem_add(symtable_t *symtab, char *key)
     return elem;
 }
 
+void symtab_update(symtable_t *symtab, bool is_defined, char *key)
+{
+    if (symtab == NULL)
+    {
+        fprintf(stderr, "Pointer to the symtable is NULL\n");
+    }
 
+    if (symtab->type == FUNCTIONS)
+    {
+        elem_t *tmp = symtab_find(symtab, key);
+        if (tmp == NULL)
+        {
+            fprintf(stderr, "Element with the given key was not found!\n");
+            return;
+        }
+        tmp->func.is_defined = is_defined;
+    }
+    
+    return;
+}
 size_t symtab_bucket_count(symtable_t *symtab)
 {
     if (!symtab)
