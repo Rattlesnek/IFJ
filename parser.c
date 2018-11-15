@@ -312,10 +312,10 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     if (stack == NULL)
         return ERR_INTERNAL;
     gl_var_tab = symtab_init(10, VARIABLES);
-    if (gl_var_tab = NULL)
+    if (gl_var_tab == NULL)
         goto err_internal_1;
     fun_tab = symtab_init(10, FUNCTIONS);
-    if (fun_tab = NULL)
+    if (fun_tab == NULL)
         goto err_internal_2;
 
 

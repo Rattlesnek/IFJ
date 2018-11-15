@@ -73,7 +73,7 @@ typedef enum {VARIABLES, FUNCTIONS} table_type_t;
 typedef struct function {
     char *key;
     bool is_defined;
-    int no_params;
+    int n_params;
     char *params;
 } func_t;
 
@@ -100,7 +100,6 @@ typedef struct element
     struct element *next;
 } elem_t;
 
-
 /**
  * @brief hash table structure
  * @param size number of items in the table
@@ -115,10 +114,10 @@ typedef struct symtable
     elem_t *ptr[];
 } symtable_t;
 
-/*
+/*[a-z
 symtable_t * symtab_init(size_t size, table_type_t type);
 
-
+[a-z
 elem_t *symtab_elem_add(symtable_t *symtab, char *key);
 */
 
@@ -145,7 +144,7 @@ size_t symtab_hash_function(const char *str);
  * @param      key     Real value of the variable
  * @return     returns a pointer to the element
  */
-elem_t *symtab_elem_add(symtable_t *symtab, char *name, char *key);
+elem_t *symtab_elem_add(symtable_t *symtab, char *key);
 
 /**
  * @brief gives the number of items in the table
@@ -178,7 +177,7 @@ void symtab_free(symtable_t *t);
  * @param size number of indexes of the table
  * @return pointer to created table
  */
-symtable_t * symtab_init(size_t size);
+symtable_t * symtab_init(size_t size, table_type_t type);
 
 /**
  * @brief calls a function for each item in the table
