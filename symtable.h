@@ -34,7 +34,7 @@
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
-
+/*
 typedef enum{UNKNOWN, INTG, DBL, STR} value_t;
 typedef enum{ID, VAR, FUNC} type_t;
 
@@ -44,6 +44,7 @@ typedef union data {
     double dbl;     // or double (when variable is type DBL)
     char *string;   // or string (when variable is type STR)
 } data_t;
+*/
 
 /**
  * @brief item structure
@@ -51,6 +52,7 @@ typedef union data {
  * @param data info about the token
  * @param *next pointer to next item
  */
+/*
 typedef struct element
 {
     char *key;
@@ -63,6 +65,41 @@ typedef struct element
     bool is_global; //?
     struct element *next;
 } elem_t;
+*/
+
+typedef enum {VARIABLES, FUNCTIONS} table_type_t;
+
+
+typedef struct function {
+    char *key;
+    bool is_defined;
+    int no_params;
+    char *params;
+} func_t;
+
+
+typedef struct variable {
+    char *key;
+    // parameters of functions are variables ???
+} var_t;
+
+/**
+ * @brief item structure
+ * @param *key dynamically allocated array of chars -> identifier
+ * @param data info about the token
+ * @param *next pointer to next item
+ */
+
+typedef struct element
+{
+    union {
+        var_t var;
+        func_t func;
+    };
+ 
+    struct element *next;
+} elem_t;
+
 
 /**
  * @brief hash table structure
@@ -72,11 +109,18 @@ typedef struct element
  */
 typedef struct symtable
 {
+    table_type_t type;
     size_t size;
     size_t arr_size;
     elem_t *ptr[];
 } symtable_t;
 
+/*
+symtable_t * symtab_init(size_t size, table_type_t type);
+
+
+elem_t *symtab_elem_add(symtable_t *symtab, char *key);
+*/
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///

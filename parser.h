@@ -71,6 +71,41 @@ typedef enum {
     EXPR_term
 } terminals_t;
 
+// rules indexes
+typedef enum {
+    RULE_0,
+    ST_LIST_1,
+    ST_LIST_2,
+    ST_LIST_3,
+    EOL_EOF_4,
+    EOL_EOF_5,
+    STAT_6,
+    STAT_7,
+    COMMAND_8,
+    COMMAND_9,
+    COMMAND_10,
+    FUNC_ASSIGN_EXPR_11,
+    END_LIST_12,
+    END_LIST_13,
+    END_LIST_14,
+    IF_LIST_15,
+    IF_LIST_16,
+    IF_LIST_17,
+    IF_LIST_18,
+    IF_LIST_19,
+    ID_FUNC_20,
+    ID_FUNC_21,
+    PARAMS_GEN_22,
+    PARAMS_GEN_23,
+    PARAMS_GEN_24,
+    P_BRACKETS_25,
+    P_BRACKETS_26,
+    P_BRACKETS_CONT_27,
+    P_BRACKETS_CONT_28,
+    P_WITHOUT_29,
+    P_WITHOUT_30
+} rules_t;
+
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
@@ -98,7 +133,7 @@ typedef enum {
 
 int ll_tableFind(char *nonterm, char *term);
 
-int parser(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable);
+int parser(dynamicStr_t *sc_str, queue_t *que);
 
 
 static inline int isTerminal(char *name)

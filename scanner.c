@@ -112,9 +112,9 @@ char* inKeyword(char *str, char **keywords)
 }
 
 
-bool scanner_unget(queue_t *que, token_t *token)
+bool scanner_unget(queue_t *que, token_t *token, char *name)
 {
-    return que_up(que, token);
+    return que_up(que, token, name);
 }
 
 
@@ -549,7 +549,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         token_info_t sc_info2;
                         sc_info2.ptr = NULL;
                         token_t *sc_token2 = createToken("EOL", sc_info2);
-                        que_up(que, sc_token2);
+                        que_up(que, sc_token2, sc_str->str);
 
                         state = State_S;
                         sc_info.ptr = NULL;
@@ -566,7 +566,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         token_info_t sc_info2;
                         sc_info2.ptr = NULL;
                         token_t *sc_token2 = createToken("!=", sc_info2);
-                        que_up(que, sc_token2);
+                        que_up(que, sc_token2, sc_str->str);
 
                         char *name = "ID";
                         if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )
@@ -1028,7 +1028,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     token_info_t sc_info2;
                     sc_info2.ptr = NULL;
                     token_t *sc_token2 = createToken("EOL", sc_info2);
-                    que_up(que, sc_token2);
+                    que_up(que, sc_token2, sc_str->str);
 
                     state = State_S;
                     sc_info.ptr = NULL;
@@ -1223,14 +1223,26 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     goto err_lexical;
             }
         }
-   }
-   else
-   {
-       state = State_S;
-       token_t *sc_token3 = que_get(que);
-       printf("Token-name: %s\n", sc_token3->name);
-       return sc_token3;
-   }
+    }
+    else
+    {
+        state = State_S;
+        char *name;
+        token_t *sc_token3 = que_get(que, &name);
+        printf("asd\n");
+        // load back to dynamic string
+        int i = 0;
+        while (name[i] != '\0')
+        {
+            if (! dynamicStr_add(sc_str, name[i]))
+                goto err_internal; 
+            i++;
+        }
+        free(name);
+
+        printf("Token-name: %s\n", sc_token3->name);
+        return sc_token3;
+    }
 
 ///////////////////////////////////////
 ///         ERROR HANDLING          ///

@@ -102,7 +102,7 @@ typedef enum
 
 token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que);
 
-bool scanner_unget(queue_t *que, token_t *token);
+bool scanner_unget(queue_t *que, token_t *token, char *name);
 
 
 #endif
