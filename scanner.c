@@ -583,7 +583,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                     else
                     {
-                        sc_unget(c);
+                        if(!dynamicStr_add(sc_str, '!'))
+                            goto err_internal;
                         state = State_FUNC;
                     }
                     break;
@@ -597,6 +598,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         goto err_internal;
 
                     printf("Token-name: %s \n", sc_token->name);
+
+                    printf("dynaicStr %s\n", sc_str->str);
                     return sc_token;  
 
 
@@ -1237,6 +1240,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 goto err_internal; 
             i++;
         }
+        printf("dynamicStr %s\n", sc_str->str);
         free(name);
 
         printf("Token-name: %s\n", sc_token3->name);
