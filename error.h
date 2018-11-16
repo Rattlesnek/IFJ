@@ -37,8 +37,8 @@
 #define SUCCESS 0
 #define ERR_LEX 1
 #define ERR_SYN 2
-#define ERR_SEM 3
-#define ERR_SEM_RUN 4
+#define ERR_SEM_UNDEF 3
+#define ERR_SEM_TYPE 4
 #define ERR_SEM_FUNC 5
 #define ERR_SEM_OTHER 6
 #define ERR_ZERO_DIV 7
