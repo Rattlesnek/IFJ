@@ -22,7 +22,7 @@
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "stack_gen.h"
+#include "stackStr.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -38,9 +38,9 @@
  * @return     NULL    If error ocurred.
  * @return     *stack  Pointer to stack.
  */
-stack_t *stc_create()
+stack_str_t *stcStr_create()
 {
-    stack_t *stack = malloc(sizeof(stack_t));
+    stack_str_t *stack = malloc(sizeof(stack_str_t));
     if (stack == NULL)
         return NULL;
 
@@ -64,7 +64,7 @@ stack_t *stc_create()
  * @return     false   If error ocurred.
  * @return     true    If function ended successfuly.
  */
-bool stc_resize(stack_t *stack, int new_cap)
+bool stcStr_resize(stack_str_t *stack, int new_cap)
 {
     stack->array = realloc(stack->array, sizeof(char *) * (new_cap));
     if (stack == NULL)
@@ -85,10 +85,10 @@ bool stc_resize(stack_t *stack, int new_cap)
  * @return     false  If error ocurred.
  * @return     true   If function ended successfuly.
  */
-bool stc_push(stack_t *stack, char *code)
+bool stcStr_push(stack_str_t *stack, char *code)
 {
     if (stack->top == stack->cap - 1)
-        if (stc_resize(stack, stack->cap + RESIZE_STEP) == false)
+        if (stcStr_resize(stack, stack->cap + RESIZE_STEP) == false)
             return false;
 
     stack->array[++stack->top] = malloc(sizeof(char) * (strlen(code) + 1));
@@ -109,7 +109,7 @@ bool stc_push(stack_t *stack, char *code)
  * @return     *char  If function ended successfuly.
  * @return     NULL   If error ocurred.
  */
-char *stc_top(stack_t *stack)
+char *stcStr_top(stack_str_t *stack)
 {
     if (stack->top == EMPTY)
         return NULL;
@@ -126,7 +126,7 @@ char *stc_top(stack_t *stack)
  * @return     false  If error ocurred.
  * @return     true   If succesful
  */
-bool stc_pop(stack_t *stack)
+bool stcStr_pop(stack_str_t *stack)
 {
     if (stack->top == EMPTY)
         return false;
@@ -140,10 +140,11 @@ bool stc_pop(stack_t *stack)
  *
  * @param      *stack  Pointer to stack.
  */
-void stc_destroy(stack_t *stack)
+void stcStr_destroy(stack_str_t *stack)
 {
     bool succes = false;
-    while ((succes = stc_pop(stack)) != false);        
+    while ((succes = stcStr_pop(stack)) != false)
+        ;        
 
     free(stack->array);
     free(stack);
@@ -155,18 +156,18 @@ int main()
     char *array = "1111111111111111111111111111111111111112";
     char *pole = "random text ktery je assembley kod";
     char *pole1 = "dalsi random assembley kod";
-    stack_t *stack = stc_create();
+    stack_str_t *stack = stcStr_create();
 
-    stc_push(stack, array);
-    stc_push(stack, pole);
-    stc_push(stack, pole1);
-    printf("%s\n", stc_top(stack));
-    stc_pop(stack);
-    printf("%s\n", stc_top(stack));
-    stc_pop(stack);
-    printf("%s\n", stc_top(stack));
+    stcStr_push(stack, array);
+    stcStr_push(stack, pole);
+    stcStr_push(stack, pole1);
+    printf("%s\n", stcStr_top(stack));
+    stcStr_pop(stack);
+    printf("%s\n", stcStr_top(stack));
+    stcStr_pop(stack);
+    printf("%s\n", stcStr_top(stack));
 
-    stc_destroy(stack);
+    stcStr_destroy(stack);
     return 0;
 }*/
 

@@ -30,7 +30,8 @@
 
 #include "scanner.h"
 
-#include "stack.h"
+#include "stackStr.h"
+#include "stackTkn.h"
 #include "queue.h"
 
 #include "token.h"
@@ -224,7 +225,7 @@ void destroyTempKey(char **key_tmp)
 }
 
 
-bool pushRevertedRules(stack_t *stack, int rule)
+bool pushRevertedRules(stack_tkn_t *stack_tkn, int rule)
 {
     int i = 0;
     token_t *token;
@@ -235,7 +236,7 @@ bool pushRevertedRules(stack_t *stack, int rule)
         token = createToken(reverted_rules[rule][i], info);
         if (token == NULL)
             return false;
-        if ( ! stc_push(stack, token))
+        if ( ! stcTkn_push(stack_tkn, token))
         {
             destroyToken(token);
             return false;
@@ -248,9 +249,10 @@ bool pushRevertedRules(stack_t *stack, int rule)
 
 
 
-void freeAll(stack_t *stack, symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab, char **key_tmp, token_t *act, token_t *token)
+void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str, symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab, char **key_tmp, token_t *act, token_t *token)
 {
-    stc_destroy(stack);
+    stcTkn_destroy(stack_tkn);
+    stcStr_destroy(stack_str);
     symtab_free(gl_var_tab);
     symtab_free(fun_tab);
     if (lc_var_tab != NULL)
@@ -282,12 +284,12 @@ int precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, stack_t *stack, token_t *act)
+int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, stack_tkn_t *stack_tkn, token_t *act)
 {
     // destroy token: "**expr**"
     token_t *token;
 
-    token = stc_pop(stack);
+    token = stcTkn_pop(stack_tkn);
     destroyToken(token);
 
     scanner_unget(que, act, sc_str->str);
@@ -325,22 +327,27 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     char *func_key_tmp = NULL;
     int param_cnt;
 
-    stack_t *stack;
+    stack_tkn_t *stack_tkn;
+    stack_str_t *stack_str;
+
     symtable_t *fun_tab;
     symtable_t *gl_var_tab;
     symtable_t *lc_var_tab = NULL;
 
 
     /// INIT STRUCTURES
-    stack = stc_create();
-    if (stack == NULL)
+    stack_tkn = stcTkn_create();
+    if (stack_tkn == NULL)
         return ERR_INTERNAL;
+    stack_str = stcStr_create();
+    if (stack_str == NULL)
+        goto err_internal_1;
     gl_var_tab = symtab_init(10, VARIABLES);
     if (gl_var_tab == NULL)
-        goto err_internal_1;
+        goto err_internal_2;
     fun_tab = symtab_init(10, FUNCTIONS);
     if (fun_tab == NULL)
-        goto err_internal_2;
+        goto err_internal_3;
 
 
     /// INITIAL PUSH of EOF and starting nonterminal
@@ -350,12 +357,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     token = createToken("EOF", info);
     if (token == NULL)
         goto err_internal_3;
-    stc_push(stack, token); // error cannot occur
+    stcTkn_push(stack_tkn, token); // error cannot occur
      
     token = createToken("[st-list]", info);
     if (token == NULL)
         goto err_internal_3;
-    stc_push(stack, token); // error cannot occur
+    stcTkn_push(stack_tkn, token); // error cannot occur
 
     token = NULL;
 
@@ -364,7 +371,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     /////////////////////////////////////////
     do {
 
-        top = stc_top(stack);
+        top = stcTkn_top(stack_tkn);
         if (get_new_token)
         {   
             act = scanner_get(sc_str, que);
@@ -383,12 +390,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
         {
             if (strcmp(act->name, "EOF") == 0)
             {
-                printf("EOF reached on both stack and scanner\n");
+                printf("EOF reached on both stack_tkn and scanner\n");
                 succ = true;
             }
             else
             {
-                printf("EOF reached on stack but not from scanner\n");
+                printf("EOF reached on stack_tkn but not from scanner\n");
                 fail = true;
             }
         }
@@ -397,13 +404,15 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             if (strcmp(top->name, "**if**") == 0)
             {
                 //printf("*********** IF ***********\n");                
-                ret_val = expresionsHandler(sc_str, que, stack, act);
+                ret_val = expresionsHandler(sc_str, que, stack_tkn, act);
                 
                 //////////////////////
                 // GENERATE IF 
                 //////////////////////
                 printf("if\n");
-                // push to stack "epilog of if" and "else branch" (in this order)
+                // push to stack_tkn "epilog of if" and "else branch" (in this order)
+                stcStr_push(stack_str, "endif\n");
+                stcStr_push(stack_str, "else\n");
 
                 get_new_token = true;
                 //printf("********** END ***********\n");
@@ -411,13 +420,14 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             else if (strcmp(top->name, "**while**") == 0)
             {
                 //printf("********* WHILE **********\n");
-                ret_val = expresionsHandler(sc_str, que, stack, act);
+                ret_val = expresionsHandler(sc_str, que, stack_tkn, act);
                 
                 //////////////////////
                 // GENERATE WHILE
                 /////////////////////
                 printf("while\n");
-                // push to stack "epilog of while"
+                // push to stack_tkn "epilog of while"
+                stcStr_push(stack_str, "endwhile\n");
 
                 get_new_token = true;
                 //printf("********** END ***********\n");
@@ -425,7 +435,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             else if (strcmp(top->name, "**expr**") == 0)
             {
                 //printf("********** EXPR **********\n");
-                ret_val = expresionsHandler(sc_str, que, stack, act);
+                ret_val = expresionsHandler(sc_str, que, stack_tkn, act);
                 
                 ////////////////////////////////
                 // GENERATE VARIABLE definition
@@ -460,8 +470,9 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                         //////////////////////////////
                         // GENERATE FUNCTION prolog
                         /////////////////////////////
-                        printf("func %s params %d\n", func_key_tmp, param_cnt);
-                        // push to stack function epilog
+                        printf("def %s params %d\n", func_key_tmp, param_cnt);
+                        // push to stack_tkn function epilog
+                        stcStr_push(stack_str, "enddef\n");
 
                         symtab_elem_add(fun_tab, func_key_tmp);
                         destroyTempKey(&func_key_tmp);
@@ -471,10 +482,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 }
                 if (strcmp(act->name, "end") == 0 || strcmp(act->name, "else") == 0)
                 {
-                    // stack pop and add to output
+                    // stack_tkn pop and add to output
+                    printf("%s", stcStr_top(stack_str));
+                    stcStr_pop(stack_str);
                 }
 
-                token = stc_pop(stack);
+                token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
                 destroyToken(act);
@@ -517,7 +530,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             if (rule == EXPR_INCLUDE)
             {
                 //printf("********** EXPR **********\n");
-                ret_val = expresionsHandler(sc_str, que, stack, act);
+                ret_val = expresionsHandler(sc_str, que, stack_tkn, act);
                 get_new_token = true;
                 //printf("********** END ***********\n");
             }
@@ -525,7 +538,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             {
                 //printf("********** EXPR **********\n");
                 // destroy token: "[func-assign-expr]"
-                token = stc_pop(stack);
+                token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
                 
@@ -543,11 +556,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             else if (rule) // in case rule == 0 -- fail
             {
                 //printf("top: %s\tact: %s\n", top->name, act->name);
-                token = stc_pop(stack);
+                token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
 
-                if ( ! pushRevertedRules(stack, rule))
+                if ( ! pushRevertedRules(stack_tkn, rule))
                     goto err_internal_main;          
             }
             else
@@ -587,47 +600,49 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     printf("\n");
 
     // free all alocated elements
-    freeAll(stack, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
     return SUCCESS;
 
 ///////////////////////////////////////
 ///         ERROR HANDLING          ///
 ///////////////////////////////////////
 err_internal_1:
-    stc_destroy(stack);
+    stcTkn_destroy(stack_tkn);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_internal_2:
-    stc_destroy(stack);
+    stcTkn_destroy(stack_tkn);
+    stcStr_destroy(stack_str);
     symtab_free(gl_var_tab);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_internal_3:
-    stc_destroy(stack);
+    stcTkn_destroy(stack_tkn);
+    stcStr_destroy(stack_str);
     symtab_free(gl_var_tab);
     symtab_free(fun_tab);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_internal_main:
-    freeAll(stack, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_lexical:
-    freeAll(stack, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
     error_msg("lexical\n");
     return ERR_LEX;
 
 err_syntactic:
-    freeAll(stack, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
     error_msg("syntactic\n");
     return ERR_SYN;
 /*
 err_sem_undef:
-    freeAll(stack, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
     error_msg("semantic - undefinde variable / function\n");
     return ERR_SEM_UNDEF;
 

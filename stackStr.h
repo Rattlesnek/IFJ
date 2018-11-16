@@ -35,11 +35,11 @@
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
-typedef struct stack {
+typedef struct stack_str {
   int top;            /* Index of element on the top of the stack */
   int cap;            /* Max capacity of stack                    */
   char **array;    /* Array of pointers to elements of stack   */
-} stack_t;
+} stack_str_t;
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
@@ -59,7 +59,7 @@ typedef struct stack {
  * @return     NULL    If error ocurred.
  * @return     *stack  Pointer to stack.
  */
-stack_t *stc_create();
+stack_str_t *stcStr_create();
 
 
 /**
@@ -71,7 +71,7 @@ stack_t *stc_create();
  * @return     false   If error ocurred.
  * @return     true    If function ended successfuly.
  */
-bool stc_resize(stack_t *stack, int new_cap);
+bool stcStr_resize(stack_str_t *stack, int new_cap);
 
 
 /**
@@ -83,7 +83,7 @@ bool stc_resize(stack_t *stack, int new_cap);
  * @return     false  If error ocurred.
  * @return     true   If function ended successfuly.
  */
-bool stc_push(stack_t *stack, char *code);
+bool stcStr_push(stack_str_t *stack, char *code);
 
 
 /**
@@ -94,7 +94,7 @@ bool stc_push(stack_t *stack, char *code);
  * @return     false  If error ocurred.
  * @return     true   If succesful
  */
-bool stc_pop(stack_t *stack);
+bool stcStr_pop(stack_str_t *stack);
 
 
 /**
@@ -105,7 +105,7 @@ bool stc_pop(stack_t *stack);
  * @return     *char  If function ended successfuly.
  * @return     NULL   If error ocurred.
  */
-char *stc_top(stack_t *stack);
+char *stcStr_top(stack_str_t *stack);
 
 
 /**
@@ -113,7 +113,7 @@ char *stc_top(stack_t *stack);
  *
  * @param      *stack  Pointer to stack.
  */
-void stc_destroy(stack_t *stack);
+void stcStr_destroy(stack_str_t *stack);
 
 
 
