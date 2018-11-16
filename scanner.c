@@ -205,7 +205,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("EOL", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
@@ -345,7 +345,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token = createToken("EOL", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
@@ -364,7 +364,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("EOL", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
@@ -750,7 +750,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("<", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
@@ -763,7 +763,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_LEQ:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("<=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -779,7 +779,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken(">", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
@@ -792,7 +792,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_MEQ:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(">=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -808,7 +808,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("=", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
@@ -821,7 +821,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_EQ:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("==", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -843,7 +843,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_NEQ:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("!=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -855,7 +855,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_COMMA:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(",", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -867,7 +867,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_LEFT_BRACKET:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("(", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -879,7 +879,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_RIGHT_BRACKET:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(")", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -891,7 +891,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_DIV:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("/", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -903,7 +903,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_MUL:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("*", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -915,7 +915,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_MINUS:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("-", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -927,7 +927,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_PLUS:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("+", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -943,7 +943,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
             switch (state)
             {
                 case State_S:
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("EOF", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -965,7 +965,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_END_COMMEND:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token = createToken("EOL", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -975,7 +975,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_LCOMM:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("EOL", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1081,7 +1081,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_LTN:
                         state = State_S;
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("<", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
@@ -1091,7 +1091,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_LEQ:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("<=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1101,7 +1101,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_MTN:
                         state = State_S;
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken(">", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
@@ -1111,7 +1111,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_MEQ:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(">=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1121,7 +1121,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_ASSIGN:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1131,7 +1131,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_EQ:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("==", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1141,7 +1141,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_NEQ:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("!=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1151,7 +1151,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     
                 case State_COMMA:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(",", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1161,7 +1161,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_LEFT_BRACKET:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("(", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1171,7 +1171,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_RIGHT_BRACKET:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(")", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1181,7 +1181,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_DIV:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("/", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1191,7 +1191,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     
                 case State_MUL:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("*", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1201,7 +1201,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_MINUS:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("-", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1211,7 +1211,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_PLUS:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("+", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
@@ -1229,7 +1229,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
         state = State_S;
         char *name;
         token_t *sc_token3 = que_get(que, &name);
-        printf("asd\n");
         // load back to dynamic string
         int i = 0;
         while (name[i] != '\0')
@@ -1250,13 +1249,13 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 err_lexical:
     sc_unget(c);
     dynamicStr_clear(sc_str); 
-    sc_info.string = NULL;
+    sc_info.ptr = NULL;
     sc_token = createToken("ERR_LEX", sc_info);
     return sc_token;
 
 err_internal:
     dynamicStr_free(sc_str);
-    sc_info.string = NULL;
+    sc_info.ptr = NULL;
     sc_token = createToken("ERR_INTERNAL", sc_info);
    return sc_token;
 }
