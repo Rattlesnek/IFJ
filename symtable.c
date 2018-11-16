@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "symtable.h"
+#include "dynamicArrParam.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -144,7 +145,7 @@ void symtab_update(symtable_t *symtab, bool is_defined, char *key)
         }
         tmp->func.is_defined = is_defined;
     }
-    
+
     return;
 }
 size_t symtab_bucket_count(symtable_t *symtab)
@@ -183,6 +184,7 @@ void symtab_clear(symtable_t *symtab)
                 else if (symtab->type == FUNCTIONS)
                 {
                     free(elem->func.key);
+                    dynamicArrParams_free(elem->func.params);
                 }
                 free(elem);
                 elem = next;

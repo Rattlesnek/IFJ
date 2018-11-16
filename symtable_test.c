@@ -29,7 +29,7 @@ void print_var(elem_t *element)
     printf("VAR %s\n", element->var.key);
 }
 
-
+//gcc symtable_test.c symtable.c symtable.h -o symtable
 int main()
 {
 

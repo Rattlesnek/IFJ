@@ -31,20 +31,29 @@
 #include <stdbool.h>
 
 
+
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
 typedef enum {VARIABLES, FUNCTIONS} table_type_t;
 
+typedef struct element elem_t;
+
+typedef struct
+{
+  elem_t **param_arr;
+  unsigned int length; // lenght of params
+  unsigned int max; // maximal length of params
+} dynamicArrParams_t;
+
 
 typedef struct function {
     char *key;
     bool is_defined;
     int n_params;
-    char *params;
+    dynamicArrParams_t *params;
 } func_t;
-
 
 typedef struct variable {
     char *key;
