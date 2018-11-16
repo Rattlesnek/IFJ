@@ -33,6 +33,12 @@
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+
+/**
+ * @brief      Initialize the array of pointers
+ *
+ * @return     True     if succesfull, otherwise false
+ */
 dynamicArrParams_t *dynamicArrParams_init()
 {
     dynamicArrParams_t *a = malloc(sizeof(dynamicArrParams_t));
@@ -52,6 +58,11 @@ dynamicArrParams_t *dynamicArrParams_init()
 }
 
 
+/**
+ * @brief      Free array of params
+ *
+ * @param      a     structure to be freed
+ */
 void dynamicArrParams_free(dynamicArrParams_t *a)
 {
     free(a->param_arr);
@@ -62,6 +73,14 @@ void dynamicArrParams_free(dynamicArrParams_t *a)
 }
 
 
+/**
+ * @brief      Add a new param ptr to the array
+ *
+ * @param      a      ptr to the structure of param pointers
+ * @param      param  element ptr to be added
+ *
+ * @return     true if was succesful, otherwise false
+ */
 bool dynamicArrParams_add(dynamicArrParams_t *a, elem_t *param)
 {
     if (a->length >= a->max)
