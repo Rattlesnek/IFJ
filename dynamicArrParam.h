@@ -38,35 +38,38 @@
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
 #define DYNAMICARRPARAM_LEN 4 //Initializing length of structure
-#define MULT_LEN 4  // in case of realloc multiply a->max by MULT_LEN
+#define MULT_LEN 4  // in case of realloc add a->max and MULT_LEN
 
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+
 /**
- * @brief Initialize params of integers
+ * @brief      Initialize array of pointers to elem_t
  *
- * @param a params of integers to be initialized
- * @return True if succesfull, otherwise false
+ * @return     True     if succesfull, otherwise false
  */
 dynamicArrParams_t *dynamicArrParams_init();
 
+
 /**
- * @brief Free params of integers
+ * @brief      Free array of params
  *
- * @param a structure to be cleared
+ * @param      a     structure to be freed
  */
 void dynamicArrParams_free(dynamicArrParams_t *a);
 
+
 /**
- * @brief Add a new int to params
+ * @brief      Add a new param ptr to the array
  *
- * @param a params of integers to be added
- * @param n int value to be added
- * @return true if was succesful, otherwise false
+ * @param      a      ptr to structure of param ptrs
+ * @param      param  element ptr to be added
+ *
+ * @return     true if was succesful, otherwise false
  */
-bool dynamicArrparams_add(dynamicArrParams_t *a, elem_t *param);
+bool dynamicArrParams_add(dynamicArrParams_t *a, elem_t *param);
 
 
 
