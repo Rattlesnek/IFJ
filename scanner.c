@@ -585,6 +585,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         if(!dynamicStr_add(sc_str, '!'))
                             goto err_internal;
+                            sc_unget(c);
                         state = State_FUNC;
                     }
                     break;
