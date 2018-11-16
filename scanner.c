@@ -488,7 +488,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
     ///        ID, FUNC INT, FLOAT      ///
     ///////////////////////////////////////
                 case State_ID:
-                    if (isalpha(c) || isdigit(c))
+                    if (isalpha(c) || isdigit(c) || c == '_')
                     {
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
