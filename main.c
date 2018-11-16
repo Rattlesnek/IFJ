@@ -14,7 +14,7 @@ int main()
     
     dynamicStr_init(sc_str);
     queue_t *que = que_create();
-    symtable_t *symtable = symtab_init(10);
+    symtable_t *symtable = symtab_init(10,1);
 
 
     token_t *token = NULL;
