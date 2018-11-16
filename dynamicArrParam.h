@@ -46,7 +46,7 @@
 
 
 /**
- * @brief      Initialize array of pointers to elem_t
+ * @brief      Initialize the array of pointers
  *
  * @return     True     if succesfull, otherwise false
  */
@@ -64,7 +64,7 @@ void dynamicArrParams_free(dynamicArrParams_t *a);
 /**
  * @brief      Add a new param ptr to the array
  *
- * @param      a      ptr to structure of param ptrs
+ * @param      a      ptr to the structure of param pointers
  * @param      param  element ptr to be added
  *
  * @return     true if was succesful, otherwise false
