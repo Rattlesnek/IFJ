@@ -1,12 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "token.h"
-#include "symtable.h"
 #include "scanner.h"
-#include "stack.h"
 #include "dynamicStr.h"
-#include "dynamicArrInt.h"
 #include "queue.h"
 #include "parser.h"
 

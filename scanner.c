@@ -205,12 +205,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("EOL", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token; 
                     }
                     break;
@@ -345,12 +345,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token = createToken("EOL", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;
                     }
                     if ( isspace(c) && c != '\n')
@@ -364,12 +364,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("EOL", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token; 
                     }
                     else
@@ -480,7 +480,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
+                    //printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
                     
                     return sc_token;  
 
@@ -488,7 +488,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
     ///        ID, FUNC INT, FLOAT      ///
     ///////////////////////////////////////
                 case State_ID:
-                    if (isalpha(c) || isdigit(c))
+                    if (isalpha(c) || isdigit(c) || c == '_')
                     {
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
@@ -522,7 +522,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                                 if (sc_token == NULL)
                                     goto err_internal;
 
-                                printf("Token-name: %s\n", sc_token->name); 
+                                //printf("Token-name: %s\n", sc_token->name); 
                                 return sc_token; 
                             }
                         else
@@ -532,7 +532,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             if (sc_token == NULL)
                                 goto err_internal;
     
-                            printf("Token-name: %s\n", sc_token->name);
+                            //printf("Token-name: %s\n", sc_token->name);
                             return sc_token;  
                         }
                     
@@ -557,7 +557,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s \n", sc_token->name);
+                        //printf("Token-name: %s \n", sc_token->name);
                         return sc_token;  
                     }
 
@@ -577,12 +577,15 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;  
                     }
 
                     else
                     {
+                        if(!dynamicStr_add(sc_str, '!'))
+                            goto err_internal;
+
                         sc_unget(c);
                         state = State_FUNC;
                     }
@@ -596,7 +599,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s \n", sc_token->name);
+                    //printf("Token-name: %s \n", sc_token->name);
                     return sc_token;  
 
 
@@ -634,7 +637,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s  || Value : %d\n", sc_token->name, sc_info.intg );
+                        //printf("Token-name: %s  || Value : %d\n", sc_token->name, sc_info.intg );
                         return sc_token;   
                     }
                     break;
@@ -665,7 +668,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;  
                     }
                     else
@@ -735,7 +738,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );
+                        //printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );
                         return sc_token;   
                     }
                     break;
@@ -750,12 +753,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("<", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;
                     }
                     break;
@@ -763,12 +766,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_LEQ:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("<=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -779,12 +782,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken(">", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;
                     }
                     break;
@@ -792,12 +795,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_MEQ:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(">=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -808,12 +811,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("=", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;
                     }
                     break;
@@ -821,12 +824,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_EQ:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("==", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -843,96 +846,96 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_NEQ:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("!=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
                     
                 case State_COMMA:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(",", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
                 case State_LEFT_BRACKET:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("(", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
                 case State_RIGHT_BRACKET:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(")", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
                 case State_DIV:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("/", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
                     
                 case State_MUL:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("*", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
                 case State_MINUS:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("-", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
                 case State_PLUS:
                     state = State_S;
                     sc_unget(c);
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("+", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
             }
@@ -943,12 +946,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
             switch (state)
             {
                 case State_S:
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("EOF", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
     
 
@@ -959,28 +962,28 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;  
                 
 
                 case State_END_COMMEND:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token = createToken("EOL", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_LCOMM:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("EOL", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token; 
 
                 case State_QUATATION2:
@@ -993,7 +996,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
+                    //printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
                     return sc_token;  
 
                 case State_ID:
@@ -1007,7 +1010,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             if (sc_token == NULL)
                                 goto err_internal;
     
-                            printf("Token-name: %s\n", sc_token->name);
+                            //printf("Token-name: %s\n", sc_token->name);
                             return sc_token; 
                         }
                     else
@@ -1017,7 +1020,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;  
                     }
 
@@ -1036,7 +1039,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s \n", sc_token->name);
+                    //printf("Token-name: %s \n", sc_token->name);
                     return sc_token;  
 
                 case State_FUNC:
@@ -1046,7 +1049,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s \n", sc_token->name);
+                    //printf("Token-name: %s \n", sc_token->name);
                     return sc_token; 
 
                 case State_INT:
@@ -1056,7 +1059,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s  || Value : %d\n", sc_token->name, sc_info.intg );
+                    //printf("Token-name: %s  || Value : %d\n", sc_token->name, sc_info.intg );
                     return sc_token; 
 
                 case State_INT0:
@@ -1066,7 +1069,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;  
 
                 case State_FLOAT:
@@ -1076,147 +1079,147 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );;
+                    //printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );;
                     return sc_token;   
 
                 case State_LTN:
                         state = State_S;
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken("<", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;
 
                 case State_LEQ:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("<=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_MTN:
                         state = State_S;
-                        sc_info.string = NULL;
+                        sc_info.ptr = NULL;
                         sc_token= createToken(">", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        //printf("Token-name: %s\n", sc_token->name);
                         return sc_token;
 
                 case State_MEQ:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(">=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_ASSIGN:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_EQ:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("==", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_NEQ:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("!=", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     
                 case State_COMMA:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(",", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_LEFT_BRACKET:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("(", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_RIGHT_BRACKET:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken(")", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_DIV:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("/", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     
                 case State_MUL:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("*", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_MINUS:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("-", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_PLUS:
                     state = State_S;
-                    sc_info.string = NULL;
+                    sc_info.ptr = NULL;
                     sc_token= createToken("+", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    //printf("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 default:
@@ -1229,7 +1232,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
         state = State_S;
         char *name;
         token_t *sc_token3 = que_get(que, &name);
-        printf("asd\n");
         // load back to dynamic string
         int i = 0;
         while (name[i] != '\0')
@@ -1240,7 +1242,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
         }
         free(name);
 
-        printf("Token-name: %s\n", sc_token3->name);
+        //printf("Token-name: %s\n", sc_token3->name);
         return sc_token3;
     }
 
@@ -1250,13 +1252,13 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 err_lexical:
     sc_unget(c);
     dynamicStr_clear(sc_str); 
-    sc_info.string = NULL;
+    sc_info.ptr = NULL;
     sc_token = createToken("ERR_LEX", sc_info);
     return sc_token;
 
 err_internal:
     dynamicStr_free(sc_str);
-    sc_info.string = NULL;
+    sc_info.ptr = NULL;
     sc_token = createToken("ERR_INTERNAL", sc_info);
    return sc_token;
 }
