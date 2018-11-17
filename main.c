@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "token.h"
-#include "symtable.h"
 #include "scanner.h"
 #include "dynamicStr.h"
 #include "queue.h"
@@ -14,7 +13,6 @@ int main()
     
     dynamicStr_init(sc_str);
     queue_t *que = que_create();
-    symtable_t *symtable = symtab_init(10,1);
 
 
     token_t *token = NULL;
@@ -31,7 +29,6 @@ int main()
 
     dynamicStr_free(sc_str);
     que_destroy(que);
-    symtab_free(symtable);
 
     return 0;
 }
