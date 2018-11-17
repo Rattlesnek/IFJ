@@ -28,9 +28,6 @@
 
 #include "queue.h"
 #include "dynamicStr.h"
-#include "dynamicArrInt.h"
-#include "stack.h"
-#include "symtable.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///

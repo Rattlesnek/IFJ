@@ -31,52 +31,29 @@
 #include <stdbool.h>
 
 
+
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
-/*
-typedef enum{UNKNOWN, INTG, DBL, STR} value_t;
-typedef enum{ID, VAR, FUNC} type_t;
-
-
-typedef union data {
-    int intg;       // either integer (when variable is type INT)
-    double dbl;     // or double (when variable is type DBL)
-    char *string;   // or string (when variable is type STR)
-} data_t;
-*/
-
-/**
- * @brief item structure
- * @param *key dynamically allocated array of chars -> identifier
- * @param data info about the token
- * @param *next pointer to next item
- */
-/*
-typedef struct element
-{
-    char *key;
-    data_t data;
-    type_t token_type;
-    value_t value_type;
-    //struct  element *first_param; // if element is function, this points to first parameter
-    //struct  element *next_param; // if element is parameter, this points to next parameter
-    bool is_init;
-    bool is_global; //?
-    struct element *next;
-} elem_t;
-*/
 
 typedef enum {VARIABLES, FUNCTIONS} table_type_t;
+
+typedef struct element elem_t;
+
+typedef struct
+{
+  elem_t **param_arr;
+  unsigned int length; // lenght of params
+  unsigned int max; // maximal length of params
+} dynamicArrParams_t;
 
 
 typedef struct function {
     char *key;
     bool is_defined;
-    int no_params;
-    char *params;
+    int n_params;
+    dynamicArrParams_t *params;
 } func_t;
-
 
 typedef struct variable {
     char *key;
@@ -100,7 +77,6 @@ typedef struct element
     struct element *next;
 } elem_t;
 
-
 /**
  * @brief hash table structure
  * @param size number of items in the table
@@ -114,13 +90,6 @@ typedef struct symtable
     size_t arr_size;
     elem_t *ptr[];
 } symtable_t;
-
-/*
-symtable_t * symtab_init(size_t size, table_type_t type);
-
-
-elem_t *symtab_elem_add(symtable_t *symtab, char *key);
-*/
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
@@ -145,7 +114,7 @@ size_t symtab_hash_function(const char *str);
  * @param      key     Real value of the variable
  * @return     returns a pointer to the element
  */
-elem_t *symtab_elem_add(symtable_t *symtab, char *name, char *key);
+elem_t *symtab_elem_add(symtable_t *symtab, char *key);
 
 /**
  * @brief gives the number of items in the table
@@ -178,7 +147,7 @@ void symtab_free(symtable_t *t);
  * @param size number of indexes of the table
  * @return pointer to created table
  */
-symtable_t * symtab_init(size_t size);
+symtable_t * symtab_init(size_t size, table_type_t type);
 
 /**
  * @brief calls a function for each item in the table
@@ -204,13 +173,13 @@ elem_t *symtab_find(symtable_t *t, const char *key);
 bool symtab_remove(symtable_t *t, const char *key);
 
 /**
- * @brief looks up item in the table, if the item exists the funcstion 
-   increments size_t data, if the item doesn't exist the function will create 
-   it and add it to the end of the list
- * @param *key pointer to the string
- * @param *t pointer to the hash table
- * @param pointer to new or found item
+ * @brief      updates the variable "is_defined" in the element
+ *
+ * @param[in]      t           Pointer to the hash table
+ * @param[in]  is_defined  Indicates a function is if defined
+ * @param[in]      key         The key used as in the hash function
  */
+
 //elem_t *symtab_elem_add(symtable_t *symtab, char *name /*(ID, FUNC)*/, char *key /*(realne jmeno promenne).*/) 
 
 

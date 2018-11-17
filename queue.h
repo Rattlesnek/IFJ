@@ -33,7 +33,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 // QUEUE_SIZE has to be 3 so that max nuber of elements in it is 2
-#define QUEUE_SIZE 3
+#define QUEUE_SIZE 5
 
 typedef struct que_elem {
     token_t *token;
