@@ -105,6 +105,9 @@ elem_t *symtab_elem_add(symtable_t *symtab, char *key)
             return NULL;
         }
         strcpy(elem->func.key, key);
+        elem->func.is_defined = false;
+        elem->func.n_params = 0;
+        elem->func.params = NULL;
     }
 
     elem->next = NULL;

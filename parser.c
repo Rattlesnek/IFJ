@@ -37,7 +37,7 @@
 #include "token.h"
 #include "symtable.h"
 
-#include "dynamicArrInt.h"
+#include "dynamicArrParam.h"
 #include "dynamicStr.h"
 
 #include "error.h"
@@ -253,6 +253,7 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str, symtable_t *gl_var_
 {
     stcTkn_destroy(stack_tkn);
     stcStr_destroy(stack_str);
+    
     symtab_free(gl_var_tab);
     symtab_free(fun_tab);
     if (lc_var_tab != NULL)
