@@ -130,6 +130,36 @@ char stc_popTop(stack_sa_t *stack)
     return term;
 }
 
+token_t *stc_tokPopTop(stack_sa_t *stack)
+{
+    token_t *token = stack->top->token;
+
+    if(stack->top == stack->bot) 
+    { 
+        free(stack->top);
+        stack->top = NULL;
+        stack->bot = NULL;
+        return token;
+    } 
+    else
+    {
+        stack_item_t *tmp = stack->top;
+        stack->top = stack->top->lptr;
+        stack->top->rptr = NULL;
+
+        free(tmp);
+        return token;
+    }
+
+    return token;
+}
+
+char stc_Top(stack_sa_t *stack)
+{
+    if(stack)
+        return stack->top->term;
+}
+
 /**
  * @brief Frees memory allocated by stack.
  *
@@ -222,6 +252,7 @@ bool stc_pushAfter(stack_sa_t *stack, table_elem_t term, table_elem_t rule)
 
     return false;
 }
+
 
 void stc_print(stack_sa_t *stack)
 {
