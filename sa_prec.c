@@ -524,7 +524,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
                 stc_destroy(stack);
                 scanner_unget(que, token, sc_str->str);
-                return true;
+                return SUCCESS;
             }
             else
                 continue;
