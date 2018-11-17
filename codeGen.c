@@ -96,7 +96,7 @@ bool isDBL_ID(token_t *token)
 
 
 
-token_t *generate(token_t *op, token_t *par1, token_t *par2, token_t *par3)
+token_t *generateExp(token_t *op, token_t *des, token_t *par2, token_t *par3, char *funName)
 {
 	if (isINT(par2))
 	{
@@ -104,18 +104,48 @@ token_t *generate(token_t *op, token_t *par1, token_t *par2, token_t *par3)
 		{
 			if (op->name[0] == '+')
 			{
-				printf("ADD LF@%s int@%s int@%s\n", par1->info.ptr->var.key, par2->info.string, par3->info.string);
+				printf("ADD LF@%s int@%s int@%s\n", des->info.ptr->var.key, par2->info.string, par3->info.string);
+				/*destroyToken(par2);
+				destroyToken(par3);*/
+				destroyToken(op);
+				token_t *tmp = createToken("INT_ID", des->info);
+				tmp->info.ptr = des->info.ptr;
+				destroyToken(des);
+				return tmp;
 			}
 			else if (op->name[0] == '-')
 			{
+				printf("SUB LF@%s int@%s int@%s\n", des->info.ptr->var.key, par2->info.string, par3->info.string);
+				/*destroyToken(par2);
+				destroyToken(par3);*/
+				destroyToken(op);
+				token_t *tmp = createToken("INT_ID", des->info);
+				tmp->info.ptr = des->info.ptr;
+				destroyToken(des);
+				return tmp;
 
 			}
 			else if (op->name[0] == '*')
 			{
-
+				printf("MUL LF@%s int@%s int@%s\n", des->info.ptr->var.key, par2->info.string, par3->info.string);
+				/*destroyToken(par2);
+				destroyToken(par3);*/
+				destroyToken(op);
+				token_t *tmp = createToken("INT_ID", des->info);
+				tmp->info.ptr = des->info.ptr;
+				destroyToken(des);
+				return tmp;
 			}
 			else if (op->name[0] == '/')
 			{
+				printf("IDIV LF@%s int@%s int@%s\n", des->info.ptr->var.key, par2->info.string, par3->info.string);
+				/*destroyToken(par2);
+				destroyToken(par3);*/
+				destroyToken(op);
+				token_t *tmp = createToken("INT_ID", des->info);
+				tmp->info.ptr = des->info.ptr;
+				destroyToken(des);
+				return tmp;
 			}
 			else if (strcmp(op->name, "==") == 0)
 			{
@@ -1717,7 +1747,7 @@ token_t *generate(token_t *op, token_t *par1, token_t *par2, token_t *par3)
 int main()
 {
 	elem_t elem;
-	elem.var.key = "promena";
+	elem.var.key = "a";
 	token_info_t info;
 	info.ptr = &elem;
 
@@ -1725,13 +1755,20 @@ int main()
 	tmp.ptr = NULL;
 
 	token_t *token = createToken("ID", info);
-	token_t *op = createToken("+", tmp);
-	printf("DEFVAR LF@%s$type\n", token->info.ptr->var.key);
+	token_t *op = createToken("-", tmp);
+	//printf("DEFVAR LF@%s$type\n", token->info.ptr->var.key);
 	token_info_t info2;
 	info2.string = "5";
 	token_t *token2 = createToken("INT", info2);
 	token_t *token3 = createToken("INT", info2);
-	generate(op, token, token2, token3);
+	token_t *tmp12 = generateExp(op, token, token2, token3, NULL);
+
+
+	free(tmp12);
+	free(token);
+	free(op);
+	free(token2);
+	free(token3);
 	return 0;
 }
 
