@@ -158,6 +158,8 @@ char stc_Top(stack_sa_t *stack)
 {
     if(stack)
         return stack->top->term;
+
+    return -1;
 }
 
 /**
