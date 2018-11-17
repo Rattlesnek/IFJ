@@ -98,213 +98,1616 @@ bool isDBL_ID(token_t *token)
 
 token_t *generate(token_t *op, token_t *par1, token_t *par2, token_t *par3)
 {
-	if (op->name[0] == '+')
+	if (isINT(par2))
 	{
-		if (isINT(par2))
+		if (isINT(par3))
 		{
-			if (isINT(par3))
+			if (op->name[0] == '+')
 			{
 				printf("ADD LF@%s int@%s int@%s\n", par1->info.ptr->var.key, par2->info.string, par3->info.string);
 			}
-			if (isDBL(par3))
-			{
-				/* code */
-			}
-			if (isSTR(par3))
-			{
-				/* code */
-			}
-			if (isID(par3))
-			{
-				/* code */
-			}
-			if (isINT_ID(par3))
-			{
-				/* code */
-			}
-			if (isDBL_ID(par3))
-			{
-				/* code */
-			}
-		}
-		else if (isDBL(par2))
-		{
-			if (isINT(par3))
+			else if (op->name[0] == '-')
 			{
 
 			}
-			if (isDBL(par3))
-			{
-				/* code */
-			}
-			if (isSTR(par3))
-			{
-				/* code */
-			}
-			if (isID(par3))
-			{
-				/* code */
-			}
-			if (isINT_ID(par3))
-			{
-				/* code */
-			}
-			if (isDBL_ID(par3))
-			{
-				/* code */
-			}
-		}
-		else if (isSTR(par2))
-		{
-			if (isINT(par3))
+			else if (op->name[0] == '*')
 			{
 
 			}
-			if (isDBL(par3))
+			else if (op->name[0] == '/')
 			{
-				/* code */
 			}
-			if (isSTR(par3))
+			else if (strcmp(op->name, "==") == 0)
 			{
-				/* code */
 			}
-			if (isID(par3))
+			else if (op->name[0] == '=')
 			{
-				/* code */
 			}
-			if (isINT_ID(par3))
+			else if (strcmp(op->name, "<=") == 0)
 			{
-				/* code */
 			}
-			if (isDBL_ID(par3))
+			else if (strcmp(op->name, ">=") == 0)
 			{
-				/* code */
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
 			}
 		}
-		else if (isID(par2))
+		if (isDBL(par3))
 		{
-			if (isINT(par3))
+			if (op->name[0] == '+')
 			{
 
 			}
-			if (isDBL(par3))
-			{
-				/* code */
-			}
-			if (isSTR(par3))
-			{
-				/* code */
-			}
-			if (isID(par3))
-			{
-				/* code */
-			}
-			if (isINT_ID(par3))
-			{
-				/* code */
-			}
-			if (isDBL_ID(par3))
-			{
-				/* code */
-			}
-		}
-		else if (isINT_ID(par2))
-		{
-			if (isINT(par3))
+			else if (op->name[0] == '-')
 			{
 
 			}
-			if (isDBL(par3))
-			{
-				/* code */
-			}
-			if (isSTR(par3))
-			{
-				/* code */
-			}
-			if (isID(par3))
-			{
-				/* code */
-			}
-			if (isINT_ID(par3))
-			{
-				/* code */
-			}
-			if (isDBL_ID(par3))
-			{
-				/* code */
-			}
-		}
-		else if (isDBL_ID(par2))
-		{
-			if (isINT(par3))
+			else if (op->name[0] == '*')
 			{
 
 			}
-			if (isDBL(par3))
+			else if (op->name[0] == '/')
 			{
-				/* code */
 			}
-			if (isSTR(par3))
+			else if (strcmp(op->name, "==") == 0)
 			{
-				/* code */
 			}
-			if (isID(par3))
+			else if (op->name[0] == '=')
 			{
-				/* code */
 			}
-			if (isINT_ID(par3))
+			else if (strcmp(op->name, "<=") == 0)
 			{
-				/* code */
 			}
-			if (isDBL_ID(par3))
+			else if (strcmp(op->name, ">=") == 0)
 			{
-				/* code */
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isSTR(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isINT_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+
+		if (isDBL_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+	}
+	else if (isDBL(par2))
+	{
+		if (isINT(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isSTR(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isINT_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+	}
+	else if (isSTR(par2))
+	{
+		if (isINT(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isSTR(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isINT_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+	}
+	else if (isID(par2))
+	{
+		if (isINT(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isSTR(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isINT_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+	}
+	else if (isINT_ID(par2))
+	{
+		if (isINT(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isSTR(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isINT_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+	}
+	else if (isDBL_ID(par2))
+	{
+		if (isINT(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isSTR(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isINT_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
+			}
+		}
+		if (isDBL_ID(par3))
+		{
+			if (op->name[0] == '+')
+			{
+
+			}
+			else if (op->name[0] == '-')
+			{
+
+			}
+			else if (op->name[0] == '*')
+			{
+
+			}
+			else if (op->name[0] == '/')
+			{
+			}
+			else if (strcmp(op->name, "==") == 0)
+			{
+			}
+			else if (op->name[0] == '=')
+			{
+			}
+			else if (strcmp(op->name, "<=") == 0)
+			{
+			}
+			else if (strcmp(op->name, ">=") == 0)
+			{
+			}
+			else if (strcmp(op->name, "!=") == 0)
+			{
+			}
+			else if (op->name[0] == '<')
+			{
+			}
+			else if (op->name[0] == '>')
+			{
+			}
+			else
+			{
+				fprintf(stderr, "Wrong operand\n");
 			}
 		}
 	}
 
+	/*
+	else if (op->name[0] == '+')
+	{
+
+	}
 	else if (op->name[0] == '-')
 	{
-		/* code */
+
 	}
 	else if (op->name[0] == '*')
 	{
-		/* code */
+
 	}
 	else if (op->name[0] == '/')
 	{
-		/* code */
 	}
 	else if (strcmp(op->name, "==") == 0)
 	{
-		/* code */
 	}
 	else if (op->name[0] == '=')
 	{
-		/* code */
 	}
 	else if (strcmp(op->name, "<=") == 0)
 	{
-		/* code */
 	}
 	else if (strcmp(op->name, ">=") == 0)
 	{
-		/* code */
 	}
 	else if (op->name[0] == '<')
 	{
-		/* code */
 	}
 	else if (op->name[0] == '>')
 	{
-		/* code */
+	}
+	else if (op->name[0] == '!=')
+	{
 	}
 	else
 	{
 		fprintf(stderr, "Wrong operand\n");
 	}
-
+	*/
 
 	return NULL;
 }
