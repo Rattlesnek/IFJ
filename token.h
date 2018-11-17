@@ -38,10 +38,8 @@
  * 
  */
 typedef union token_info {
-    elem_t *ptr;    // either ptr to info-element in hash table (use in all cases except latter two)
-    int intg;       // or integer (use only when token name is "INT")
-    double dbl;     // or double (use only when token name is "DBL")
-    char *string;   // or string (use only when token name is "STR")
+    elem_t *ptr;    // either ptr to info-element in hash table
+    char *string;   // or string (use only when token name is "STR" or "INT" or "DBL")
 } token_info_t;
 
 /**
