@@ -106,8 +106,7 @@ elem_t *symtab_elem_add(symtable_t *symtab, char *key)
         }
         strcpy(elem->func.key, key);
         elem->func.is_defined = false;
-        elem->func.n_params = 0;
-        elem->func.params = NULL;
+        elem->func.n_params = UNDEF_NO_PARAMS;
     }
 
     elem->next = NULL;
@@ -187,7 +186,6 @@ void symtab_clear(symtable_t *symtab)
                 else if (symtab->type == FUNCTIONS)
                 {
                     free(elem->func.key);
-                    dynamicArrParams_free(elem->func.params);
                 }
                 free(elem);
                 elem = next;
@@ -229,20 +227,22 @@ elem_t *symtab_find(symtable_t *symtab, const char *key)
     return NULL;
 }
 
-void symtab_foreach(symtable_t *symtab, void (*func) (elem_t *elem))
+bool symtab_foreach(symtable_t *symtab, bool (*func) (elem_t *elem))
 {
     if (!symtab)
     {
-        return;
+        return false;
     }
 
     for (size_t i = 0; i < symtab_bucket_count(symtab); ++i)
     {
         for (elem_t *elem = symtab->ptr[i]; elem != NULL ; elem = elem->next)
         {
-            func(elem);
+            if ( ! func(elem))
+                return false;
         }
     }
+    return true;
 }
 
 void symtab_free(symtable_t *symtab)

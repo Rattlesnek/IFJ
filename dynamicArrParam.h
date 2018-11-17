@@ -33,6 +33,12 @@
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
+typedef struct
+{
+  elem_t **param_arr;
+  unsigned int length; // lenght of params
+  unsigned int max; // maximal length of params
+} dynamicArrParams_t;
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
