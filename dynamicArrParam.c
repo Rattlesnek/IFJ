@@ -65,6 +65,9 @@ dynamicArrParams_t *dynamicArrParams_init()
  */
 void dynamicArrParams_free(dynamicArrParams_t *a)
 {
+    if(a == NULL)
+        return;
+
     free(a->param_arr);
     a->param_arr = NULL;
     a->length = 0;

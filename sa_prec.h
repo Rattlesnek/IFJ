@@ -47,6 +47,7 @@ typedef enum {
     _E_,        /* Non-Terminal */
     _L_,
     _S_,
+    _F_,
 
                 /* Rules        */
    _sml_,       // <
@@ -80,7 +81,8 @@ typedef enum {
  * @return  true      If analysed expression is correct  
  *          false     If analysed expression is incorrect 
  */   
-bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *symtable);
+bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtable, 
+             symtable_t *func_symtable);
 
 
 

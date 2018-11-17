@@ -33,6 +33,7 @@
 
 typedef struct stack_item {
     char term;
+    token_t *token;
     struct stack_item *rptr;
     struct stack_item *lptr;
 } stack_item_t;
@@ -70,7 +71,7 @@ stack_sa_t *stc_init();
  * @return     true   If term is pushed successfuly
  *             false  If error ocurres 
  */
-bool stc_push(stack_sa_t *stack, char term);
+bool stc_push(stack_sa_t *stack, char term, token_t *token);
 
 /**
  * @brief Pops token from top of stack

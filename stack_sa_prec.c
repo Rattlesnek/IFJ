@@ -64,13 +64,14 @@ stack_sa_t *stc_init()
  * @return     true   If term is pushed successfuly
  *             false  If error ocurres 
  */
-bool stc_push(stack_sa_t *stack, char term)
+bool stc_push(stack_sa_t *stack, char term, token_t *tok)
 {
     stack_item_t *new = malloc(sizeof(stack_item_t));
     if(new == NULL)
         return false;
 
     new->term = term;
+    new->token = tok;
     if(stack->top == NULL && stack->bot == NULL)
     {
         stack->bot = new;
@@ -101,6 +102,11 @@ char stc_popTop(stack_sa_t *stack)
     
     if(stack->top == stack->bot) 
     {
+        if(stack->top->token != NULL)
+        {
+            free(stack->top->token->name);
+            free(stack->top->token);
+        }
         free(stack->top);
         stack->top = NULL;
         stack->bot = NULL;
@@ -112,6 +118,11 @@ char stc_popTop(stack_sa_t *stack)
         stack->top = stack->top->lptr;
         stack->top->rptr = NULL;
 
+        if(tmp->token != NULL)
+        {
+            free(tmp->token->name);
+            free(tmp->token);
+        }
         free(tmp);
         return term;
     }
@@ -131,6 +142,11 @@ void stc_destroy(stack_sa_t *stack)
     {
         stack_item_t *tmp = next;
         next = next->rptr;
+        if(tmp->token != NULL)
+        {
+            free(tmp->token->name);
+            free(tmp->token);
+        }
         free(tmp);
     }
 
@@ -168,6 +184,10 @@ char stc_topTerm(stack_sa_t *stack)
             return _rel_;
         else if(tmp->term == _str_)
             return _str_;
+        else if(tmp->term == _func_)
+            return _func_;
+        else if(tmp->term == _coma_)
+            return _coma_;
     }
 
     return EMPTY;
@@ -184,7 +204,7 @@ bool stc_pushAfter(stack_sa_t *stack, table_elem_t term, table_elem_t rule)
         return false;
 
     new->term = rule;
-
+    new->token = NULL;
     if(tmp->rptr != NULL)
     {
         new->rptr = tmp->rptr;
