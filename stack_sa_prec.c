@@ -164,6 +164,10 @@ char stc_topTerm(stack_sa_t *stack)
             return _mins_;
         else if(tmp->term == _div_)
             return _div_;
+        else if(tmp->term == _rel_)
+            return _rel_;
+        else if(tmp->term == _str_)
+            return _str_;
     }
 
     return EMPTY;
@@ -172,7 +176,7 @@ char stc_topTerm(stack_sa_t *stack)
 bool stc_pushAfter(stack_sa_t *stack, table_elem_t term, table_elem_t rule)
 {
     stack_item_t *tmp = NULL;
-    for(tmp = stack->top; tmp->term != term; tmp = tmp->lptr)
+    for(tmp = stack->top; tmp->term != (char)term; tmp = tmp->lptr)
         ;
 
     stack_item_t *new = malloc(sizeof(stack_item_t));
