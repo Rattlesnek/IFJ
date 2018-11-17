@@ -179,12 +179,8 @@ bool symtab_remove(symtable_t *t, const char *key);
  * @param[in]  is_defined  Indicates a function is if defined
  * @param[in]      key         The key used as in the hash function
  */
-void symtab_update(symtable_t *t, bool is_defined, char *key);
 
-
-
-
-
+//elem_t *symtab_elem_add(symtable_t *symtab, char *name /*(ID, FUNC)*/, char *key /*(realne jmeno promenne).*/) 
 
 
 

@@ -9,6 +9,8 @@ parser: main_parser.c parser.c parser.h scanner.c scanner.h token.c token.h dyna
 scanner: main.c scanner.c scanner.h token.c token.h dynamicStr.c dynamicStr.h queue.c queue.h
 	gcc $(CFLAGS)  main.c scanner.c token.c dynamicStr.c queue.c -o scanner
 
+sa_prec: symtable.c symtable.h main_sa_prec.c scanner.c scanner.h token.c token.h dynamicStr.c dynamicStr.h dynamicArrParam.c dynamicArrParam.h sa_prec.c sa_prec.h stack_sa_prec.c stack_sa_prec.h
+	gcc $(CFLAGS) main_sa_prec.c scanner.c token.c dynamicStr.c queue.c symtable.c sa_prec.c stack_sa_prec.c dynamicArrParam.c -o sa_prec
 clean:
 	rm -f parser
 	rm -f scanner
