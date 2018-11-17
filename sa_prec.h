@@ -81,7 +81,7 @@ typedef enum {
  * @return  true      If analysed expression is correct  
  *          false     If analysed expression is incorrect 
  */   
-bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtable, 
+int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtable, 
              symtable_t *func_symtable);
 
 

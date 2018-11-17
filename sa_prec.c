@@ -25,6 +25,7 @@
 #include "scanner.h"
 #include "sa_prec.h"
 #include "stack_sa_prec.h"
+#include "error.h"
 #include <string.h>
 #include <stdbool.h>
 
@@ -148,7 +149,7 @@ static inline bool sa_detectSucEnd(stack_sa_t *stack, table_elem_t token)
  * @return  true      If analysed expression is correct  
  *          false     If analysed expression is incorrect 
  */   
-bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab)
+int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab)
 {
     stack_sa_t *stack = stc_init();
     stc_push(stack, _empt_, NULL);
@@ -536,20 +537,20 @@ bool sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtabl
             stc_destroy(stack);
             free(token->name);
             free(token);
-            return true;
+            return SUCCESS;
         }
 
         token = scanner_get(sc_str, que);
     }
 
     stc_destroy(stack);
-    return true;
+    return SUCCESS;
 
 fail_end:
     stc_destroy(stack);
     free(token->name);
     free(token);
-    return false;
+    return ERR_SYN;
 
 }
 
