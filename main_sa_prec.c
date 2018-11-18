@@ -26,8 +26,11 @@ int main()
     elem->func.is_defined = true;
     elem->func.n_params = 2;
 
-    if(!sa_prec(sc_str, que, lsymtable, fsymtable))
-        printf("=> sa_prec: Something is wrong, I guess...\n");
+    elem_t *elem1 = symtab_elem_add(lsymtable, "a");
+    elem_t *elem2 = symtab_elem_add(fsymtable, "f");
+    int ret_value = sa_prec(sc_str, que, lsymtable, fsymtable);
+    if(ret_value)
+        printf("=> sa_prec: Something is wrong, I guess... (%d)\n", ret_value);
     else
         printf("=> sa_prec: The expression is OK\n");
 

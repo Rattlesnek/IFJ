@@ -163,14 +163,17 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     int num_params = 0;
     elem_t *loc_elem = NULL;
     elem_t *func_elem = NULL;
+    int count = 0;
+    char func_read = 0;
     while(42)
     {
         stack_top_term = stc_topTerm(stack);
     
         token_term = sa_getTokenIndex(token);
 
+
 #if TEST_FUNC
-        if(token_term == _id_ && (strcmp(token->name, "ID") == 0) && detect_func == 0)
+        if(token_term == _id_ && (strcmp(token->name, "ID") == 0))
         {
             loc_elem = symtab_find(loc_symtab, sc_str->str);
             func_elem = symtab_find(func_symtab, sc_str->str);
@@ -181,17 +184,28 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             }
             else if(func_elem != NULL)
             {
+                if(detect_func == 1 || count != 0)
+                    goto fail_end;
+
                 token_term = _func_;
+                detect_func = 1;
             }
             else
             {
+                if(loc_symtab->name == NULL && func_symtab->name == NULL)
+                    goto sem_fail_defined;
+
+                if(detect_func == 1 || count != 0)
+                    goto fail_end;
+
                 func_elem = symtab_elem_add(func_symtab, sc_str->str);
                 func_elem->func.is_defined = false;
                 token_term = _func_;
+                detect_func = 1;
             }
 
-            detect_func = 1;
         }
+        count++;
 #endif
 
         printf("=> sa_prec: Token_term %d\n", token_term);
@@ -205,10 +219,17 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         }
         else if(rule == '=')
         {
+            if(func_read)
+                goto fail_end;
+
             stc_push(stack, token_term, token);
+
         }
         else if(rule == '<')
         {
+            if(func_read)
+                goto fail_end;
+
             stc_pushAfter(stack, stack_top_term, _sml_);
             stc_push(stack, token_term, token);
             stc_print(stack);
@@ -305,8 +326,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         if(!func_elem->func.is_defined)
                             func_elem->func.n_params = num_params;
                         else if(func_elem->func.n_params != num_params)
-                            goto fail_end;
+                            goto sem_fail;
 
+                        func_read = 1;
                         break;
                     }
                     else if(term == _E_)
@@ -326,8 +348,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                                 if(!func_elem->func.is_defined)
                                     func_elem->func.n_params = num_params;
                                 else if(func_elem->func.n_params != num_params)
-                                    goto fail_end;
-
+                                    goto sem_fail;
+                                func_read = 1;
                                 break;
                             }
                             else if(term == _sml_)
@@ -364,8 +386,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             if(!func_elem->func.is_defined)
                                 func_elem->func.n_params = num_params;
                             else if(func_elem->func.n_params != num_params)
-                                goto fail_end;
+                                goto sem_fail;
 
+                            func_read = 1;
                             break;
                         }
 
@@ -481,8 +504,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(!func_elem->func.is_defined)
                             func_elem->func.n_params = num_params;
                     else if(func_elem->func.n_params != num_params)
-                            goto fail_end;
+                            goto sem_fail;
 
+                    func_read = 1;
                     break;
 
                 /* F -> f E, ... , E */    
@@ -513,8 +537,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(!func_elem->func.is_defined)
                             func_elem->func.n_params = num_params;
                     else if(func_elem->func.n_params != num_params)
-                            goto fail_end;
+                            goto sem_fail;
 
+                    func_read = 1;
                     break;
 
             }
@@ -523,8 +548,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             if(sa_detectSucEnd(stack, token_term))
             {
                 stc_destroy(stack);
-                scanner_unget(que, token, sc_str->str);
-                return true;
+                free(token->name);
+                free(token);
+                //scanner_unget(que, token, sc_str->str);
+                return SUCCESS;
             }
             else
                 continue;
@@ -534,7 +561,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         if(sa_detectSucEnd(stack, token_term))
         {
             stc_destroy(stack);
-            scanner_unget(que, token, sc_str->str);
+            free(token->name);
+            free(token);
+            //scanner_unget(que, token, sc_str->str);
             return SUCCESS;
         }
 
@@ -550,6 +579,17 @@ fail_end:
     free(token);
     return ERR_SYN;
 
+sem_fail:
+    stc_destroy(stack);
+    free(token->name);
+    free(token);
+    return ERR_SEM_FUNC;
+
+sem_fail_defined:
+    stc_destroy(stack);
+    free(token->name);
+    free(token);
+    return ERR_SEM_UNDEF;
 }
 
 ////////////////////////////////////////////////////////////////////////
