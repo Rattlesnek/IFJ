@@ -82,7 +82,7 @@ typedef enum
 	State_COMMBEGI,
 	State_COMMBEGIN,
 	State_MAY_END,		//Maybe end of comments
-	State_COMM_LINE, 	//Comments
+	State_COMM_LINE, 	//Comments #
 	State_END_COMM,		//Ending of comments
 	State_END_COMME,	//Ending like "=e"
 	State_END_COMMEN,

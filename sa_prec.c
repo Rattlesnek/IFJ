@@ -548,9 +548,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             if(sa_detectSucEnd(stack, token_term))
             {
                 stc_destroy(stack);
+
                 free(token->name);
                 free(token);
                 //scanner_unget(que, token, sc_str->str);
+
                 return SUCCESS;
             }
             else

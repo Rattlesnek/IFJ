@@ -59,39 +59,39 @@ void sc_unget(int c)
 }
 
 /**
- * @brief Converting str to int
+ * @brief Converts str from input to str according to task to format of int
  * 
- * @param str Structure with string to be converted
- * @return int Whole number
+ * @param s destined string with needed format
+ * @param sc_str input string
  */
-int toInt(dynamicStr_t *sc_str)
+bool InttoStr (char *s, dynamicStr_t *sc_str)
 {
     char *endptr;
     int num = strtol(sc_str->str, &endptr, 10);
     if(*endptr)
     {
-        dynamicStr_free(sc_str);
-        return -1  ;
+        return false;
     }
-    return num;
+    sprintf(s, "%d", num);
+    return true;
 }
 
 /**
- * @brief Converting str to float
+ * @brief Converts str from input to str according to task to format of double
  * 
- * @param str Structure with str to be converted
- * @return float Floating number
+ * @param s destined str with needed format
+ * @param sc_str input string
  */
-double toDouble(dynamicStr_t *sc_str)
+bool DobtoStr (char *s, dynamicStr_t *sc_str)
 {
     char *endptr;
     double num = strtod(sc_str->str, &endptr);
     if(*endptr)
     {
-        dynamicStr_free(sc_str);
-        return -1  ;
+        return false;
     }
-    return num;
+    sprintf(s, "%a", num);
+    return true;
 }
 /**
  * @brief Check if ID is keywords
@@ -130,30 +130,40 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
     token_info_t sc_info;
     token_t *sc_token;
     int c = 0;
+
+////////////////////////////////////////////////////////////
+///////     Comment in the begginig of the file     ///////
+///////////////////////////////////////////////////////////
     static bool test_begin = true;
     if(test_begin)
     {
-        //blabla otestuju =begin
-        if((c = fgetc(stdin)) != EOF)
+        test_begin = false;
+        if((c = getc(stdin)) != EOF)
         {
             if(c == '=')
             {
-                char tmp[6];
-                if(fgets(tmp, 6, stdin) != NULL)
+                state = State_COMM;
+
+                /*
+                char tmp[5];
+                if(fgets(tmp, 5, stdin) != NULL)
                 {
                     if(strncmp(tmp, "begin", 6) == 0)
                     {
                         //tak je to dobre a dodelej osetreni jestli je za tim white space
-                    }
+                    }   
                 }
+                else
+                    goto err_internal;
+                */
             }
+            else if (c == '#')
+                state = State_LCOMM;
+
             else 
-            {
                 ungetc(c, stdin);
-            }
-        }
             
-        test_begin = false;
+        }
     }
     if (que_empty(que))
     { 
@@ -657,12 +667,15 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.intg = toInt(sc_str); 
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                        if ( !(InttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                            goto err_internal;
+
                         sc_token= createToken("INT", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s  || Value : %d\n", sc_token->name, sc_info.intg );
+                        printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
                         return sc_token;   
                     }
                     break;
@@ -688,12 +701,15 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.intg = 0;
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                        if ( !(InttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                            goto err_internal;
+
                         sc_token= createToken("INT", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s\n", sc_token->name);
+                        printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string);
                         return sc_token;  
                     }
                     else
@@ -758,12 +774,15 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.dbl = toDouble(sc_str); 
-                        sc_token= createToken("DBL", sc_info);
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                        if ( !(DobtoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                            goto err_internal;
+
+                        sc_token = createToken("DBL", sc_info);
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );
+                        printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
                         return sc_token;   
                     }
                     break;
@@ -1079,32 +1098,41 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_INT:
                     state = State_S;
-                    sc_info.intg = toInt(sc_str); 
+                    sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) ); 
+                    if ( !(InttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                        goto err_internal;
+
                     sc_token= createToken("INT", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s  || Value : %d\n", sc_token->name, sc_info.intg );
+                    printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
                     return sc_token; 
 
                 case State_INT0:
                     state = State_S;
-                    sc_info.intg = 0;
+                    sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) ); 
+                    if ( !(InttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                        goto err_internal;
+
                     sc_token= createToken("INT", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s\n", sc_token->name);
+                    printf("Token-name: %s  ||  Value :%s\n", sc_token->name, sc_info.string);
                     return sc_token;  
 
                 case State_FLOAT:
                     state = State_S;
-                    sc_info.dbl = toDouble(sc_str); 
+                    sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) ); 
+                    if ( !(DobtoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                            goto err_internal;
+
                     sc_token= createToken("DBL", sc_info);
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    printf("Token-name: %s  || Value : %f\n", sc_token->name, sc_info.dbl );;
+                    printf("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string);;
                     return sc_token;   
 
                 case State_LTN:
@@ -1275,17 +1303,17 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 ///         ERROR HANDLING          ///
 ///////////////////////////////////////
 err_lexical:
-    sc_unget(c);
-    dynamicStr_clear(sc_str); 
+    sc_unget(c); 
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_LEX", sc_info);
+    printf("Token-name: %s\n", sc_token->name);
     return sc_token;
 
 err_internal:
-    dynamicStr_free(sc_str);
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_INTERNAL", sc_info);
-   return sc_token;
+    printf("Token-name: %s\n", sc_token->name);
+    return sc_token;
 }
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///

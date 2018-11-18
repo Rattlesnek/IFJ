@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "parser.h"
+#include "sa_prec.h"
 
 #include <stdbool.h>
 //////////////////////
@@ -50,13 +51,13 @@
 // LL-Grammar table
 int ll_table[LL_ROWS][LL_COLS] = {
     // if/els/elif/end/whi/def/EOL/EOF/ =/ (/  )/  ,/  ID/ FUNC/expr
-    {   1,	0,	0,	0,	1,	1,	2,	3,	0,	0,	0,	0,	1,	1,	1,  },  // [st-list]
+    {   1,	0,	0,	0,	1,	1,	2,	3,	0,	1,	0,	0,	1,	1,	1,  },  // [st-list]
     {   0,	0,	0,	0,	0,	0,	4,	5,	0,	0,	0,	0,	0,	0,	0,	},  // [EOF-EOL]
-    {   7,	0,	0,	0,	7,	6,	0,	0,	0,	0,	0,	0,	7,	7,	7,	},  // [stat]
+    {   7,	0,	0,	0,	7,	6,	0,	0,	0,	7,	0,	0,	7,	7,	7,	},  // [stat]
     {   9,	0,	0,	0,	8,	0,	0,	0,	0,	0,	0,	0,	10,	0,	0,	},  // [command]
     {   0,	0,	0,	0,	0,	0,	0,	0,	11,	0,	0,	0,	0,	0,	0,	},  // [func-assign-expr]
-    {   12,	0,	0,	14,	12,	0,	13,	0,	0,	0,	0,	0,  12,	12,	12,	},  // [end-list]
-    {   15,	18,	17,	19,	15,	0,	16,	0,	0,	0,	0,	0,	15,	15,	15,	},  // [if-list]
+    {   12,	0,	0,	14,	12,	0,	13,	0,	0,	12,	0,	0,  12,	12,	12,	},  // [end-list]
+    {   15,	18,	17,	19,	15,	0,	16,	0,	0,	15,	0,	0,	15,	15,	15,	},  // [if-list]
     {   0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,  0,	20,	21,	0,	},  // [id-func]
     {   0,	0,	0,	0,	0,	0,	24,	0,	0,	22,	0,	0,	23,	0,	0,	},  // [params-gen]
     {   0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	0,	25,	0,	0,	},  // [p-brackets]
@@ -181,7 +182,7 @@ int LLtableFind(char *nonterm, char *term)
         term_idx = ID_term;
     else if (strcmp(term, "FUNC") == 0)
         term_idx = FUNC_term;
-    else if (isExpr(term)) // has to be behind strcmp(term, "FUNC") otherwise wont work
+    else if (isExpr(term)) // has to be behind strcmp(term, "FUNC") and behind strcmp(term, "(") otherwise wont work
         term_idx = EXPR_term;
 
 
@@ -192,15 +193,31 @@ int LLtableFind(char *nonterm, char *term)
 }
 
 
-void print_fun(elem_t *element)
+bool print_fun(elem_t *element)
 {
-    printf("FUN %s\n", element->func.key);
+    printf("%s, ", element->func.key);
+    return true;
+}
+
+bool print_fun_info(elem_t *element)
+{
+    printf("%s\n", element->func.key);
+    printf("%d\n", element->func.is_defined);
+    printf("%d\n", element->func.n_params);
+
+    return true;
 }
 
 
-void print_var(elem_t *element)
+bool print_var(elem_t *element)
 {
-    printf("VAR %s\n", element->var.key);
+    printf("%s, ", element->var.key);
+    return true;
+}
+
+bool check_fun(elem_t *element)
+{
+    return element->func.is_defined;
 }
 
 
@@ -249,7 +266,9 @@ bool pushRevertedRules(stack_tkn_t *stack_tkn, int rule)
 
 
 
-void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str, symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab, char **key_tmp, token_t *act, token_t *token)
+void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
+             symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab,
+             dynamicArrParams_t *param_arr, char **key_tmp, token_t *act, token_t *token)
 {
     stcTkn_destroy(stack_tkn);
     stcStr_destroy(stack_str);
@@ -259,6 +278,8 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str, symtable_t *gl_var_
     if (lc_var_tab != NULL)
         symtab_free(lc_var_tab);
 
+    dynamicArrParams_free(param_arr);
+
     destroyTempKey(key_tmp);
     destroyToken(act);
     destroyToken(token);
@@ -266,7 +287,7 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str, symtable_t *gl_var_
 
 
 ///////////////////////////////////////////////////////////////////////////////
-int precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
+int precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_tab, symtable_t *fun_tab)
 {
     token_t *act = scanner_get(sc_str, que);
     //printf("expr handling: %s\n", act->name);
@@ -285,7 +306,7 @@ int precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, stack_tkn_t *stack_tkn, token_t *act)
+int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, symtable_t *gl_var_tab, symtable_t *lc_var_tab, symtable_t *fun_tab, stack_tkn_t *stack_tkn, token_t *act)
 {
     // destroy token: "**expr**"
     token_t *token;
@@ -295,9 +316,15 @@ int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, stack_tkn_t *stack_tkn
 
     scanner_unget(que, act, sc_str->str);
     
+    symtable_t *var_tab;
+    if (lc_var_tab == NULL)
+        var_tab = gl_var_tab;
+    else    
+        var_tab = lc_var_tab;
+
     // SPUSTENIE PRECEDENCNEJ ANALYZY 
     //////////////////////////////////////////////////
-    return precedenc_analysis_temp(sc_str, que);
+    return precedenc_analysis_temp(sc_str, que, var_tab, fun_tab);
     /////////////////////////////////////////////////
 }
 
@@ -322,11 +349,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     bool get_func_params = false;
 
     int rule;
-    int ret_val;
+    int ret_val = -1;
 
     char *id_key_tmp = NULL;
     char *func_key_tmp = NULL;
     int param_cnt;
+    dynamicArrParams_t *param_arr = NULL;
 
     stack_tkn_t *stack_tkn;
     stack_str_t *stack_str;
@@ -343,10 +371,10 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     stack_str = stcStr_create();
     if (stack_str == NULL)
         goto err_internal_1;
-    gl_var_tab = symtab_init(10, VARIABLES);
+    gl_var_tab = symtab_init(NULL, VARIABLES);
     if (gl_var_tab == NULL)
         goto err_internal_2;
-    fun_tab = symtab_init(10, FUNCTIONS);
+    fun_tab = symtab_init(NULL, FUNCTIONS);
     if (fun_tab == NULL)
         goto err_internal_3;
 
@@ -391,12 +419,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
         {
             if (strcmp(act->name, "EOF") == 0)
             {
-                printf("EOF reached on both stack_tkn and scanner\n");
+                printf("EOF reached on both stack and scanner\n");
                 succ = true;
             }
             else
             {
-                printf("EOF reached on stack_tkn but not from scanner\n");
+                printf("EOF reached on stack but not from scanner\n");
                 fail = true;
             }
         }
@@ -405,7 +433,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             if (strcmp(top->name, "**if**") == 0)
             {
                 //printf("*********** IF ***********\n");                
-                ret_val = expresionsHandler(sc_str, que, stack_tkn, act);
+                ret_val = expresionsHandler(sc_str, que, gl_var_tab, lc_var_tab, fun_tab, stack_tkn, act);
                 
                 //////////////////////
                 // GENERATE IF 
@@ -421,7 +449,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             else if (strcmp(top->name, "**while**") == 0)
             {
                 //printf("********* WHILE **********\n");
-                ret_val = expresionsHandler(sc_str, que, stack_tkn, act);
+                ret_val = expresionsHandler(sc_str, que, gl_var_tab, lc_var_tab, fun_tab, stack_tkn, act);
                 
                 //////////////////////
                 // GENERATE WHILE
@@ -436,14 +464,17 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             else if (strcmp(top->name, "**expr**") == 0)
             {
                 //printf("********** EXPR **********\n");
-                ret_val = expresionsHandler(sc_str, que, stack_tkn, act);
+                ret_val = expresionsHandler(sc_str, que, gl_var_tab, lc_var_tab, fun_tab, stack_tkn, act);
                 
                 ////////////////////////////////
                 // GENERATE VARIABLE definition
                 ///////////////////////////////
                 printf("var %s\n", id_key_tmp);
                 
-                symtab_elem_add(gl_var_tab, id_key_tmp); // TODO
+                if (lc_var_tab == NULL)
+                    symtab_elem_add(gl_var_tab, id_key_tmp); // TODO
+                else 
+                    symtab_elem_add(lc_var_tab, id_key_tmp);
                 destroyTempKey(&id_key_tmp);
 
                 get_new_token = true;
@@ -457,34 +488,76 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             {
                 //printf("top == act: %s\n", act->name);
                 if (get_func_params)
-                {
+                {                  
                     if (strcmp(act->name, "ID") == 0)
                     {
                         if (param_cnt >= 0)
                         {
-                            symtab_elem_add(lc_var_tab, sc_str->str);
+                            elem_t *param = symtab_elem_add(lc_var_tab, sc_str->str);
+                            if (param == NULL)
+                                goto err_internal_main;
+                            if (! dynamicArrParams_add(param_arr, param))
+                                goto err_internal_main;
                         }
                         param_cnt++;
                     }
                     else if (strcmp(act->name, "EOL") == 0)
                     {                   
                         //////////////////////////////
-                        // GENERATE FUNCTION prolog
+                        // GENERATE FUNCTION
                         /////////////////////////////
-                        printf("def %s params %d\n", func_key_tmp, param_cnt);
-                        // push to stack_tkn function epilog
+                        elem_t *fun = symtab_elem_add(fun_tab, func_key_tmp);
+                        if (fun == NULL)
+                            goto err_internal_main;
+                        else if (fun->func.n_params == UNDEF_NO_PARAMS)
+                        {
+                            fun->func.is_defined = true;
+                            fun->func.n_params = param_cnt;
+                        }
+                        else
+                        {
+                            if (fun->func.n_params == param_cnt)
+                            {
+                                fun->func.is_defined = true;
+                            }
+                            else
+                                goto err_sem_func;
+                        }
+                        destroyTempKey(&func_key_tmp);
+                        
+                        // GENERATE FUNCTION PROLOG
+                        printf("def %s params %d\n", fun->func.key, param_cnt);
+                        for (int i = 0; i < fun->func.n_params; i++)
+                            printf("param %s ", param_arr->param_arr[i]->var.key);
+                        printf("\n");
+                        dynamicArrParams_free(param_arr);
+                        param_arr = NULL;
+
+                         // PUSH TO STACK FUNCTION EPILOG
                         stcStr_push(stack_str, "enddef\n");
 
-                        symtab_elem_add(fun_tab, func_key_tmp);
-                        destroyTempKey(&func_key_tmp);
 
                         get_func_params = false;
                     }
                 }
                 if (strcmp(act->name, "end") == 0 || strcmp(act->name, "else") == 0)
                 {
-                    // stack_tkn pop and add to output
-                    printf("%s", stcStr_top(stack_str));
+                    ////////////////////////////
+                    // STACK POP GENERATED CODE
+                    ///////////////////////////
+                    char *generated_code = stcStr_top(stack_str);
+                    printf("%s", generated_code);
+                    ////////////////////////////////////////////// TODO
+                    if (strcmp(generated_code, "enddef\n") == 0)
+                    {  
+                        printf("LOCAL TABLE: ");
+                        symtab_foreach(lc_var_tab, print_var);
+                        printf("\n");
+
+                        symtab_free(lc_var_tab);
+                        lc_var_tab = NULL;
+                    }
+                    
                     stcStr_pop(stack_str);
                 }
 
@@ -522,7 +595,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 
                 //printf("create local hash table for function\n");
                 if (lc_var_tab == NULL) // TODO
-                    lc_var_tab = symtab_init(10, VARIABLES);
+                    lc_var_tab = symtab_init(func_key_tmp, VARIABLES);
+                
+                param_arr = dynamicArrParams_init();
+                if (param_arr == NULL)
+                    goto err_internal_main;
 
                 get_func_params = true;
             }
@@ -531,7 +608,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             if (rule == EXPR_INCLUDE)
             {
                 //printf("********** EXPR **********\n");
-                ret_val = expresionsHandler(sc_str, que, stack_tkn, act);
+                ret_val = expresionsHandler(sc_str, que, gl_var_tab, lc_var_tab, fun_tab, stack_tkn, act);
                 get_new_token = true;
                 //printf("********** END ***********\n");
             }
@@ -549,7 +626,13 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 
                 // SPUSTENIE PRECEDENCNEJ ANALYZY
                 //////////////////////////////////////////
-                ret_val = precedenc_analysis_temp(sc_str, que);
+                symtable_t *var_tab;
+                if (lc_var_tab == NULL)
+                    var_tab = gl_var_tab;
+                else    
+                    var_tab = lc_var_tab;
+                
+                ret_val = precedenc_analysis_temp(sc_str, que, var_tab, fun_tab);
                 /////////////////////////////////////////
                 get_new_token = true;
                 //printf("********** END ***********\n");
@@ -570,20 +653,18 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 fail = true;
             } 
         }
-
-        /*
+        
         switch (ret_val)
         {
             case ERR_INTERNAL:  goto err_internal_main; break;
             case ERR_SYN:       goto err_syntactic; break;
             case ERR_SEM_UNDEF: goto err_sem_undef; break;
-            case ERR_SEM_TYPE:  goto err_sem_type; break;
             case ERR_SEM_FUNC:  goto err_sem_func; break;
             case ERR_SEM_OTHER: goto err_sem_other; break;
-            case ERR_ZERO_DIV:  goto err_sem_div; break;
+            case SUCCESS:       printf("SUCCESS EXPR\n"); ret_val = -1; break;
             default: break;
         }
-        */
+
     } while (succ == false && fail == false);
     /////////////////////////////////////////
     ///         END OF MAIN LOOP          ///
@@ -592,16 +673,17 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     if (fail)     
         goto err_syntactic;
 
-    printf("\nglobal\n");
+    if (! symtab_foreach(fun_tab, check_fun))
+        goto err_sem_undef;
+
+    printf("\nGLOBAL TABLE:\n");
     symtab_foreach(gl_var_tab, print_var);
-    printf("\nfunctions\n");
-    symtab_foreach(fun_tab, print_fun);
-    printf("\nlocal\n");
-    symtab_foreach(lc_var_tab, print_var);
-    printf("\n");
+    printf("\n\nFUNC TABLE:\n");
+    symtab_foreach(fun_tab, print_fun);   
+    printf("\n\n");
 
     // free all alocated elements
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
     return SUCCESS;
 
 ///////////////////////////////////////
@@ -628,33 +710,34 @@ err_internal_3:
     return ERR_INTERNAL;
 
 err_internal_main:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_lexical:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
     error_msg("lexical\n");
     return ERR_LEX;
 
 err_syntactic:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
     error_msg("syntactic\n");
     return ERR_SYN;
-/*
+
 err_sem_undef:
-    freeAll(stack_tkn, gl_var_tab, fun_tab, lc_var_tab, &id_key_tmp, act, token);
-    error_msg("semantic - undefinde variable / function\n");
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    error_msg("semantic - undefined variable / function\n");
     return ERR_SEM_UNDEF;
 
-err_sem_type:
-
 err_sem_func:
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    error_msg("semantic - wrong number of function parameters\n");
+    return ERR_SEM_UNDEF;
 
 err_sem_other:
-
-err_zero_div:
-*/
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    error_msg("semantic - other\n");
+    return ERR_SEM_UNDEF;
 }
 
 

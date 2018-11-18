@@ -38,21 +38,11 @@
 
 typedef enum {VARIABLES, FUNCTIONS} table_type_t;
 
-typedef struct element elem_t;
-
-typedef struct
-{
-  elem_t **param_arr;
-  unsigned int length; // lenght of params
-  unsigned int max; // maximal length of params
-} dynamicArrParams_t;
-
 
 typedef struct function {
     char *key;
     bool is_defined;
     int n_params;
-    dynamicArrParams_t *params;
 } func_t;
 
 typedef struct variable {
@@ -85,6 +75,7 @@ typedef struct element
  */
 typedef struct symtable
 {
+    char *name;
     table_type_t type;
     size_t size;
     size_t arr_size;
@@ -95,6 +86,9 @@ typedef struct symtable
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
 
+#define SYMTAB_SIZE 181
+
+#define UNDEF_NO_PARAMS -1
 
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
@@ -147,14 +141,14 @@ void symtab_free(symtable_t *t);
  * @param size number of indexes of the table
  * @return pointer to created table
  */
-symtable_t * symtab_init(size_t size, table_type_t type);
+symtable_t * symtab_init(char *name, table_type_t type);
 
 /**
  * @brief calls a function for each item in the table
  * @param *t pointer to the hash table
  * @param func function that will be called for each item
  */
-void symtab_foreach(symtable_t *t, void (*func) (elem_t *elem));
+bool symtab_foreach(symtable_t *t, bool (*func) (elem_t *elem));
 
 /**
  * @brief finds an item based on the match of keys

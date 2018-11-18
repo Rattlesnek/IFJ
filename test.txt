@@ -1,7 +1,13 @@
-
+=begin
+25
+=end
 ahoj = 4
+=beg
+asdasd
+=end
 if if ahoj > 3 then
     ahoj = 2
 else
     ahoj = 5
 end
+48.5

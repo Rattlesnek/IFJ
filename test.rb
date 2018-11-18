@@ -1,5 +1,4 @@
 
-
 def fun (x, y)
     fun_var1 = 0
     
@@ -16,16 +15,18 @@ end
 
 
 def f? p1, p2
-    f_var2 = "ds"
+    f_var2 = "ds" + "as"
+    baz
     while 1 do
         f_wh_var = 2
     end
 end
 
-
+=begin
 def baz
     baz_var = 1.25
 end
+=end
 
 
 while 1 do
