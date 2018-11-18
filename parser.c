@@ -201,9 +201,9 @@ bool print_fun(elem_t *element)
 
 bool print_fun_info(elem_t *element)
 {
-    printf("%s\n", element->func.key);
-    printf("%d\n", element->func.is_defined);
-    printf("%d\n", element->func.n_params);
+    printf("key %s\n", element->func.key);
+    printf("definde %d\n", element->func.is_defined);
+    printf("n params %d\n", element->func.n_params);
 
     return true;
 }
@@ -438,7 +438,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 //printf("top == act: %s\n", act->name);
                 if (strcmp(top->name, "if") == 0)
                 {
-                    //printf("*********** IF ***********\n");  
+                    printf("*********** IF ***********\n");  
 #ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
@@ -453,11 +453,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     stcStr_push(stack_str, "else\n");
 
                     get_new_token = true;
-                    //printf("********** END ***********\n");
+                    printf("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "while") == 0)
                 {
-                    //printf("********* WHILE **********\n");
+                    printf("********* WHILE **********\n");
 #ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
@@ -472,11 +472,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     stcStr_push(stack_str, "endwhile\n");
 
                     get_new_token = true;
-                    //printf("********** END ***********\n");
+                    printf("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "=") == 0)
                 {
-                    //printf("********** EXPR **********\n");
+                    printf("********** EXPR **********\n");
 #ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
@@ -492,7 +492,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     destroyTempKey(&id_key_tmp);
 
                     get_new_token = true;
-                    //printf("********** END ***********\n");
+                    printf("********** END ***********\n");
                 }
             /*    else if (strcmp(top->name, "elif") == 0)
                 {
@@ -622,12 +622,13 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             // need to be if (not else if) !!!
             if (rule == EXPR_INCLUDE)
             {
-                //printf("********** EXPR **********\n");
+                printf("********** EXPR **********\n");
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
 
                 scanner_unget(que, act, sc_str->str);
+                act = NULL;
                 // RUN PRECEDENC ANALYSIS
 #ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
@@ -636,11 +637,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #endif
 
                 get_new_token = true;
-                //printf("********** END ***********\n");
+                printf("********** END ***********\n");
             }
             else if (rule == EXPR_INCLUDE_TWO)
             {
-                //printf("********** EXPR **********\n");
+                printf("********** EXPR **********\n");
                 // destroy token: "[func-assign-expr]"
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
@@ -649,6 +650,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 scanner_unget(que, createToken("ID", info), id_key_tmp);
                 destroyTempKey(&id_key_tmp);
                 scanner_unget(que, act, sc_str->str);
+                act = NULL;
                 // RUN PRECEDENC ANALYSIS              
 #ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
@@ -657,7 +659,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #endif
 
                 get_new_token = true;
-                //printf("********** END ***********\n");
+                printf("********** END ***********\n");
             }
             else if (rule) // in case rule == 0 -- fail
             {
@@ -694,6 +696,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 
     if (fail)     
         goto err_syntactic;
+
+    //symtab_foreach(fun_tab, print_fun_info);
 
     if (! symtab_foreach(fun_tab, check_fun))
         goto err_sem_undef;

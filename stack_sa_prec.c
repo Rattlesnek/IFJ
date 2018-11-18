@@ -104,8 +104,7 @@ char stc_popTop(stack_sa_t *stack)
     {
         if(stack->top->token != NULL)
         {
-            free(stack->top->token->name);
-            free(stack->top->token);
+            destroyToken(stack->top->token);
         }
         free(stack->top);
         stack->top = NULL;

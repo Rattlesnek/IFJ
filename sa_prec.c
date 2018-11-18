@@ -176,7 +176,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         if(token_term == _id_ && (strcmp(token->name, "ID") == 0))
         {
             loc_elem = symtab_find(loc_symtab, sc_str->str);
-            func_elem = symtab_find(func_symtab, sc_str->str);
+            if(!detect_func)
+                func_elem = symtab_find(func_symtab, sc_str->str);
 
             if(loc_elem != NULL)
             {
@@ -500,9 +501,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         goto fail_end;
 
                     stc_push(stack, _F_, NULL);
-
                     if(!func_elem->func.is_defined)
-                            func_elem->func.n_params = num_params;
+                    {
+                        func_elem->func.n_params = num_params;
+                    }
                     else if(func_elem->func.n_params != num_params)
                             goto sem_fail;
 
@@ -579,18 +581,20 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     return SUCCESS;
 
 fail_end:
+    //destroyToken(token);
     stc_destroy(stack);
-    destroyToken(token);
+    //destroyToken(token);
     return ERR_SYN;
 
 sem_fail:
+    //destroyToken(token);
     stc_destroy(stack);
-    destroyToken(token);
+    //destroyToken(token);
     return ERR_SEM_FUNC;
 
 sem_fail_defined:
+    //destroyToken(token);
     stc_destroy(stack);
-    destroyToken(token);
     return ERR_SEM_UNDEF;
 }
 
