@@ -120,8 +120,7 @@ char stc_popTop(stack_sa_t *stack)
 
         if(tmp->token != NULL)
         {
-            free(tmp->token->name);
-            free(tmp->token);
+            destroyToken(tmp->token);
         }
         free(tmp);
         return term;
@@ -176,8 +175,7 @@ void stc_destroy(stack_sa_t *stack)
         next = next->rptr;
         if(tmp->token != NULL)
         {
-            free(tmp->token->name);
-            free(tmp->token);
+            destroyToken(tmp->token);
         }
         free(tmp);
     }
