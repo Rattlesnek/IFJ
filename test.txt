@@ -2,7 +2,7 @@
 25
 =end
 ahoj = 4
-=begin
+=beg
 asdasd
 =end
 if if ahoj > 3 then

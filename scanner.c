@@ -667,7 +667,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = malloc(sizeof(int)); 
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
                         if ( !(InttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
                             goto err_internal;
 
@@ -701,7 +701,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = malloc(sizeof(int)); 
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
                         if ( !(InttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
                             goto err_internal;
 
@@ -774,7 +774,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = malloc(sizeof(double)); 
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
                         if ( !(DobtoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
                             goto err_internal;
 
@@ -1098,7 +1098,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_INT:
                     state = State_S;
-                    sc_info.string = malloc(sizeof(int)); 
+                    sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) ); 
                     if ( !(InttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
                         goto err_internal;
 
@@ -1111,7 +1111,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_INT0:
                     state = State_S;
-                    sc_info.string = malloc(sizeof(int)); 
+                    sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) ); 
                     if ( !(InttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
                         goto err_internal;
 
@@ -1124,7 +1124,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_FLOAT:
                     state = State_S;
-                    sc_info.string = malloc(sizeof(double)); 
+                    sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) ); 
                     if ( !(DobtoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
                             goto err_internal;
 
