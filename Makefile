@@ -14,7 +14,7 @@ scanner: main.c scanner.c scanner.h token.c token.h dynamicStr.c dynamicStr.h qu
 	gcc $(CFLAGS)  main.c scanner.c token.c dynamicStr.c queue.c -o scanner
 
 sa_prec: symtable.c symtable.h main_sa_prec.c scanner.c scanner.h token.c token.h dynamicStr.c dynamicStr.h dynamicArrParam.c dynamicArrParam.h sa_prec.c sa_prec.h stack_sa_prec.c stack_sa_prec.h
-	gcc $(CFLAGS) main_sa_prec.c scanner.c token.c dynamicStr.c queue.c symtable.c sa_prec.c stack_sa_prec.c dynamicArrParam.c -o sa_prec
+	gcc $(CFLAGS) main_sa_prec.c scanner.c token.c dynamicStr.c queue.c symtable.c sa_prec.c stack_sa_prec.c dynamicArrParam.c -o sa_prec -D DEBUG_PREC
 
 clean:
 	rm -f parser

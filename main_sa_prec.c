@@ -20,8 +20,8 @@ int main()
 
     dynamicStr_init(sc_str);
     queue_t *que = que_create();
-    symtable_t *lsymtable = symtab_init(20, VARIABLES);
-    symtable_t *fsymtable = symtab_init(20, FUNCTIONS);
+    symtable_t *lsymtable = symtab_init(NULL, VARIABLES);
+    symtable_t *fsymtable = symtab_init(NULL, FUNCTIONS);
     elem_t *elem = symtab_elem_add(fsymtable, "test");
     elem->func.is_defined = true;
     elem->func.n_params = 2;
