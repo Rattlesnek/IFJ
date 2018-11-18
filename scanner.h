@@ -44,8 +44,7 @@ typedef enum
 	State_FLOAT, /// Double number
 	State_HEX,	//BEgining og hex number '\x'
 	State_HEX_NUM,	//Hex number with one number '\xA'
-	State_HEX_NUM_END,	//Hex number with two number '\xAA'
-
+	
 	State_QUATATION1, //Starting a string
 	State_QUATATION2,	//Ending a string
 	State_STR, /// String

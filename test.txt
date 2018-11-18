@@ -1,11 +1,11 @@
 =begin
 
 =end
-=beg
-asdasd
-=end
+a= 45
 if if ahoj > 3 then
 else
 
 end
-
+12.547
+"Hello \\s \x1"
+"Ahoj\nSve'te\s\\\x22 "

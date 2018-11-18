@@ -420,7 +420,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
     ///////////////////////////////////////
                 case State_QUATATION1:
                     if (c == '\n')   
-                    goto err_lexical;
+                        goto err_lexical;
                     
                     else if (c == '\\')     // Char '\' add after we know it means something
                     {
@@ -470,9 +470,10 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             goto err_internal;
 
                         state = State_HEX_NUM;
-                    } 
-                    else
+                    }
+                    else  
                         goto err_lexical;
+                    
                     break;
 
                 case State_HEX_NUM:
@@ -481,23 +482,13 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
 
-                        state = State_HEX_NUM_END;
+                        state = State_QUATATION1;
                     }
                     else if (c == '\n')
                         goto err_lexical;
 
-                    else
-                    {
-                        if(!dynamicStr_add(sc_str, c))
-                            goto err_internal;
-
-                        state = State_QUATATION1;
-                    }
-                    break;
-
-                case State_HEX_NUM_END:
-                    if (c == '\n') 
-                        goto err_lexical;
+                    else if (c == '"')
+                        state = State_QUATATION2;
 
                     else
                     {
