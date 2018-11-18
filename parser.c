@@ -75,16 +75,16 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
     /*EOL_EOF_5*/           {  NULL, }, 
     /*STAT_6*/              { "[end-list]", "[params-gen]", "[id-func]", "def", },
     /*STAT_7*/              { "[command]", },
-    /*COMMAND_8*/           { "[end-list]", "EOL", "do", "**while**", "while", },
-    /*COMMAND_9*/           { "[if-list]", "EOL", "then", "**if**", "if", },
+    /*COMMAND_8*/           { "[end-list]", "EOL", "do", "while", },
+    /*COMMAND_9*/           { "[if-list]", "EOL", "then", "if", },
     /*COMMAND_10*/          { "[func-assign-expr]", "ID", },
-    /*FUNC_ASSIGN_EXPR_11*/ { "**expr**", "=", },
+    /*FUNC_ASSIGN_EXPR_11*/ { "=", },
     /*END_LIST_12*/         { "[end-list]", "EOL", "[command]", },
     /*END_LIST_13*/         { "[end-list]", "EOL", },
     /*END_LIST_14*/         { "end", },
     /*IF_LIST_15*/          { "[if-list]", "EOL", "[command]", },
     /*IF_LIST_16*/          { "[if-list]", "EOL", },
-    /*IF_LIST_17*/          { "[if-list]", "EOL", "then", "**elif**", "elif", },
+    /*IF_LIST_17*/          { "[if-list]", "EOL", "then", "elif", },
     /*IF_LIST_18*/          { "[end-list]", "EOL", "else", },
     /*IF_LIST_19*/          { "end", },
     /*ID_FUNC_20*/          { "ID", },
@@ -287,7 +287,7 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
 
 
 ///////////////////////////////////////////////////////////////////////////////
-int precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_tab, symtable_t *fun_tab)
+int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
 {
     token_t *act = scanner_get(sc_str, que);
     //printf("expr handling: %s\n", act->name);
@@ -306,6 +306,7 @@ int precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_
 ///////////////////////////////////////////////////////////////////////////////
 
 
+/*
 int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, symtable_t *gl_var_tab, symtable_t *lc_var_tab, symtable_t *fun_tab, stack_tkn_t *stack_tkn, token_t *act)
 {
     // destroy token: "**expr**"
@@ -324,10 +325,10 @@ int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, symtable_t *gl_var_tab
 
     // SPUSTENIE PRECEDENCNEJ ANALYZY 
     //////////////////////////////////////////////////
-    return precedenc_analysis_temp(sc_str, que, var_tab, fun_tab);
+    return sa_prec(sc_str, que, var_tab, fun_tab);
     /////////////////////////////////////////////////
 }
-
+*/
 
 /**
  * @brief Parser - Syntactic analysis
@@ -360,6 +361,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     stack_str_t *stack_str;
 
     symtable_t *fun_tab;
+    symtable_t *var_tab;
     symtable_t *gl_var_tab;
     symtable_t *lc_var_tab = NULL;
 
@@ -374,6 +376,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     gl_var_tab = symtab_init(NULL, VARIABLES);
     if (gl_var_tab == NULL)
         goto err_internal_2;
+    var_tab = gl_var_tab;
     fun_tab = symtab_init(NULL, FUNCTIONS);
     if (fun_tab == NULL)
         goto err_internal_3;
@@ -430,63 +433,93 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
         }
         else if (isTerminal(top->name))
         {
-            if (strcmp(top->name, "**if**") == 0)
-            {
-                //printf("*********** IF ***********\n");                
-                ret_val = expresionsHandler(sc_str, que, gl_var_tab, lc_var_tab, fun_tab, stack_tkn, act);
-                
-                //////////////////////
-                // GENERATE IF 
-                //////////////////////
-                printf("if\n");
-                // push to stack_tkn "epilog of if" and "else branch" (in this order)
-                stcStr_push(stack_str, "endif\n");
-                stcStr_push(stack_str, "else\n");
-
-                get_new_token = true;
-                //printf("********** END ***********\n");
-            }
-            else if (strcmp(top->name, "**while**") == 0)
-            {
-                //printf("********* WHILE **********\n");
-                ret_val = expresionsHandler(sc_str, que, gl_var_tab, lc_var_tab, fun_tab, stack_tkn, act);
-                
-                //////////////////////
-                // GENERATE WHILE
-                /////////////////////
-                printf("while\n");
-                // push to stack_tkn "epilog of while"
-                stcStr_push(stack_str, "endwhile\n");
-
-                get_new_token = true;
-                //printf("********** END ***********\n");
-            }
-            else if (strcmp(top->name, "**expr**") == 0)
-            {
-                //printf("********** EXPR **********\n");
-                ret_val = expresionsHandler(sc_str, que, gl_var_tab, lc_var_tab, fun_tab, stack_tkn, act);
-                
-                ////////////////////////////////
-                // GENERATE VARIABLE definition
-                ///////////////////////////////
-                printf("var %s\n", id_key_tmp);
-                
-                if (lc_var_tab == NULL)
-                    symtab_elem_add(gl_var_tab, id_key_tmp); // TODO
-                else 
-                    symtab_elem_add(lc_var_tab, id_key_tmp);
-                destroyTempKey(&id_key_tmp);
-
-                get_new_token = true;
-                //printf("********** END ***********\n");
-            }
-        /*  else if (strcmp(top->name, "**elif**") == 0)
-            {
-
-            } */
-            else if (strcmp(top->name, act->name) == 0)
+            if (strcmp(top->name, act->name) == 0)
             {
                 //printf("top == act: %s\n", act->name);
+                if (strcmp(top->name, "if") == 0)
+                {
+                    //printf("*********** IF ***********\n");  
+#ifdef DEBUG_PARSER              
+                    ret_val = prec_tmp(sc_str, que);
+#else
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+#endif
+                    //////////////////////
+                    // GENERATE IF 
+                    //////////////////////
+                    printf("if\n");
+                    // push to stack_tkn "epilog of if" and "else branch" (in this order)
+                    stcStr_push(stack_str, "endif\n");
+                    stcStr_push(stack_str, "else\n");
+
+                    get_new_token = true;
+                    //printf("********** END ***********\n");
+                }
+                else if (strcmp(top->name, "while") == 0)
+                {
+                    //printf("********* WHILE **********\n");
+#ifdef DEBUG_PARSER              
+                    ret_val = prec_tmp(sc_str, que);
+#else
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+#endif
+                    
+                    //////////////////////
+                    // GENERATE WHILE
+                    /////////////////////
+                    printf("while\n");
+                    // push to stack_tkn "epilog of while"
+                    stcStr_push(stack_str, "endwhile\n");
+
+                    get_new_token = true;
+                    //printf("********** END ***********\n");
+                }
+                else if (strcmp(top->name, "=") == 0)
+                {
+                    //printf("********** EXPR **********\n");
+#ifdef DEBUG_PARSER              
+                    ret_val = prec_tmp(sc_str, que);
+#else
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+#endif
+                    
+                    ////////////////////////////////
+                    // GENERATE VARIABLE definition
+                    ///////////////////////////////
+                    printf("var %s\n", id_key_tmp);
+                    
+                    symtab_elem_add(var_tab, id_key_tmp);
+                    destroyTempKey(&id_key_tmp);
+
+                    get_new_token = true;
+                    //printf("********** END ***********\n");
+                }
+            /*    else if (strcmp(top->name, "elif") == 0)
+                {
+
+                } */
+                else if (strcmp(act->name, "end") == 0 || strcmp(act->name, "else") == 0)
+                {
+                    ////////////////////////////
+                    // STACK POP GENERATED CODE
+                    ///////////////////////////
+                    char *generated_code = stcStr_top(stack_str);
+                    printf("%s", generated_code);
+                    ////////////////////////////////////////////// TODO
+                    if (strcmp(generated_code, "enddef\n") == 0)
+                    {  
+                        printf("LOCAL TABLE: ");
+                        symtab_foreach(lc_var_tab, print_var);
+                        printf("\n");
+
+                        symtab_free(lc_var_tab);
+                        lc_var_tab = NULL;
+                        var_tab = gl_var_tab;
+                    }
+                    
+                    stcStr_pop(stack_str);
+                }
+                
                 if (get_func_params)
                 {                  
                     if (strcmp(act->name, "ID") == 0)
@@ -540,26 +573,6 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                         get_func_params = false;
                     }
                 }
-                if (strcmp(act->name, "end") == 0 || strcmp(act->name, "else") == 0)
-                {
-                    ////////////////////////////
-                    // STACK POP GENERATED CODE
-                    ///////////////////////////
-                    char *generated_code = stcStr_top(stack_str);
-                    printf("%s", generated_code);
-                    ////////////////////////////////////////////// TODO
-                    if (strcmp(generated_code, "enddef\n") == 0)
-                    {  
-                        printf("LOCAL TABLE: ");
-                        symtab_foreach(lc_var_tab, print_var);
-                        printf("\n");
-
-                        symtab_free(lc_var_tab);
-                        lc_var_tab = NULL;
-                    }
-                    
-                    stcStr_pop(stack_str);
-                }
 
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
@@ -592,15 +605,17 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 
                 // HACK :D
                 param_cnt = (strcmp(act->name, "ID") == 0) ? -1 : 0;
-                
-                //printf("create local hash table for function\n");
-                if (lc_var_tab == NULL) // TODO
-                    lc_var_tab = symtab_init(func_key_tmp, VARIABLES);
-                
                 param_arr = dynamicArrParams_init();
                 if (param_arr == NULL)
                     goto err_internal_main;
-
+                
+                //printf("create local hash table for function\n");
+                if (lc_var_tab == NULL) // TODO
+                {
+                    lc_var_tab = symtab_init(func_key_tmp, VARIABLES);
+                    var_tab = lc_var_tab;
+                }
+                
                 get_func_params = true;
             }
 
@@ -608,7 +623,18 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             if (rule == EXPR_INCLUDE)
             {
                 //printf("********** EXPR **********\n");
-                ret_val = expresionsHandler(sc_str, que, gl_var_tab, lc_var_tab, fun_tab, stack_tkn, act);
+                token = stcTkn_pop(stack_tkn);
+                destroyToken(token);
+                token = NULL;
+
+                scanner_unget(que, act, sc_str->str);
+                // RUN PRECEDENC ANALYSIS
+#ifdef DEBUG_PARSER              
+                    ret_val = prec_tmp(sc_str, que);
+#else
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+#endif
+
                 get_new_token = true;
                 //printf("********** END ***********\n");
             }
@@ -623,17 +649,13 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 scanner_unget(que, createToken("ID", info), id_key_tmp);
                 destroyTempKey(&id_key_tmp);
                 scanner_unget(que, act, sc_str->str);
-                
-                // SPUSTENIE PRECEDENCNEJ ANALYZY
-                //////////////////////////////////////////
-                symtable_t *var_tab;
-                if (lc_var_tab == NULL)
-                    var_tab = gl_var_tab;
-                else    
-                    var_tab = lc_var_tab;
-                
-                ret_val = precedenc_analysis_temp(sc_str, que, var_tab, fun_tab);
-                /////////////////////////////////////////
+                // RUN PRECEDENC ANALYSIS              
+#ifdef DEBUG_PARSER              
+                    ret_val = prec_tmp(sc_str, que);
+#else
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+#endif
+
                 get_new_token = true;
                 //printf("********** END ***********\n");
             }
