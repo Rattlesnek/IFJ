@@ -90,7 +90,11 @@ bool DobtoStr (char *s, dynamicStr_t *sc_str)
     {
         return false;
     }
-    sprintf(s, "%a", num);
+    while ( (unsigned)(sprintf(s, "%a", num)) > strlen(s) )
+    {
+        unsigned int new_size = strlen(s) + 10;
+		s = realloc(s, new_size * sizeof(char));
+    }
     return true;
 }
 /**
@@ -774,7 +778,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_S;
                         sc_unget(c);
-                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                        sc_info.string = malloc( 25 * sizeof(char) );
                         if ( !(DobtoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
                             goto err_internal;
 
@@ -1124,7 +1128,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                 case State_FLOAT:
                     state = State_S;
-                    sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) ); 
+                    sc_info.string = malloc( 25 * sizeof(char) ); 
                     if ( !(DobtoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
                             goto err_internal;
 
