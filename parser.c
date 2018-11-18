@@ -287,7 +287,7 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
 
 
 ///////////////////////////////////////////////////////////////////////////////
-int precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que)
+int precedenc_analysis_temp(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_tab, symtable_t *fun_tab)
 {
     token_t *act = scanner_get(sc_str, que);
     //printf("expr handling: %s\n", act->name);
@@ -324,7 +324,7 @@ int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, symtable_t *gl_var_tab
 
     // SPUSTENIE PRECEDENCNEJ ANALYZY 
     //////////////////////////////////////////////////
-    return sa_prec(sc_str, que, var_tab, fun_tab);
+    return precedenc_analysis_temp(sc_str, que, var_tab, fun_tab);
     /////////////////////////////////////////////////
 }
 
@@ -371,10 +371,10 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     stack_str = stcStr_create();
     if (stack_str == NULL)
         goto err_internal_1;
-    gl_var_tab = symtab_init(10, VARIABLES);
+    gl_var_tab = symtab_init(NULL, VARIABLES);
     if (gl_var_tab == NULL)
         goto err_internal_2;
-    fun_tab = symtab_init(10, FUNCTIONS);
+    fun_tab = symtab_init(NULL, FUNCTIONS);
     if (fun_tab == NULL)
         goto err_internal_3;
 
@@ -595,7 +595,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 
                 //printf("create local hash table for function\n");
                 if (lc_var_tab == NULL) // TODO
-                    lc_var_tab = symtab_init(10, VARIABLES);
+                    lc_var_tab = symtab_init(func_key_tmp, VARIABLES);
                 
                 param_arr = dynamicArrParams_init();
                 if (param_arr == NULL)
@@ -632,7 +632,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 else    
                     var_tab = lc_var_tab;
                 
-                ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+                ret_val = precedenc_analysis_temp(sc_str, que, var_tab, fun_tab);
                 /////////////////////////////////////////
                 get_new_token = true;
                 //printf("********** END ***********\n");
