@@ -75,6 +75,7 @@ typedef struct element
  */
 typedef struct symtable
 {
+    char *name;
     table_type_t type;
     size_t size;
     size_t arr_size;
@@ -84,6 +85,8 @@ typedef struct symtable
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
+
+#define SYMTAB_SIZE 181
 
 #define UNDEF_NO_PARAMS -1
 
@@ -138,7 +141,7 @@ void symtab_free(symtable_t *t);
  * @param size number of indexes of the table
  * @return pointer to created table
  */
-symtable_t * symtab_init(size_t size, table_type_t type);
+symtable_t * symtab_init(char *name, table_type_t type);
 
 /**
  * @brief calls a function for each item in the table

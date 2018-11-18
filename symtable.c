@@ -36,15 +36,28 @@
 
 
 
-symtable_t * symtab_init(size_t size, table_type_t type)
+symtable_t * symtab_init(char *name, table_type_t type)
 {
-    symtable_t *symtab = (symtable_t*)malloc(sizeof(symtable_t) + size * sizeof(elem_t));
+    symtable_t *symtab = (symtable_t*)malloc(sizeof(symtable_t) + SYMTAB_SIZE * sizeof(elem_t *));
     if (symtab == NULL)
     {
         return NULL;
     }
-
-    symtab->arr_size = size;
+    if (name == NULL)
+    {
+        symtab->name = NULL;
+    }
+    else
+    {
+        symtab->name = malloc((strlen(name) + 1) * sizeof(char));
+        if (symtab->name == NULL)
+        {
+            free(symtab);
+            return NULL;
+        }    
+        strcpy(symtab->name, name);
+    }
+    symtab->arr_size = SYMTAB_SIZE;
     symtab->size = 0;
 
     for (size_t i = 0; i < symtab->arr_size; ++i)
@@ -247,12 +260,12 @@ bool symtab_foreach(symtable_t *symtab, bool (*func) (elem_t *elem))
 
 void symtab_free(symtable_t *symtab)
 {
-    if (!symtab)
-    {
+    if (symtab == NULL)
         return;
-    }
 
     symtab_clear(symtab);
+    if (symtab->name != NULL)
+        free(symtab->name);
     free(symtab);
 }
 
