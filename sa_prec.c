@@ -581,19 +581,19 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     return SUCCESS;
 
 fail_end:
-    //destroyToken(token);
+    destroyToken(token);
     stc_destroy(stack);
     //destroyToken(token);
     return ERR_SYN;
 
 sem_fail:
-    //destroyToken(token);
+    destroyToken(token);
     stc_destroy(stack);
     //destroyToken(token);
     return ERR_SEM_FUNC;
 
 sem_fail_defined:
-    //destroyToken(token);
+    destroyToken(token);
     stc_destroy(stack);
     return ERR_SEM_UNDEF;
 }
