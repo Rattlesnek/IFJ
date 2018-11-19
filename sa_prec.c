@@ -170,7 +170,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         stack_top_term = stc_topTerm(stack);
     
         token_term = sa_getTokenIndex(token);
-
+        if(token_term == INVALID_TOKEN)
+            goto fail_end;
 
 #if TEST_FUNC
         if(token_term == _id_ && (strcmp(token->name, "ID") == 0))
