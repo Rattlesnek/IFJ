@@ -306,30 +306,6 @@ int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-/*
-int expresionsHandler(dynamicStr_t *sc_str, queue_t *que, symtable_t *gl_var_tab, symtable_t *lc_var_tab, symtable_t *fun_tab, stack_tkn_t *stack_tkn, token_t *act)
-{
-    // destroy token: "**expr**"
-    token_t *token;
-
-    token = stcTkn_pop(stack_tkn);
-    destroyToken(token);
-
-    scanner_unget(que, act, sc_str->str);
-    
-    symtable_t *var_tab;
-    if (lc_var_tab == NULL)
-        var_tab = gl_var_tab;
-    else    
-        var_tab = lc_var_tab;
-
-    // SPUSTENIE PRECEDENCNEJ ANALYZY 
-    //////////////////////////////////////////////////
-    return sa_prec(sc_str, que, var_tab, fun_tab);
-    /////////////////////////////////////////////////
-}
-*/
-
 /**
  * @brief Parser - Syntactic analysis
  * 
@@ -680,11 +656,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
         
         switch (ret_val)
         {
-            case ERR_INTERNAL:  goto err_internal_main; break;
-            case ERR_SYN:       goto err_syntactic; break;
-            case ERR_SEM_UNDEF: goto err_sem_undef; break;
-            case ERR_SEM_FUNC:  goto err_sem_func; break;
-            case ERR_SEM_OTHER: goto err_sem_other; break;
+            case ERR_INTERNAL:  goto err_internal_main;
+            case ERR_SYN:       goto err_syntactic;
+            case ERR_SEM_UNDEF: goto err_sem_undef;
+            case ERR_SEM_FUNC:  goto err_sem_func;
+            case ERR_SEM_OTHER: goto err_sem_other;
             case SUCCESS:       printf("SUCCESS EXPR\n"); ret_val = -1; break;
             default: break;
         }
