@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    []
+  FileName    [if_while.h]
 
   SystemName  [IFJ - PROJECT]
 
@@ -8,11 +8,11 @@
 
   Synopsis    []
 
-  Author      []
+  Author      [Jindrich Sestak]
 
   Affiliation []
 
-  Date        [--/--/2018]
+  Date        [20/11/2018]
 
   Revision    []
 
@@ -27,21 +27,8 @@
 #include <stdbool.h>
 
 #include "parser.h"
-
-#include "scanner.h"
 #include "sa_prec.h"
-
-#include "dynamicArrParam.h"
-#include "dynamicStr.h"
 #include "stackStr.h"
-#include "stackTkn.h"
-#include "queue.h"
-
-#include "token.h"
-#include "symtable.h"
-
-#include "funcGen.h"
-
 #include "error.h"
 
 ////////////////////////////////////////////////////////////////////////
@@ -52,7 +39,7 @@
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
-#define IF_LENGTH 
+
 
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
