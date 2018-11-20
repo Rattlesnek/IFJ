@@ -654,8 +654,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             } 
         }
         
-        switch (ret_val)
-        {
+        switch (ret_val){
             case ERR_INTERNAL:  goto err_internal_main;
             case ERR_SYN:       goto err_syntactic;
             case ERR_SEM_UNDEF: goto err_sem_undef;
