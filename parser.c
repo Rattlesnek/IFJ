@@ -41,6 +41,7 @@
 #include "funcGen.h"
 
 #include "error.h"
+#include "if_while.h"
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -421,10 +422,13 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     //////////////////////
                     // GENERATE IF 
                     //////////////////////
-                    printf("if\n");
+
+                    //printf("if\n");
                     // push to stack_tkn "epilog of if" and "else branch" (in this order)
-                    stcStr_push(stack_str, "endif\n");
-                    stcStr_push(stack_str, "else\n");
+                    //stcStr_push(stack_str, "endif\n");
+                    //stcStr_push(stack_str, "else\n");
+                    
+                    generate_if(stack_str);
 
                     get_new_token = true;
                     printf("********** END ***********\n");
@@ -440,10 +444,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     //////////////////////
                     // GENERATE WHILE
                     /////////////////////
-                    printf("while\n");
-                    // push to stack_tkn "epilog of while"
-                    stcStr_push(stack_str, "endwhile\n");
 
+                    //printf("while\n");
+                    // push to stack_tkn "epilog of while"
+                    //stcStr_push(stack_str, "endwhile\n");
+                    generate_while(stack_str);
                     get_new_token = true;
                     printf("********** END ***********\n");
                 }

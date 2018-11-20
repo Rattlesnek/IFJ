@@ -103,6 +103,13 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que);
 
 bool scanner_unget(queue_t *que, token_t *token, char *name);
 
+void sc_unget(int c);
+
+bool InttoStr (char *s, dynamicStr_t *sc_str);
+
+bool DobtoStr (char *s, dynamicStr_t *sc_str);
+
+char* inKeyword(char *str, char **keywords);
 
 #endif
 ////////////////////////////////////////////////////////////////////////

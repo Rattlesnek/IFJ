@@ -2,10 +2,15 @@
 
 =end
 a= 45
-if if ahoj > 3 then
+if a > 3 then
 else
-
 end
-12.547
-"Hello \\s \x1"
-"Ahoj\nSve'te\s\\\x22 "
+while 1 do
+    end
+
+if a ==3 then
+else
+end
+b = 12.547
+c = "Hello \\s \x1"
+d = "Ahoj\nSve'te\s\\\x22 "

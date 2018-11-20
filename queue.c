@@ -102,13 +102,6 @@ token_t *que_get(queue_t *queue, char **name)
 
 void que_destroy(queue_t *queue)
 {
-    while (queue->f_index != queue->b_index)
-    {
-        free(queue->array[queue->f_index].name);
-        destroyToken(queue->array[queue->f_index].token);
-        queue->f_index = nextIndex(queue->f_index);
-    }
-    
     free(queue);
 }
 
