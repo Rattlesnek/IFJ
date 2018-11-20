@@ -205,6 +205,59 @@ int type(char *param1, char *param2)
     return matrix[index_param1][index_param2];
 }
 
+token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
+{
+    char param1[10];
+    char param2[10];
+    token_t *tmp = createToken("INT_ID", des->info);
+
+    if (strcmp(par1->name, "INT_ID"))
+    {
+        strcpy(param1, "LF");
+    }
+    else if (strcmp(par1->name, "INT"))
+    {
+        strcpy(param1, "int");
+    }
+    if (strcmp(par2->name, "INT_ID"))
+    {
+        strcpy(param2, "LF");
+    }
+    else if (strcmp(par2->name, "INT"))
+    {
+        strcpy(param2, "int");
+    }
+
+    printf("%s LF@%s int@%s int@%s\n", operator(op->name), des->info.ptr->var.key, par1->info.string, par2->info.string);
+    /*destroyToken(par1);
+    destroyToken(par2);*/
+    destroyToken(op);
+
+
+    return tmp;
+
+
+    /*  print(
+          "asdada",
+
+          ......
+          .....,
+          operator(op)
+      )
+    */
+    if (op == "<=")
+    {
+        print(
+
+        )
+    }
+    >=
+    !=
+
+}
+
+
+
 token_t *gen_expr(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 {
     switch (type(par1->name, par2->name))
@@ -342,7 +395,7 @@ if (isID(par3))
             token_info_t info;
             info.ptr = &elem;
 
-
+            symtable_t *symtable = symtab_init("foo", VARIABLES);
 
             token_info_t tmp;
             tmp.ptr = NULL;
@@ -354,7 +407,7 @@ if (isID(par3))
             info2.string = "5";
             token_t *token2 = createToken("INT", info2);
             token_t *token3 = createToken("INT", info2);
-            token_t *tmp12 = generateExp(op, token2, token3, "foo");
+            token_t *tmp12 = gen_expr(op, token2, token3, symtable);
 
 
             //free(tmp12);
