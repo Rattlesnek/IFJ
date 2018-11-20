@@ -22,15 +22,15 @@
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "parser.h"
-#include "sa_prec.h"
-
 #include <stdbool.h>
-//////////////////////
-#include <unistd.h> 
+
+#include "parser.h"
 
 #include "scanner.h"
+#include "sa_prec.h"
 
+#include "dynamicArrParam.h"
+#include "dynamicStr.h"
 #include "stackStr.h"
 #include "stackTkn.h"
 #include "queue.h"
@@ -38,8 +38,7 @@
 #include "token.h"
 #include "symtable.h"
 
-#include "dynamicArrParam.h"
-#include "dynamicStr.h"
+#include "funcGen.h"
 
 #include "error.h"
 
@@ -268,7 +267,7 @@ bool pushRevertedRules(stack_tkn_t *stack_tkn, int rule)
 
 void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
              symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab,
-             dynamicArrParams_t *param_arr, char **key_tmp, token_t *act, token_t *token)
+             dynamicArrParam_t *param_arr, char **id_key_tmp, char **func_key_tmp, token_t *act, token_t *token)
 {
     stcTkn_destroy(stack_tkn);
     stcStr_destroy(stack_str);
@@ -280,13 +279,13 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
 
     dynamicArrParams_free(param_arr);
 
-    destroyTempKey(key_tmp);
+    destroyTempKey(id_key_tmp);
+    destroyTempKey(func_key_tmp);
     destroyToken(act);
     destroyToken(token);
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
+#ifdef DEBUG_PARSER
 int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
 {
     token_t *act = scanner_get(sc_str, que);
@@ -303,8 +302,7 @@ int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
     
     return 0;
 }
-///////////////////////////////////////////////////////////////////////////////
-
+#endif
 
 /**
  * @brief Parser - Syntactic analysis
@@ -315,7 +313,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 {
     //printf("Parser started\n"); 
     
-    // DEFINE VARIABLES
+    // DEFINE LOCAL VARIABLES
     token_t *top = NULL; 
     token_t *act = NULL;
 
@@ -331,7 +329,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     char *id_key_tmp = NULL;
     char *func_key_tmp = NULL;
     int param_cnt;
-    dynamicArrParams_t *param_arr = NULL;
+    dynamicArrParam_t *param_arr = NULL;
 
     stack_tkn_t *stack_tkn;
     stack_str_t *stack_str;
@@ -378,13 +376,13 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     ///             MAIN LOOP             ///
     /////////////////////////////////////////
     do {
-
+        // get token from the top of the stack
         top = stcTkn_top(stack_tkn);
         if (get_new_token)
         {   
+            // if needed get new token from scanner 
             act = scanner_get(sc_str, que);
             //printf("scanner_get: %s\n", act->name);
-            
             if (strcmp(act->name, "ERR_LEX") == 0)
                 goto err_lexical;
             else if (strcmp(act->name, "ERR_INTERNAL") == 0)
@@ -439,7 +437,6 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
 #endif
-                    
                     //////////////////////
                     // GENERATE WHILE
                     /////////////////////
@@ -458,13 +455,17 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
 #endif
-                    
                     ////////////////////////////////
                     // GENERATE VARIABLE definition
                     ///////////////////////////////
                     printf("var %s\n", id_key_tmp);
                     
-                    symtab_elem_add(var_tab, id_key_tmp);
+                    // check if same name isnt used for function
+                    if (symtab_find(fun_tab, id_key_tmp) != NULL)
+                        goto err_sem_undef;
+                    if (symtab_elem_add(var_tab, id_key_tmp) == NULL)
+                        goto err_internal_main;
+
                     destroyTempKey(&id_key_tmp);
 
                     get_new_token = true;
@@ -481,8 +482,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ///////////////////////////
                     char *generated_code = stcStr_top(stack_str);
                     printf("%s", generated_code);
-                    ////////////////////////////////////////////// TODO
-                    if (strcmp(generated_code, "enddef\n") == 0)
+
+                    if (strcmp(generated_code, "POPFRAME\nRETURN\n\n") == 0)
                     {  
                         printf("LOCAL TABLE: ");
                         symtab_foreach(lc_var_tab, print_var);
@@ -492,16 +493,19 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                         lc_var_tab = NULL;
                         var_tab = gl_var_tab;
                     }
-                    
                     stcStr_pop(stack_str);
                 }
                 
+
                 if (get_func_params)
                 {                  
                     if (strcmp(act->name, "ID") == 0)
                     {
                         if (param_cnt >= 0)
                         {
+                            // check if same name is not used for function or other parameter
+                            if (symtab_find(fun_tab, sc_str->str) != NULL || symtab_find(lc_var_tab, sc_str->str) != NULL)
+                                goto err_sem_undef;
                             elem_t *param = symtab_elem_add(lc_var_tab, sc_str->str);
                             if (param == NULL)
                                 goto err_internal_main;
@@ -518,33 +522,38 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                         elem_t *fun = symtab_elem_add(fun_tab, func_key_tmp);
                         if (fun == NULL)
                             goto err_internal_main;
-                        else if (fun->func.n_params == UNDEF_NO_PARAMS)
+
+                        // check if same name was not used for other function 
+                        if (fun->func.is_defined == false)
                         {
-                            fun->func.is_defined = true;
-                            fun->func.n_params = param_cnt;
-                        }
-                        else
-                        {
-                            if (fun->func.n_params == param_cnt)
+                            // check if number of parameters is set to default value
+                            if (fun->func.n_params == UNDEF_NO_PARAMS)
                             {
                                 fun->func.is_defined = true;
+                                fun->func.n_params = param_cnt;
                             }
                             else
-                                goto err_sem_func;
+                            {
+                                // in this else branch we know that function was called before in the body of another function
+                                // if number of parameters is not equal, function call was wrong
+                                if (fun->func.n_params == param_cnt)
+                                    fun->func.is_defined = true;
+                                else
+                                    goto err_sem_func;
+                            }
                         }
+                        else
+                            goto err_sem_undef;
+
+                        
                         destroyTempKey(&func_key_tmp);
                         
                         // GENERATE FUNCTION PROLOG
-                        printf("def %s params %d\n", fun->func.key, param_cnt);
-                        for (int i = 0; i < fun->func.n_params; i++)
-                            printf("param %s ", param_arr->param_arr[i]->var.key);
-                        printf("\n");
+                        if (! funcGen(stack_str, fun, param_arr, param_cnt))
+                            goto err_internal_main;
+                        
                         dynamicArrParams_free(param_arr);
                         param_arr = NULL;
-
-                         // PUSH TO STACK FUNCTION EPILOG
-                        stcStr_push(stack_str, "enddef\n");
-
 
                         get_func_params = false;
                     }
@@ -576,6 +585,10 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             }
             else if (rule == ID_FUNC_20 || rule == ID_FUNC_21)
             {   
+                // check if same name isnt used global variable
+                if (symtab_find(gl_var_tab, sc_str->str) != NULL)
+                    goto err_sem_undef;
+                
                 if ( ! createTempKey(&func_key_tmp, sc_str->str))
                     goto err_internal_main;
 
@@ -674,7 +687,6 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
         goto err_syntactic;
 
     //symtab_foreach(fun_tab, print_fun_info);
-
     if (! symtab_foreach(fun_tab, check_fun))
         goto err_sem_undef;
 
@@ -685,7 +697,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     printf("\n\n");
 
     // free all alocated elements
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
     return SUCCESS;
 
 ///////////////////////////////////////
@@ -712,32 +724,32 @@ err_internal_3:
     return ERR_INTERNAL;
 
 err_internal_main:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_lexical:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
     error_msg("lexical\n");
     return ERR_LEX;
 
 err_syntactic:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
     error_msg("syntactic\n");
     return ERR_SYN;
 
 err_sem_undef:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
-    error_msg("semantic - undefined variable / function\n");
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
+    error_msg("semantic - undefined/redefined variable or function\n");
     return ERR_SEM_UNDEF;
 
 err_sem_func:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
     error_msg("semantic - wrong number of function parameters\n");
     return ERR_SEM_UNDEF;
 
 err_sem_other:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
     error_msg("semantic - other\n");
     return ERR_SEM_UNDEF;
 }

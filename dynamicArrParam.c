@@ -39,9 +39,9 @@
  *
  * @return     True     if succesfull, otherwise false
  */
-dynamicArrParams_t *dynamicArrParams_init()
+dynamicArrParam_t *dynamicArrParams_init()
 {
-    dynamicArrParams_t *a = malloc(sizeof(dynamicArrParams_t));
+    dynamicArrParam_t *a = malloc(sizeof(dynamicArrParam_t));
     if (a == NULL)
     {
         return NULL;
@@ -63,7 +63,7 @@ dynamicArrParams_t *dynamicArrParams_init()
  *
  * @param      a     structure to be freed
  */
-void dynamicArrParams_free(dynamicArrParams_t *a)
+void dynamicArrParams_free(dynamicArrParam_t *a)
 {
     if (a == NULL)
         return;
@@ -84,7 +84,7 @@ void dynamicArrParams_free(dynamicArrParams_t *a)
  *
  * @return     true if was succesful, otherwise false
  */
-bool dynamicArrParams_add(dynamicArrParams_t *a, elem_t *param)
+bool dynamicArrParams_add(dynamicArrParam_t *a, elem_t *param)
 {
     if (a->length >= a->max)
     {
@@ -106,7 +106,7 @@ bool dynamicArrParams_add(dynamicArrParams_t *a, elem_t *param)
 int main()
 {
 
-    dynamicArrParams_t *a = dynamicArrParams_init();
+    dynamicArrParam_t *a = dynamicArrParams_init();
     if (a == NULL)
     {
         return 1;

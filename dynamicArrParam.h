@@ -38,7 +38,7 @@ typedef struct
   elem_t **param_arr;
   unsigned int length; // lenght of params
   unsigned int max; // maximal length of params
-} dynamicArrParams_t;
+} dynamicArrParam_t;
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
@@ -56,7 +56,7 @@ typedef struct
  *
  * @return     True     if succesfull, otherwise false
  */
-dynamicArrParams_t *dynamicArrParams_init();
+dynamicArrParam_t *dynamicArrParams_init();
 
 
 /**
@@ -64,7 +64,7 @@ dynamicArrParams_t *dynamicArrParams_init();
  *
  * @param      a     structure to be freed
  */
-void dynamicArrParams_free(dynamicArrParams_t *a);
+void dynamicArrParams_free(dynamicArrParam_t *a);
 
 
 /**
@@ -75,7 +75,7 @@ void dynamicArrParams_free(dynamicArrParams_t *a);
  *
  * @return     true if was succesful, otherwise false
  */
-bool dynamicArrParams_add(dynamicArrParams_t *a, elem_t *param);
+bool dynamicArrParams_add(dynamicArrParam_t *a, elem_t *param);
 
 
 
