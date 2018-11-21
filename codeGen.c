@@ -8,7 +8,7 @@
 
   Synopsis    []
 
-  Author      [Lukas Vlake]
+  Author      [Lukas Valek]
 
   Affiliation []
 
@@ -230,7 +230,7 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -241,7 +241,7 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 
     if (strcmp(par1->name, "INT_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -262,7 +262,7 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     if (strcmp(par2->name, "INT_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param2, "GF");
         }
@@ -319,8 +319,8 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
               );
     }
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -347,7 +347,7 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -358,7 +358,7 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 
     if (strcmp(par1->name, "DBL_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -379,7 +379,7 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     if (strcmp(par2->name, "DBL_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param2, "GF");
         }
@@ -432,8 +432,8 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
               );
     }
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -459,7 +459,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -470,7 +470,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
     if (strcmp(par1->name, "INT_ID") == 0 || strcmp(par1->name, "DBL_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -498,7 +498,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     }
     if (strcmp(par2->name, "INT_ID") == 0 || strcmp(par2->name, "DBL_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param2, "GF");
         }
@@ -594,8 +594,8 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     }
 
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -623,7 +623,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -634,7 +634,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 
     if (strcmp(par1->name, "INT_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -655,7 +655,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     if (strcmp(par2->name, "STR_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param2, "GF");
         }
@@ -704,8 +704,8 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     {
         fprintf(stderr, "%d", 4);
         label_n++;
-        /*destroyToken(par1);
-        destroyToken(par2);*/
+        destroyToken(par1);
+        destroyToken(par2);
         destroyToken(op);
         free(print1);
         free(print2);
@@ -713,8 +713,8 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         return NULL;
     }
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -741,7 +741,7 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -752,7 +752,7 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 
     if (strcmp(par1->name, "DBL_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -773,7 +773,7 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     if (strcmp(par2->name, "STR_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param2, "GF");
         }
@@ -822,8 +822,8 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     {
         fprintf(stderr, "%d", 4);
         label_n++;
-        /*destroyToken(par1);
-        destroyToken(par2);*/
+        destroyToken(par1);
+        destroyToken(par2);
         destroyToken(op);
         free(print1);
         free(print2);
@@ -831,8 +831,8 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         return NULL;
     }
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -859,7 +859,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -870,7 +870,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     if (strcmp(par1->name, "INT_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -1102,8 +1102,8 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     }
 
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -1129,7 +1129,7 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -1140,7 +1140,7 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     if (strcmp(par1->name, "DBL_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -1359,8 +1359,8 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     }
 
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -1387,7 +1387,7 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -1398,7 +1398,7 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 
     if (strcmp(par1->name, "STR_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -1419,7 +1419,7 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     if (strcmp(par2->name, "STR_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param2, "GF");
         }
@@ -1473,8 +1473,8 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     {
         fprintf(stderr, "%d", 4);
         label_n++;
-        /*destroyToken(par1);
-        destroyToken(par2);*/
+        destroyToken(par1);
+        destroyToken(par2);
         destroyToken(op);
         free(print1);
         free(print2);
@@ -1482,8 +1482,8 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         return NULL;
     }
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -1509,7 +1509,7 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -1520,7 +1520,7 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     if (strcmp(par1->name, "STR_ID") == 0)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
+        if (strcmp(symtab->name, "$GT" ) == 0)
         {
             strcpy(param1, "GF");
         }
@@ -1638,8 +1638,8 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     {
         fprintf(stderr, "%d", 4);
         label_n++;
-        /*destroyToken(par1);
-        destroyToken(par2);*/
+        destroyToken(par1);
+        destroyToken(par2);
         destroyToken(op);
         free(print1);
         free(print2);
@@ -1648,8 +1648,8 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     }
 
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -1664,18 +1664,17 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     }
     static unsigned long long label_n = 0;
 
-    char param1[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "ID%lluID", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("ID", info);
 
     char *print1;
     char *print2;
 
-    if (strcmp(symtab->name, "GT" ) == 0)
+    if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame, "GF");
     }
@@ -1684,36 +1683,13 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         strcpy(frame, "LF");
     }
 
-    if (strcmp(par1->name, "INT_ID") == 0)
+    print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
+    if (print1 == NULL)
     {
-        if (strcmp(symtab->name, "GT" ) == 0)
-        {
-            strcpy(param1, "GF");
-        }
-        else
-        {
-            strcpy(param1, "LF");
-        }
-
-        print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
-        if (print1 == NULL)
-        {
-            return NULL;
-        }
-        strcpy(print1, par1->info.ptr->var.key);
+        return NULL;
     }
-    else if (strcmp(par1->name, "INT" ) == 0)
-    {
+    strcpy(print1, par1->info.ptr->var.key);
 
-        strcpy(param1, "int");
-
-        print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
-        if (print1 == NULL)
-        {
-            return NULL;
-        }
-        strcpy(print1, par1->info.string);
-    }
 
     print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
     if (print2 == NULL)
@@ -1723,19 +1699,35 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     strcpy(print2, par2->info.ptr->var.key);
 
 
+
+    printf("DEFVAR %s@%s%llu$type0\n"
+           "TYPE %s@%s%llu$type0 %s@%s\n"
+           "JUMPIFEQ $%s$%llu$int0 %s@%s%llu$type0 string@int\n",
+           frame, print1, label_n, frame, print1, label_n, frame, print1,
+           symtab->name, label_n, frame, print1, label_n);
+
+    printf("JUMPIFEQ $%s$%llu$float0 %s@%s%llu$type0 string@float\n", symtab->name,
+           label_n, frame, print1, label_n );
+
+    printf("JUMPIFEQ $%s$%llu$string0 %s@%s%llu$type0 string@string\n", symtab->name,
+           label_n, frame, print1, label_n );
+
+    printf("LABEL $%s$%llu$int0\n", symtab->name,
+           label_n);
+
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
     {
-        printf("DEFVAR %s@%s%llu$type\n"
-               "DEFVAR %s@%s%llu$tmp\n"
-               "DEFVAR %s@%llu$tmp$int\n"
-               "TYPE %s@%s%llu$type %s@%s\n"
-               "MOVE %s@%s%llu$tmp %s@%s\n"
-               "MOVE %s@%llu$tmp$int %s@%s\n"
-               "JUMPIFEQ $%s$%llu$int %s@%s%llu$type string@int\n"
-               "JUMPIFEQ $%s$%llu$int %s@%s%llu$type string@string\n"
-               "INT2FLOAT %s@%llu$tmp$int %s@%s\n"
-               "LABEL $%s$%llu$int\n"
-               "%s %s@%s %s@%s%llu$tmp %s@%llu$tmp$int\n",
+        printf("DEFVAR %s@%s%llu$type1\n"
+               "DEFVAR %s@%s%llu$tmp1\n"
+               "DEFVAR %s@%llu$tmp$int1\n"
+               "TYPE %s@%s%llu$type1 %s@%s\n"
+               "MOVE %s@%s%llu$tmp1 %s@%s\n"
+               "MOVE %s@%llu$tmp$int1 %s@%s\n"
+               "JUMPIFEQ $%s$%llu$int1 %s@%s%llu$type1 string@int\n"
+               "JUMPIFEQ $%s$%llu$int1 %s@%s%llu$type1 string@string\n"
+               "INT2FLOAT %s@%llu$tmp$int1 %s@%s\n"
+               "LABEL $%s$%llu$int1\n"
+               "%s %s@%s %s@%s%llu$tmp1 %s@%llu$tmp$int1\n",
                frame,
                print2,
                label_n,//
@@ -1756,7 +1748,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
                print2,//`
                frame,
                label_n,
-               param1,
+               frame,
                print1,//
                symtab->name,
                label_n,
@@ -1770,7 +1762,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
                label_n,//
                frame,
                label_n,
-               param1,
+               frame,
                print1,//
                symtab->name,
                label_n,//
@@ -1787,9 +1779,9 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
         if (strcmp(op->name, "!=") == 0)
         {
-            printf("DEFVAR %s@%s$not\n"
-                   "MOVE %s@%s$not %s@%s\n"
-                   "NOT %s@%s %s@%s$not\n",
+            printf("DEFVAR %s@%s$not1\n"
+                   "MOVE %s@%s$not1 %s@%s\n"
+                   "NOT %s@%s %s@%s$not1\n",
                    frame,
                    des->info.ptr->var.key,
                    frame,
@@ -1805,18 +1797,18 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     }
     else
     {
-        printf("DEFVAR %s@%s%llu$type\n"
-               "DEFVAR %s@%s%llu$tmp\n"
-               "DEFVAR %s@%llu$tmp$int\n"
-               "TYPE %s@%s%llu$type %s@%s\n"
-               "MOVE %s@%s%llu$tmp %s@%s\n"
-               "MOVE %s@%llu$tmp$int %s@%s\n"
-               "JUMPIFEQ $%s$%llu$int %s@%s%llu$type string@int\n"
-               "JUMPIFEQ $%s$%llu$float %s@%s%llu$type string@float\n"
+        printf("DEFVAR %s@%s%llu$type1\n"
+               "DEFVAR %s@%s%llu$tmp1\n"
+               "DEFVAR %s@%llu$tmp$int1\n"
+               "TYPE %s@%s%llu$type1 %s@%s\n"
+               "MOVE %s@%s%llu$tmp1 %s@%s\n"
+               "MOVE %s@%llu$tmp$int1 %s@%s\n"
+               "JUMPIFEQ $%s$%llu$int1 %s@%s%llu$type1 string@int\n"
+               "JUMPIFEQ $%s$%llu$float1 %s@%s%llu$type1 string@float\n"
                "EXIT int@4\n"
-               "LABEL $%s$%llu$float\n"
-               "INT2FLOAT %s@%llu$tmp$int %s@%s\n"
-               "LABEL $%s$%llu$int\n",
+               "LABEL $%s$%llu$float1\n"
+               "INT2FLOAT %s@%llu$tmp$int1 %s@%s\n"
+               "LABEL $%s$%llu$int1\n",
                frame,
                print2,
                label_n,//
@@ -1837,7 +1829,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
                print2,//
                frame,
                label_n,
-               param1,
+               frame,
                print1,//
                symtab->name,
                label_n,
@@ -1853,7 +1845,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
                label_n,//
                frame,
                label_n,
-               param1,
+               frame,
                print1,//
                symtab->name,
                label_n//
@@ -1861,7 +1853,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
         if (switched)
         {
-            printf("%s %s@%s %s@%s%llu$tmp %s@%llu$tmp$int\n", operator(op->name, 0),
+            printf("%s %s@%s %s@%s%llu$tmp1 %s@%llu$tmp$int1\n", operator(op->name, 0),
                    frame,
                    des->info.ptr->var.key,
                    frame,
@@ -1874,7 +1866,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
         else
         {
-            printf("%s %s@%s %s@%llu$tmp$int %s@%s%llu$tmp \n", operator(op->name, 0),
+            printf("%s %s@%s %s@%llu$tmp$int1 %s@%s%llu$tmp1 \n", operator(op->name, 0),
                    frame,
                    des->info.ptr->var.key,
                    frame,
@@ -1886,11 +1878,11 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
         if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
         {
-            printf("DEFVAR %s@%s$eq\n"
-                   "DEFVAR %s@%s$or\n"
-                   "MOVE %s@%s$or %s@%s\n"
-                   "EQ %s@%s$eq %s@%s%llu$tmp %s@%llu$tmp$int\n"
-                   "OR %s@%s %s@%s$eq %s@%s$or\n",
+            printf("DEFVAR %s@%s$eq1\n"
+                   "DEFVAR %s@%s$or1\n"
+                   "MOVE %s@%s$or1 %s@%s\n"
+                   "EQ %s@%s$eq1 %s@%s%llu$tmp1 %s@%llu$tmp$int1\n"
+                   "OR %s@%s %s@%s$eq1 %s@%s$or\n",
                    frame,
                    des->info.ptr->var.key,//
                    frame,
@@ -1917,9 +1909,282 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
     }
 
+
+    printf("JUMP ENDTHISMADNESS\n");
+
+    printf("LABEL $%s$%llu$float0\n", symtab->name,
+           label_n);
+
+
+    if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
+    {
+        printf("DEFVAR %s@%s%llu$type2\n"
+               "DEFVAR %s@%s%llu$tmp2\n"
+               "TYPE %s@%s%llu$type2 %s@%s\n"
+               "MOVE %s@%s%llu$tmp2 %s@%s\n"
+               "JUMPIFEQ $%s$%llu$float2 %s@%s%llu$type2 string@float\n"
+               "JUMPIFEQ $%s$%llu$float2 %s@%s%llu$type2 string@string\n"
+               "INT2FLOAT %s@%s%llu$tmp2 %s@%s\n"
+               "LABEL $%s$%llu$float2\n"
+               "%s %s@%s %s@%s%llu$tmp2 %s@%s\n",
+               frame,
+               print2,
+               label_n,//
+               frame,
+               print2,
+               label_n,//
+               frame,
+               print2,
+               label_n,
+               frame,
+               print2,//
+               frame,
+               print2,
+               label_n,
+               frame,
+               print2,//
+               symtab->name,
+               label_n,
+               frame,
+               print2,
+               label_n,//
+               symtab->name,
+               label_n,
+               frame,
+               print2,
+               label_n,//
+               frame,
+               print2,
+               label_n,
+               frame,
+               print2,//
+               symtab->name,
+               label_n,//
+               operator(op->name, 0),
+               frame,
+               des->info.ptr->var.key,
+               frame,
+               print2,
+               label_n,
+               frame,
+               print1//
+              );
+        if (strcmp(op->name, "!=") == 0)
+        {
+            printf("DEFVAR %s@%s$not2\n"
+                   "MOVE %s@%s$not2 %s@%s\n"
+                   "NOT %s@%s %s@%s$not2\n",
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key
+                  );
+        }
+    }
+
+
+    else
+    {
+        printf("DEFVAR %s@%s%llu$type2\n"
+               "DEFVAR %s@%s%llu$tmp2\n"
+               "TYPE %s@%s%llu$type2 %s@%s\n"
+               "MOVE %s@%s%llu$tmp2 %s@%s\n"
+               "JUMPIFEQ $%s$%llu$int2 %s@%s%llu$type2 string@int\n"
+               "JUMPIFEQ $%s$%llu$float2 %s@%s%llu$type2 string@float\n"
+               "EXIT int@4\n"
+               "LABEL $%s$%llu$int2\n"
+               "INT2FLOAT %s@%s%llu$tmp2 %s@%s\n"
+               "LABEL $%s$%llu$float2\n",
+               frame,
+               print2,
+               label_n,//
+               frame,
+               print2,
+               label_n,//
+               frame,
+               print2,
+               label_n,
+               frame,
+               print2,//
+               frame,
+               print2,
+               label_n,
+               frame,
+               print2,//
+               symtab->name,
+               label_n,
+               frame,
+               print2,
+               label_n,//
+               symtab->name,
+               label_n,
+               frame,
+               print2,
+               label_n,//
+               symtab->name,
+               label_n,//
+               frame,
+               print2,
+               label_n,
+               frame,
+               print2,
+               symtab->name,
+               label_n//
+              );
+
+        if (switched)
+        {
+            printf("%s %s@%s %s@%s%llu$tmp2 %s@%s\n", operator(op->name, 0),
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   print2,
+                   label_n,
+                   frame,
+                   print1//
+                  );
+
+        }
+        else
+        {
+            printf("%s %s@%s %s@%s %s@%s%llu$tmp2 \n", operator(op->name, 0),
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   print1,
+                   frame,
+                   print2,
+                   label_n
+
+                  );
+        }
+        if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
+        {
+            printf("DEFVAR %s@%s$eq2\n"
+                   "DEFVAR %s@%s$or2\n"
+                   "MOVE %s@%s$or2 %s@%s\n"
+                   "EQ %s@%s$eq2 %s@%s%llu$tmp2 %s@%s\n"
+                   "OR %s@%s %s@%s$eq2 %s@%s$or2\n",
+                   frame,
+                   des->info.ptr->var.key,//
+                   frame,
+                   des->info.ptr->var.key,//
+                   frame,
+                   des->info.ptr->var.key,//
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   print2,
+                   label_n,
+                   frame,
+                   print1,//
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key
+                  );
+        }
+
+    }
+    printf("JUMP ENDTHISMADNESS\n");
+
+    printf("LABEL $%s$%llu$string0\n", symtab->name,
+           label_n);
+
+
+    if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
+    {
+        printf("%s %s@%s %s@%s %s@%s\n", operator(op->name, 0),
+               frame,
+               des->info.ptr->var.key,
+               frame,
+               print2,
+               frame,
+               print1//
+              );
+        if (strcmp(op->name, "!=") == 0)
+        {
+            printf("DEFVAR %s@%s$not3\n"
+                   "MOVE %s@%s$not3 %s@%s\n"
+                   "NOT %s@%s %s@%s$not3\n",
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   des->info.ptr->var.key
+                  );
+        }
+    }
+
+    else if (strcmp(op->name, "+") == 0)
+    {
+        printf("DEFVAR %s@%s%llu$type3\n"
+               "TYPE %s@%s%llu$type3 %s@%s\n"
+               "JUMPIFEQ $%s$%llu$string3 %s@%s%llu$type3 string@string\n"
+               "EXIT int4\n"
+               "LABEL $%s$%llu$string3\n",
+               frame,
+               print2,
+               label_n,//
+               frame,
+               print2,
+               label_n,
+               frame,
+               print2,//
+               symtab->name,
+               label_n,
+               frame,
+               print2,
+               label_n,//
+               symtab->name,
+               label_n//
+
+              );
+
+        if (switched)
+        {
+            printf("%s %s@%s %s@%s %s@%s\n", operator(op->name, 1),
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   print2,//
+                   frame,
+                   print1//
+                  );
+        }
+        else
+        {
+            printf("%s %s@%s %s@%s %s@%s\n", operator(op->name, 1),
+                   frame,
+                   des->info.ptr->var.key,
+                   frame,
+                   print1,//
+                   frame,
+                   print2//
+                  );
+        }
+    }
+
+    printf("LABEL ENDTHISMADNESS\n");
+
     label_n++;
-    /*destroyToken(par1);
-    destroyToken(par2);*/
+    destroyToken(par1);
+    destroyToken(par2);
     destroyToken(op);
     free(print1);
     free(print2);
@@ -1981,19 +2246,25 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
 
         default: break;
     }
-    return (token_t *) NULL;
+    return NULL;
 }
 
 #if 0
-#endif
+
 
 int main()
 {
     elem_t elem;
-    elem.var.key = "jsem0ID";
+    elem.var.key = "jsemID1";
     token_info_t *info = malloc(sizeof(token_info_t));
     info->ptr = &elem;
     token_t *token = createToken("ID", *info);
+
+    elem_t elem5;
+    elem5.var.key = "jsemID2";
+    token_info_t *info6 = malloc(sizeof(token_info_t));
+    info6->ptr = &elem5;
+    token_t *token5 = createToken("ID", *info6);
 
 
     elem_t elem1;
@@ -2009,20 +2280,20 @@ int main()
     token_t *token4 = createToken("STR_ID", info5);
 
 
-    symtable_t *symtable = symtab_init("GT", VARIABLES);
+    symtable_t *symtable = symtab_init("foo", VARIABLES);
 
     token_info_t tmp;
     tmp.ptr = NULL;
 
 
-    token_t *op = createToken("+", tmp);
+    token_t *op = createToken("!=", tmp);
     token_info_t info3;
     info3.string = "ahoj";
     token_info_t info4;
     info4.string = "7.1";
     token_t *token2 = createToken("STR", info3);
     token_t *token3 = createToken("DBL", info4);
-    token_t *tmp12 = gen_expr(op,  token, token, symtable);
+    token_t *tmp12 = gen_expr(op,  token5, token, symtable);
     /*printf("---%s---\n", tmp12->info.ptr->var.key);
     printf("---%s---\n", tmp12->name);*/
     //token_t *tmp13 = gen_expr(op, tmp12, token2, symtable);
@@ -2032,17 +2303,21 @@ int main()
         printf("\nC\nH\nY\nB\nA\n");
     }
 
+    /*free(info);
+    free(info6);
     free(tmp12);
-    free(token);
+    //free(token);
     free(token1);
-    free(op);
+    //free(op);
     free(token2);
     free(token3);
-    free(token4);
+    free(token4);*/
+    //free(token5);
+    symtab_free(symtable);
     return 0;
 }
 
-
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
