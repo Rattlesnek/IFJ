@@ -26,10 +26,10 @@
 #include "sa_prec.h"
 #include "stack_sa_prec.h"
 #include "error.h"
-#include "dynamicArrParam.h"
-#include "queue.h"
+#include "stackTkn.h"
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -152,6 +152,37 @@ static inline bool sa_isExprVar(token_t *token)
     return false;
 }
 
+void sa_callFunc(stack_tkn_t *stack)
+{
+    token_t *func = stcTkn_pop(stack);
+
+    printf("CREATEFRAME\n");
+    token_t *param;
+    int i = 1;
+    char *val = NULL;
+    while((param = stcTkn_pop(stack)) != NULL)
+    {
+        val = sa_isExprVar(param) ? param->info.string : 
+                                    param->info.ptr->var.key;
+        
+        printf("DEFVAR %s@%%%d\n"
+               "MOVE %s@%%%d %s@%s\n",
+                func->info.ptr->func.key,
+                i,
+                func->info.ptr->func.key,
+                i,
+                param->name,
+                val
+              );
+
+        i++;
+        free(param);
+    }
+    
+    printf("CALL %s\n", func->info.ptr->func.key);
+    free(func);
+}
+
 /* 
  * @brief Operator-precedence parser
  *
@@ -178,7 +209,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     char func_read = 0;
     table_elem_t term;
     token_t *ptr_tok[2];
-    
+    stack_tkn_t *tok_stack = stcTkn_create();
     while(42)
     {
         stack_top_term = stc_topTerm(stack);
@@ -199,12 +230,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             if(loc_elem != NULL)
             {
                 token_term = _id_;
+                token->info.ptr = loc_elem;
             }
             else if(func_elem != NULL)
             {
                 if(detect_func == 1 || count != 0)
                     goto fail_end;
 
+                token->info.ptr = func_elem;
                 token_term = _func_;
                 detect_func = 1;
             }
@@ -224,12 +257,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
         }
         count++;
-
-        if(sa_isExprVar(token))
-        {
-            if(detect_func);
-
-        }
 
         printf("=> sa_prec: Token_term %d\n", token_term);
         printf("=> sa_prec: Stack topTerm %d\n", stack_top_term);
@@ -267,7 +294,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //token_t *token = stc_tokPopTop(stack, &term);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _id_)
+                    {
+                        destroyToken(ptr_tok[0]);
                         goto fail_end;
+                    }
             
                     term = stc_popTop(stack);
                     if(term != _sml_)
@@ -285,7 +315,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //term = stc_popTop(stack);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _plus_)
@@ -294,7 +327,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //term = stc_popTop(stack);
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
+                        destroyToken(ptr_tok[1]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _sml_)
@@ -310,7 +347,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //term = stc_popTop(stack);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _mult_)
@@ -319,7 +359,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //term = stc_popTop(stack);
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
+                        destroyToken(ptr_tok[1]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _sml_)
@@ -336,14 +380,18 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                  * F -> f(E, ... , E)
                  */
                 case _rbrc_:
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
+                    //stcTkn_push(tok_stack, ptr_tok[0]);
                     if(term != _rbrc_)
                         goto fail_end;
 
-                    term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term == _lbrc_)
                     {
-                        term = stc_popTop(stack);
+                        //term = stc_popTop(stack);
+                        ptr_tok[0] = stc_tokPopTop(stack, &term);
+                        stcTkn_push(tok_stack, ptr_tok[0]);
                         if(term != _func_)
                             goto fail_end;
 
@@ -358,15 +406,19 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         else if(func_elem->func.n_params != num_params)
                             goto sem_fail;
 
+                        sa_callFunc(tok_stack);
                         func_read = 1;
                         break;
                     }
                     else if(term == _E_)
                     {
+                        stcTkn_push(tok_stack, ptr_tok[0]);
                         term = stc_popTop(stack);
                         if(term == _lbrc_)
                         {
-                            term = stc_popTop(stack);
+                            //term = stc_popTop(stack);
+                            ptr_tok[0] = stc_tokPopTop(stack, &term);
+                            stcTkn_push(tok_stack, ptr_tok[0]);
                             if(term == _func_)
                             {
                                 term = stc_popTop(stack);
@@ -379,6 +431,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                                     func_elem->func.n_params = num_params;
                                 else if(func_elem->func.n_params != num_params)
                                     goto sem_fail;
+
+                                sa_callFunc(tok_stack);
                                 func_read = 1;
                                 break;
                             }
@@ -392,18 +446,23 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         {
                             while(42)
                             {
-                                term = stc_popTop(stack);
+                                //term = stc_popTop(stack);
+                                ptr_tok[0] = stc_tokPopTop(stack, &term);
+                                stcTkn_push(tok_stack, ptr_tok[0]);
                                 if(term != _E_)
                                     goto fail_end;
 
-                                term = stc_popTop(stack);
+                                ptr_tok[0] = stc_tokPopTop(stack, &term);
+                                //term = stc_popTop(stack);
                                 if(term == _lbrc_)
                                     break;
                                 else if(term != _coma_)
                                     goto fail_end;
                             }
 
-                            term = stc_popTop(stack);
+                            //term = stc_popTop(stack);
+                            ptr_tok[0] = stc_tokPopTop(stack, &term);
+                            stcTkn_push(tok_stack, ptr_tok[0]);
                             if(term != _func_)
                                 goto fail_end;
 
@@ -418,6 +477,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             else if(func_elem->func.n_params != num_params)
                                 goto sem_fail;
 
+                            sa_callFunc(tok_stack);
                             func_read = 1;
                             break;
                         }
@@ -431,7 +491,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //term = stc_popTop(stack);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _mins_)
@@ -440,7 +503,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //term = stc_popTop(stack);
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
+                        destroyToken(ptr_tok[1]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _sml_)
@@ -455,7 +522,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //term = stc_popTop(stack);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _div_)
@@ -464,7 +534,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //term = stc_popTop(stack);
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
+                        destroyToken(ptr_tok[1]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _sml_)
@@ -482,11 +556,18 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     // term = stc_popTop(stack);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
+                    {
+                        destroyToken(ptr_tok[0]);
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _rel_)
+                    {
+                        destroyToken(ptr_tok[1]);
+                        destroyToken(ptr_tok[0]);
                         goto fail_end;
+                    }
 
                     // term = stc_popTop(stack);
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
@@ -506,15 +587,23 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                  * F -> f E
                  */
                 case _func_:
-                    term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term == _E_)
                     {
-                        term = stc_popTop(stack);
+                        stcTkn_push(tok_stack, ptr_tok[0]);
+                        ptr_tok[0] = stc_tokPopTop(stack, &term);
+                        stcTkn_push(tok_stack, ptr_tok[0]);
                         if(term != _func_)
                             goto fail_end;
                     }
-                    else if(term != _func_)
+                    else if(term == _func_)
+                    {   
+                       stcTkn_push(tok_stack, ptr_tok[0]); 
+                    }
+                    else
+                    {
                         goto fail_end;
+                    }
 
                     term = stc_popTop(stack);
                     if(term != _sml_)
@@ -522,12 +611,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                     stc_push(stack, _F_, NULL);
                     if(!func_elem->func.is_defined)
-                    {
                         func_elem->func.n_params = num_params;
-                    }
                     else if(func_elem->func.n_params != num_params)
                             goto sem_fail;
 
+                    sa_callFunc(tok_stack);
                     func_read = 1;
                     break;
 
@@ -535,7 +623,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 case _coma_:
                     while(42)
                     {
-                        term = stc_popTop(stack);
+                        //term = stc_popTop(stack);
+                        ptr_tok[0] = stc_tokPopTop(stack, &term);
+                        stcTkn_push(tok_stack, ptr_tok[0]);
                         if(term != _E_)
                             goto fail_end;
 
@@ -546,7 +636,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             goto fail_end;
                     }
 
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
+                    stcTkn_push(tok_stack, ptr_tok[0]);
                     if(term != _func_)
                         goto fail_end;
 
@@ -561,6 +653,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     else if(func_elem->func.n_params != num_params)
                             goto sem_fail;
 
+                    sa_callFunc(tok_stack);
                     func_read = 1;
                     break;
 
@@ -569,6 +662,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             
             if(sa_detectSucEnd(stack, token_term))
             {
+                stcTkn_destroy(tok_stack);
                 stc_destroy(stack);
 #ifdef DEBUG_PREC
                 destroyToken(token);
@@ -584,6 +678,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
         if(sa_detectSucEnd(stack, token_term))
         {
+            stcTkn_destroy(tok_stack);
             stc_destroy(stack);
 
 #ifdef DEBUG_PREC            
@@ -601,18 +696,21 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     return SUCCESS;
 
 fail_end:
+    stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
     //destroyToken(token);
     return ERR_SYN;
 
 sem_fail:
+    stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
     //destroyToken(token);
     return ERR_SEM_FUNC;
 
 sem_fail_defined:
+    stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
     return ERR_SEM_UNDEF;
