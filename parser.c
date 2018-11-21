@@ -436,6 +436,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 else if (strcmp(top->name, "while") == 0)
                 {
                     printf("********* WHILE **********\n");
+                    generate_LABEL_while();
 #ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
@@ -445,10 +446,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     // GENERATE WHILE
                     /////////////////////
 
+                    generate_while_false();
                     //printf("while\n");
                     // push to stack_tkn "epilog of while"
                     //stcStr_push(stack_str, "endwhile\n");
-                    generate_while(stack_str);
+                    generate_while_ending(stack_str);
                     get_new_token = true;
                     printf("********** END ***********\n");
                 }

@@ -63,8 +63,18 @@ bool generate_if(stack_str_t *stack);
  * @return true Returns true if everything pushed on stack properly
  * @return false Returns false if error occured
  */
-bool generate_while(stack_str_t *stack);
+bool generate_while_ending(stack_str_t *stack);
 
+/**
+ * @brief Prints "LABEL $while$%llu\n"
+ */
+void generate_LABEL_while();
+
+/**
+ * @brief Prints "JUMPIFEQ $end_while$%llu COND int@0\n" ergo ==> Condition of while
+ * 
+ */
+void generate_while_false();
 
 #endif
 ////////////////////////////////////////////////////////////////////////

@@ -43,6 +43,9 @@ int state = State_S;
 char *keywords[] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while", "elif"};
 int KeywordLen = 10;
 
+char *builtin_func[] = {"inputs", "inputi", "inputf", "print", "length", "substr", "ord", "chr"};
+int Built_Func = 8;
+
 ////////////////////////////////////////////////////////////////////////
 ///                     FUNCTION DEFINITIONS                         ///
 ///////////////////////////////////////////////////////////////////////
@@ -110,6 +113,17 @@ char* inKeyword(char *str, char **keywords)
     {
         if (strcmp(keywords[i], str) == 0)
             return keywords[i];
+    }
+   
+    return "ID";
+}
+
+char *inBuiltin_Func(char *str, char **builtin_func)
+{
+    for (int i = 0; i < Built_Func; i++)
+    {
+        if (strcmp(builtin_func[i], str) == 0)
+            return builtin_func[i];
     }
    
     return "ID";
@@ -545,16 +559,27 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         sc_unget(c);
                         char *name = "ID";
                         if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )
-                            {
-                                name = inKeyword(sc_str->str, keywords);
-                                sc_info.ptr = NULL;
-                                sc_token= createToken(name, sc_info);
-                                if (sc_token == NULL)
-                                    goto err_internal;
+                        {
+                            name = inKeyword(sc_str->str, keywords);
+                            sc_info.ptr = NULL;
+                            sc_token= createToken(name, sc_info);
+                            if (sc_token == NULL)
+                                goto err_internal;
 
-                                printf("Token-name: %s\n", sc_token->name); 
-                                return sc_token; 
-                            }
+                            printf("Token-name: %s\n", sc_token->name); 
+                            return sc_token; 
+                        }
+                        else if (strcmp(inBuiltin_Func(sc_str->str, builtin_func),"ID") != 0)
+                        {
+                            name = inBuiltin_Func(sc_str->str, builtin_func);
+                            sc_info.ptr = NULL;
+                            sc_token= createToken(name, sc_info);
+                            if (sc_token == NULL)
+                                goto err_internal;
+
+                            printf("Token-name: %s\n", sc_token->name); 
+                            return sc_token; 
+                        }
                         else
                         {
                             sc_info.ptr = NULL;

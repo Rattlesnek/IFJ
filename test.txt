@@ -1,6 +1,10 @@
 =begin
 
 =end
+inputi()
+print()
+chr(i)
+
 a= 45
 if a > 3 then
 else
