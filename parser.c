@@ -351,6 +351,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     gl_var_tab = symtab_init(NULL, VARIABLES);
     if (gl_var_tab == NULL)
         goto err_internal_2;
+    gl_var_tab->name = "$GT";
     var_tab = gl_var_tab;
     fun_tab = symtab_init(NULL, FUNCTIONS);
     if (fun_tab == NULL)
