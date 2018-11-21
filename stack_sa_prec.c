@@ -128,10 +128,11 @@ char stc_popTop(stack_sa_t *stack)
     return term;
 }
 
-token_t *stc_tokPopTop(stack_sa_t *stack)
+token_t *stc_tokPopTop(stack_sa_t *stack, table_elem_t *term)
 {
     token_t *token = stack->top->token;
-
+    *term = stack->top->term;
+    
     if(stack->top == stack->bot) 
     { 
         free(stack->top);

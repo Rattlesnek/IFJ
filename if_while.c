@@ -66,18 +66,14 @@ bool generate_if(stack_str_t *stack)
     return true;
 }
 
-bool generate_while(stack_str_t *stack)
+bool generate_while_ending(stack_str_t *stack)
 {
-    /******* LABEL WHILE*************/
-    printf("LABEL $while$%llu\n", count);
-
     /******** END of While***********/
     //"LABEL $end_while$%llu\nJUMP $while$%llu\n" has max length 72 bits
-    char *b = malloc(sizeof(char) * 125);
-    sprintf(b, "JUMPIFEQ $end_while$%llu COND int@0\n"
-                "JUMP $while$%llu\n"
+    char *b = malloc(sizeof(char) * 72);
+    sprintf(b,  "JUMP $while$%llu\n"
                 "LABEL $end_while$%llu\n",
-                 count,count, count);
+                 count,count);
     if (stcStr_push(stack, b) == false)
         return false;
 
@@ -90,6 +86,19 @@ bool generate_while(stack_str_t *stack)
     count++;
     return true;
 }
+
+void generate_LABEL_while()
+{
+    /******* LABEL WHILE*************/
+    printf("LABEL $while$%llu\n", count);
+}
+
+void generate_while_false()
+{
+    printf("JUMPIFEQ $end_while$%llu COND int@0\n", count);
+}
+
+
 
 
 

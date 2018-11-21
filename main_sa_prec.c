@@ -27,6 +27,7 @@ int main()
     elem->func.n_params = 2;
 
     elem_t *elem1 = symtab_elem_add(lsymtable, "a");
+    //elem1->var.key = "2";
     elem_t *elem2 = symtab_elem_add(fsymtable, "f");
     int ret_value = sa_prec(sc_str, que, lsymtable, fsymtable);
     if(ret_value)
