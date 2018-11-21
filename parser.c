@@ -351,7 +351,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     gl_var_tab = symtab_init(NULL, VARIABLES);
     if (gl_var_tab == NULL)
         goto err_internal_2;
-    gl_var_tab->name = "$GT";
+    gl_var_tab->name = malloc( (strlen("$GT") + 1) * sizeof(char));
+    strcpy(gl_var_tab->name, "$GT");
     var_tab = gl_var_tab;
     fun_tab = symtab_init(NULL, FUNCTIONS);
     if (fun_tab == NULL)
@@ -429,7 +430,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     //stcStr_push(stack_str, "endif\n");
                     //stcStr_push(stack_str, "else\n");
                     
-                    generate_if(stack_str);
+                    if (! generate_if(stack_str))
+                        goto err_internal_main;
 
                     get_new_token = true;
                     printf("********** END ***********\n");
@@ -449,9 +451,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 
                     generate_while_false();
                     //printf("while\n");
-                    // push to stack_tkn "epilog of while"
                     //stcStr_push(stack_str, "endwhile\n");
-                    generate_while_ending(stack_str);
+                    
+                    // push to stack_tkn "epilog of while"
+                    if (! generate_while_ending(stack_str))
+                        goto err_internal_main;
+
                     get_new_token = true;
                     printf("********** END ***********\n");
                 }
@@ -623,7 +628,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
-
+                
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
                 // RUN PRECEDENC ANALYSIS
@@ -638,7 +643,9 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             }
             else if (rule == EXPR_INCLUDE_TWO)
             {
+                
                 printf("********** EXPR **********\n");
+                
                 // destroy token: "[func-assign-expr]"
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
