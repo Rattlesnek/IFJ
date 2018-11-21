@@ -38,10 +38,9 @@
 #include "token.h"
 #include "symtable.h"
 
-#include "funcGen.h"
+#include "parser_gen.h"
 
 #include "error.h"
-#include "if_while.h"
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -351,8 +350,10 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     gl_var_tab = symtab_init(NULL, VARIABLES);
     if (gl_var_tab == NULL)
         goto err_internal_2;
+    ////////////////////////////////////
     gl_var_tab->name = malloc( (strlen("$GT") + 1) * sizeof(char));
     strcpy(gl_var_tab->name, "$GT");
+    ////////////////////////////////////
     var_tab = gl_var_tab;
     fun_tab = symtab_init(NULL, FUNCTIONS);
     if (fun_tab == NULL)
@@ -471,7 +472,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ////////////////////////////////
                     // GENERATE VARIABLE definition
                     ///////////////////////////////
-                    printf("var %s\n", id_key_tmp);
+                    //printf("var %s\n", id_key_tmp);
+                    generate_var(var_tab, id_key_tmp, "right_val"); // TODO
                     
                     // check if same name isnt used for function
                     if (symtab_find(fun_tab, id_key_tmp) != NULL)
@@ -562,7 +564,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                         destroyTempKey(&func_key_tmp);
                         
                         // GENERATE FUNCTION PROLOG
-                        if (! funcGen(stack_str, fun, param_arr, param_cnt))
+                        if (! generate_function(stack_str, fun, param_arr))
                             goto err_internal_main;
                         
                         dynamicArrParams_free(param_arr);
@@ -645,7 +647,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             {
                 
                 printf("********** EXPR **********\n");
-                
+
                 // destroy token: "[func-assign-expr]"
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
@@ -760,12 +762,12 @@ err_sem_undef:
 err_sem_func:
     freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
     error_msg("semantic - wrong number of function parameters\n");
-    return ERR_SEM_UNDEF;
+    return ERR_SEM_FUNC;
 
 err_sem_other:
     freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
     error_msg("semantic - other\n");
-    return ERR_SEM_UNDEF;
+    return ERR_SEM_OTHER;
 }
 
 

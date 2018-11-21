@@ -26,10 +26,9 @@
 
 #include <stdbool.h>
 
-#include "parser.h"
-#include "sa_prec.h"
+#include "symtable.h"
+#include "dynamicArrParam.h"
 #include "stackStr.h"
-#include "error.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
@@ -75,6 +74,13 @@ void generate_LABEL_while();
  * 
  */
 void generate_while_false();
+
+
+bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr);
+
+
+void generate_var(symtable_t *var_tab, char *var_name, char *right_val);
+
 
 #endif
 ////////////////////////////////////////////////////////////////////////
