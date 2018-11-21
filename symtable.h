@@ -40,14 +40,14 @@ typedef enum {VARIABLES, FUNCTIONS} table_type_t;
 
 
 typedef struct function {
-    char *key;
-    bool is_defined;
-    int n_params;
+  char *key;
+  bool is_defined;
+  int n_params;
 } func_t;
 
 typedef struct variable {
-    char *key;
-    // parameters of functions are variables ???
+  char *key;
+  // parameters of functions are variables ???
 } var_t;
 
 /**
@@ -59,12 +59,12 @@ typedef struct variable {
 
 typedef struct element
 {
-    union {
-        var_t var;
-        func_t func;
-    };
- 
-    struct element *next;
+  union {
+    var_t var;
+    func_t func;
+  };
+
+  struct element *next;
 } elem_t;
 
 /**
@@ -75,11 +75,11 @@ typedef struct element
  */
 typedef struct symtable
 {
-    char *name;
-    table_type_t type;
-    size_t size;
-    size_t arr_size;
-    elem_t *ptr[];
+  char *name;
+  table_type_t type;
+  size_t size;
+  size_t arr_size;
+  elem_t *ptr[];
 } symtable_t;
 
 ////////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ bool symtab_remove(symtable_t *t, const char *key);
  * @param[in]      key         The key used as in the hash function
  */
 
-//elem_t *symtab_elem_add(symtable_t *symtab, char *name /*(ID, FUNC)*/, char *key /*(realne jmeno promenne).*/) 
+//elem_t *symtab_elem_add(symtable_t *symtab, char *name /*(ID, FUNC)*/, char *key /*(realne jmeno promenne).*/)
 
 
 

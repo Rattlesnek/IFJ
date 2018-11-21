@@ -30,35 +30,6 @@
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
 
-// enum na indexy
-typedef enum index {
-	INT_index,
-	DBL_index,
-	STR_index,
-	ID_index
-
-} index_t;
-
-
-// enum na switchdexy
-typedef enum index_switch {
-	INT_INT,
-	INT_DBL,
-	INT_STR,
-	INT_ID,
-	DBL_INT,
-	DBL_DBL,
-	DBL_STR,
-	DBL_ID,
-	STR_INT,
-	STR_DBL,
-	STR_STR,
-	STR_ID,
-	ID_INT,
-	ID_DBL,
-	ID_STR,
-	ID_ID
-} index_switch_t;
 
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
@@ -69,10 +40,35 @@ typedef enum index_switch {
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+// enum na indexy
+typedef enum index {
+  INT_index,
+  DBL_index,
+  STR_index,
+  ID_index
+
+} index_t;
 
 
-
-
+// enum na switchdexy
+typedef enum index_switch {
+  INT_INT,
+  INT_DBL,
+  INT_STR,
+  INT_ID,
+  DBL_INT,
+  DBL_DBL,
+  DBL_STR,
+  DBL_ID,
+  STR_INT,
+  STR_DBL,
+  STR_STR,
+  STR_ID,
+  ID_INT,
+  ID_DBL,
+  ID_STR,
+  ID_ID
+} index_switch_t;
 
 #endif
 ////////////////////////////////////////////////////////////////////////
