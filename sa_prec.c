@@ -26,6 +26,8 @@
 #include "sa_prec.h"
 #include "stack_sa_prec.h"
 #include "error.h"
+#include "dynamicArrParam.h"
+#include "queue.h"
 #include <string.h>
 #include <stdbool.h>
 
@@ -140,6 +142,16 @@ static inline bool sa_detectSucEnd(stack_sa_t *stack, table_elem_t token)
             && token == _empt_);
 }
 
+static inline bool sa_isExprVar(token_t *token)
+{
+    if(strcmp(token->name, "INT") == 0 ||
+       strcmp(token->name, "DBL") == 0 ||
+       strcmp(token->name, "STR") == 0)
+        return true;
+
+    return false;
+}
+
 /* 
  * @brief Operator-precedence parser
  *
@@ -158,13 +170,15 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     int token_term = 0;
     int stack_top_term = 0;
     char rule = 0;
-    int term = 0;
     char detect_func = 0;
     int num_params = 0;
     elem_t *loc_elem = NULL;
     elem_t *func_elem = NULL;
     int count = 0;
     char func_read = 0;
+    table_elem_t term;
+    token_t *ptr_tok[2];
+    
     while(42)
     {
         stack_top_term = stc_topTerm(stack);
@@ -173,12 +187,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         if(token_term == INVALID_TOKEN)
             goto fail_end;
 
-#if TEST_FUNC
         if(token_term == _id_ && (strcmp(token->name, "ID") == 0))
         {
             loc_elem = symtab_find(loc_symtab, sc_str->str);
             if(!detect_func)
+            {
                 func_elem = symtab_find(func_symtab, sc_str->str);
+                token->info.ptr = func_elem;
+            }
 
             if(loc_elem != NULL)
             {
@@ -208,7 +224,12 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
         }
         count++;
-#endif
+
+        if(sa_isExprVar(token))
+        {
+            if(detect_func);
+
+        }
 
         printf("=> sa_prec: Token_term %d\n", token_term);
         printf("=> sa_prec: Stack topTerm %d\n", stack_top_term);
@@ -242,17 +263,17 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
                 /* E -> i */
                 case _id_:
-                    term = stc_Top(stack);
+                    //term = stc_Top(stack);
+                    //token_t *token = stc_tokPopTop(stack, &term);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _id_)
                         goto fail_end;
-
-                    token_t *token = stc_tokPopTop(stack);
-
+            
                     term = stc_popTop(stack);
                     if(term != _sml_)
                         goto fail_end;
 
-                    stc_push(stack, _E_, token);
+                    stc_push(stack, _E_, ptr_tok[0]);
 
                     if(detect_func)
                         num_params++;
@@ -261,7 +282,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                 /* E -> E + E */
                 case _plus_:
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
                         goto fail_end;
 
@@ -269,7 +291,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _plus_)
                         goto fail_end;
 
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
                         goto fail_end;
 
@@ -277,12 +300,15 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
 
-                    stc_push(stack, _E_, NULL);
+                    // Volani Lukiho f-ce
+
+                    stc_push(stack, _E_, NULL);     // TODO
                     break;
 
                 /* E -> E * E */
                 case _mult_:
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
                         goto fail_end;
 
@@ -290,7 +316,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _mult_)
                         goto fail_end;
 
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
                         goto fail_end;
 
@@ -298,7 +325,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
 
-                    stc_push(stack, _E_, NULL);
+                    // Volani Lukiho f-ce
+                    stc_push(stack, _E_, NULL);     // TODO
                     break;
 
                 /* 
@@ -400,7 +428,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                 /* E -> E - E */
                 case _mins_:
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
                         goto fail_end;
 
@@ -408,7 +437,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _mins_)
                         goto fail_end;
 
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
                         goto fail_end;
 
@@ -416,12 +446,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
 
-                    stc_push(stack, _E_, NULL);
+                    // Volani Lukio f-ce
+                    stc_push(stack, _E_, NULL);     // TODO
                     break;
 
                 /* E -> E / E */
                 case _div_:
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
                         goto fail_end;
 
@@ -429,13 +461,16 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _div_)
                         goto fail_end;
 
-                    term = stc_popTop(stack);
+                    //term = stc_popTop(stack);
+                    ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if(term != _E_)
                         goto fail_end;
 
                     term = stc_popTop(stack);
                     if(term != _sml_)
                         goto fail_end;
+
+                    // Volani Lukio f-ce
 
                     stc_push(stack, _E_, NULL);
                     break;
@@ -444,43 +479,27 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                  * L -> S rel S 
                  */
                 case _rel_:
-                    term = stc_popTop(stack);
-
-                    if(term == _E_)
-                    {
-                        term = stc_popTop(stack);
-                        if(term != _rel_)
-                            goto fail_end;
-
-                        term = stc_popTop(stack);
-                        if(term != _E_)
-                            goto fail_end;
-
-                        term = stc_popTop(stack);  
-                        if(term != _sml_)
-                            goto fail_end;
-                    }
-                    else if(term == _S_)
-                    {
-
-                        term = stc_popTop(stack);
-                        if(term != _rel_)
-                            goto fail_end;
-
-                        term = stc_popTop(stack);
-                        if(term != _S_)
-                            goto fail_end;
-
-                        term = stc_popTop(stack);  
-                        if(term != _sml_)
-                            goto fail_end;
-                    }
-                    else
-                    {
+                    // term = stc_popTop(stack);
+                    ptr_tok[0] = stc_tokPopTop(stack, &term);
+                    if(term != _E_)
                         goto fail_end;
-                    }
 
-                    stc_push(stack, _L_, NULL);
+                    term = stc_popTop(stack);
+                    if(term != _rel_)
+                        goto fail_end;
+
+                    // term = stc_popTop(stack);
+                    ptr_tok[1] = stc_tokPopTop(stack, &term);
+                    if(term != _E_)
+                        goto fail_end;
+
+                    term = stc_popTop(stack);  
+                    if(term != _sml_)
+                        goto fail_end;
+                     
+                    // Volani Lukio f-ce
+
+                    stc_push(stack, _L_, NULL);     // TODO
                     break;
 
                 /* F -> f

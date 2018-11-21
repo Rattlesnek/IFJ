@@ -102,7 +102,7 @@ bool stc_pushAfter(stack_sa_t *stack, table_elem_t term, table_elem_t rule);
 void stc_print(stack_sa_t *stack);
 
 char stc_Top(stack_sa_t *stack);
-token_t *stc_tokPopTop(stack_sa_t *stack);
+token_t *stc_tokPopTop(stack_sa_t *stack, table_elem_t *term);
 
 
 #endif
