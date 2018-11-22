@@ -272,7 +272,9 @@ bool pushRevertedRules(stack_tkn_t *stack_tkn, int rule)
 
 void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
              symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab,
-             dynamicArrParam_t *param_arr, char **id_key_tmp, char **func_key_tmp, token_t *act, token_t *token)
+             dynamicArrParam_t *param_arr, 
+             char **id_key_tmp, char **func_key_tmp, char **sa_prec_ret,
+             token_t *act, token_t *token)
 {
     stcTkn_destroy(stack_tkn);
     stcStr_destroy(stack_str);
@@ -286,6 +288,8 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
 
     destroyTempKey(id_key_tmp);
     destroyTempKey(func_key_tmp);
+    destroyTempKey(sa_prec_ret);
+    
     destroyToken(act);
     destroyToken(token);
 }
@@ -329,9 +333,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     bool get_func_params = false;
 
     int rule;
+    
     int ret_val = -1;
+    char *sa_prec_ret = NULL;
 
     char *id_key_tmp = NULL;
+    
     char *func_key_tmp = NULL;
     int param_cnt;
     dynamicArrParam_t *param_arr = NULL;
@@ -428,12 +435,13 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
 #endif
                     
-                    if (! generate_if(stack_str))
+                    if (! generate_if(var_tab, stack_str, sa_prec_ret))
                         goto err_internal_main;
 
+                    destroyTempKey(&sa_prec_ret);
                     get_new_token = true;
                     PARSER_DBG_PRINT("********** END ***********\n");
                 }
@@ -448,14 +456,15 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
 #endif
                     
-                    generate_while_false();
+                    generate_while_false(var_tab, sa_prec_ret);
                     // push to stack_tkn "epilog of while"
                     if (! generate_while_ending(stack_str))
                         goto err_internal_main;
 
+                    destroyTempKey(&sa_prec_ret);
                     get_new_token = true;
                     PARSER_DBG_PRINT("********** END ***********\n");
                 }
@@ -468,10 +477,10 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
 #endif
 
-                    generate_var(var_tab, id_key_tmp, "right_val"); // TODO
+                    generate_var(var_tab, id_key_tmp, sa_prec_ret); // TODO
                     
                     // check if same name isnt used for function
                     if (symtab_find(fun_tab, id_key_tmp) != NULL)
@@ -480,7 +489,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                         goto err_internal_main;
 
                     destroyTempKey(&id_key_tmp);
-
+                    destroyTempKey(&sa_prec_ret);
                     get_new_token = true;
                     PARSER_DBG_PRINT("********** END ***********\n");
                 }
@@ -638,11 +647,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
 #endif
 
                 // expression TODO
-
+                destroyTempKey(&sa_prec_ret);
                 get_new_token = true;
                 PARSER_DBG_PRINT("********** END ***********\n");
             }
@@ -664,11 +673,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
 #ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
 #endif
 
                 // expression TODO
-
+                destroyTempKey(&sa_prec_ret);
                 get_new_token = true;
                 PARSER_DBG_PRINT("********** END ***********\n");
             }
@@ -722,7 +731,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     PARSER_DBG_PRINT("\n\n");
 
     // free all alocated elements
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
     return SUCCESS;
 
 ///////////////////////////////////////
@@ -749,32 +758,32 @@ err_internal_3:
     return ERR_INTERNAL;
 
 err_internal_main:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_lexical:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
     error_msg("lexical\n");
     return ERR_LEX;
 
 err_syntactic:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
     error_msg("syntactic\n");
     return ERR_SYN;
 
 err_sem_undef:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
     error_msg("semantic - undefined/redefined variable or function\n");
     return ERR_SEM_UNDEF;
 
 err_sem_func:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
     error_msg("semantic - wrong number of function parameters\n");
     return ERR_SEM_FUNC;
 
 err_sem_other:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
     error_msg("semantic - other\n");
     return ERR_SEM_OTHER;
 }

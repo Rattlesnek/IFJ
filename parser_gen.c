@@ -41,10 +41,14 @@ unsigned long long int count = 0;
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-bool generate_if(stack_str_t *stack)
+bool generate_if(symtable_t *var_tab, stack_str_t *stack, char *cond)
 {
+    char frame[3] = "LF";
+    if (strcmp(var_tab->name, "$GT") == 0)
+        strcpy(frame, "GF");
+    
     /*********Jump to ELSE if cond == false*********/ 
-    printf("\nJUMPIFEQ $else$%llu COND int@0\n\n", count);
+    printf("\nJUMPIFEQ $else$%llu %s@%s int@0\n\n", count, frame, cond);
     /********* DOING IF statement *************/
 
     //Must go from bottom to top (LABEL endif -> JMP endif) viz. assembler
@@ -99,9 +103,13 @@ void generate_LABEL_while()
 }
 
 
-void generate_while_false()
+void generate_while_false(symtable_t *var_tab, char *cond)
 {
-    printf("JUMPIFEQ $end_while$%llu COND int@0\n\n", count);
+    char frame[3] = "LF";
+    if (strcmp(var_tab->name, "$GT") == 0)
+        strcpy(frame, "GF");
+
+    printf("JUMPIFEQ $end_while$%llu %s@%s int@0\n\n", count, frame, cond);
 }
 
 
@@ -140,10 +148,16 @@ void generate_var(symtable_t *var_tab, char *var_name, char *right_val)
     if (strcmp(var_tab->name, "$GT") == 0)
         strcpy(frame, "GF");
     
+    char frame_right_val[3];
+    if (strcmp(right_val, "%retval") == 0) // TODO
+        strcpy(frame_right_val, "TF");
+    else
+        strcpy(frame_right_val, frame);
+    
     if (symtab_find(var_tab, var_name) == NULL)
         printf("DEFVAR %s@%s\n", frame, var_name);
 
-    printf("MOVE %s@%s %s@%s\n", frame, var_name, frame, right_val);
+    printf("MOVE %s@%s %s@%s\n", frame, var_name, frame_right_val, right_val);
 }
 
 
