@@ -42,6 +42,11 @@
 
 #include "error.h"
 
+#ifdef PARSER_PRINT
+    #define PARSER_DBG_PRINT(...) do{ PARSER_DBG_PRINT( __VA_ARGS__ ); } while(0)
+#else
+    #define PARSER_DBG_PRINT(...) do{ } while(0)
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -185,7 +190,7 @@ int LLtableFind(char *nonterm, char *term)
         term_idx = EXPR_term;
 
 
-    //printf("nonterm_idx: %d\tterm_idx: %d\n", nonterm_idx, term_idx);
+    //PARSER_DBG_PRINT("nonterm_idx: %d\tterm_idx: %d\n", nonterm_idx, term_idx);
 
     // return value from corresponding bucket in ll_table
     return ll_table[nonterm_idx][term_idx];
@@ -194,15 +199,15 @@ int LLtableFind(char *nonterm, char *term)
 
 bool print_fun(elem_t *element)
 {
-    printf("%s, ", element->func.key);
+    PARSER_DBG_PRINT("%s, ", element->func.key);
     return true;
 }
 
 bool print_fun_info(elem_t *element)
 {
-    printf("key %s\n", element->func.key);
-    printf("definde %d\n", element->func.is_defined);
-    printf("n params %d\n", element->func.n_params);
+    PARSER_DBG_PRINT("key %s\n", element->func.key);
+    PARSER_DBG_PRINT("defined %d\n", element->func.is_defined);
+    PARSER_DBG_PRINT("n_params %d\n", element->func.n_params);
 
     return true;
 }
@@ -210,7 +215,7 @@ bool print_fun_info(elem_t *element)
 
 bool print_var(elem_t *element)
 {
-    printf("%s, ", element->var.key);
+    PARSER_DBG_PRINT("%s, ", element->var.key);
     return true;
 }
 
@@ -285,17 +290,17 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
     destroyToken(token);
 }
 
-#ifdef DEBUG_PARSER
+#ifdef PARSER_DEBUG
 int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
 {
     token_t *act = scanner_get(sc_str, que);
-    //printf("expr handling: %s\n", act->name);
+    PARSER_DBG_PRINT("expr handling: %s\n", act->name);
     if (strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0)
     {
         do {
             destroyToken(act);
             act = scanner_get(sc_str, que);
-            //printf("expr handling: %s\n", act->name);
+            PARSER_DBG_PRINT("expr handling: %s\n", act->name);
         } while(strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
     }
     scanner_unget(que, act, sc_str->str);
@@ -311,7 +316,7 @@ int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
  */
 int parser(dynamicStr_t *sc_str, queue_t *que)
 {
-    //printf("Parser started\n"); 
+    PARSER_DBG_PRINT("Parser started\n"); 
     
     // DEFINE LOCAL VARIABLES
     token_t *top = NULL; 
@@ -386,7 +391,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
         {   
             // if needed get new token from scanner 
             act = scanner_get(sc_str, que);
-            //printf("scanner_get: %s\n", act->name);
+            PARSER_DBG_PRINT("scanner_get: %s\n", act->name);
             if (strcmp(act->name, "ERR_LEX") == 0)
                 goto err_lexical;
             else if (strcmp(act->name, "ERR_INTERNAL") == 0)
@@ -400,12 +405,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
         {
             if (strcmp(act->name, "EOF") == 0)
             {
-                printf("EOF reached on both stack and scanner\n");
+                PARSER_DBG_PRINT("EOF reached on both stack and scanner\n");
                 succ = true;
             }
             else
             {
-                printf("EOF reached on stack but not from scanner\n");
+                PARSER_DBG_PRINT("EOF reached on stack but not from scanner\n");
                 fail = true;
             }
         }
@@ -413,66 +418,59 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
         {
             if (strcmp(top->name, act->name) == 0)
             {
-                //printf("top == act: %s\n", act->name);
+                PARSER_DBG_PRINT("top == act: %s\n", act->name);
                 if (strcmp(top->name, "if") == 0)
                 {
-                    printf("*********** IF ***********\n");  
-#ifdef DEBUG_PARSER              
+                    PARSER_DBG_PRINT("*********** IF ***********\n");  
+                    ///////////////////
+                    //  GENERATE IF  //
+                    ///////////////////
+#ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
 #endif
-                    //////////////////////
-                    // GENERATE IF 
-                    //////////////////////
-
-                    //printf("if\n");
-                    // push to stack_tkn "epilog of if" and "else branch" (in this order)
-                    //stcStr_push(stack_str, "endif\n");
-                    //stcStr_push(stack_str, "else\n");
                     
                     if (! generate_if(stack_str))
                         goto err_internal_main;
 
                     get_new_token = true;
-                    printf("********** END ***********\n");
+                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "while") == 0)
                 {
-                    printf("********* WHILE **********\n");
+                    PARSER_DBG_PRINT("********* WHILE **********\n");
+                    //////////////////////
+                    //  GENERATE WHILE  //
+                    //////////////////////
                     generate_LABEL_while();
-#ifdef DEBUG_PARSER              
+
+#ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
 #endif
-                    //////////////////////
-                    // GENERATE WHILE
-                    /////////////////////
-
-                    generate_while_false();
-                    //printf("while\n");
-                    //stcStr_push(stack_str, "endwhile\n");
                     
+                    generate_while_false();
                     // push to stack_tkn "epilog of while"
                     if (! generate_while_ending(stack_str))
                         goto err_internal_main;
 
                     get_new_token = true;
-                    printf("********** END ***********\n");
+                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "=") == 0)
                 {
-                    printf("********** EXPR **********\n");
-#ifdef DEBUG_PARSER              
+                    PARSER_DBG_PRINT("********** EXPR **********\n");
+                    /////////////////////////
+                    //  GENERATE VARIABLE  //
+                    /////////////////////////
+#ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
 #endif
-                    ////////////////////////////////
-                    // GENERATE VARIABLE definition
-                    ///////////////////////////////
-                    //printf("var %s\n", id_key_tmp);
+
                     generate_var(var_tab, id_key_tmp, "right_val"); // TODO
                     
                     // check if same name isnt used for function
@@ -484,25 +482,26 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     destroyTempKey(&id_key_tmp);
 
                     get_new_token = true;
-                    printf("********** END ***********\n");
+                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
-            /*    else if (strcmp(top->name, "elif") == 0)
+            /*  else if (strcmp(top->name, "elif") == 0)
                 {
 
                 } */
                 else if (strcmp(act->name, "end") == 0 || strcmp(act->name, "else") == 0)
                 {
-                    ////////////////////////////
-                    // STACK POP GENERATED CODE
-                    ///////////////////////////
+                    ////////////////////////////////
+                    //  STACK POP GENERATED CODE  //
+                    ////////////////////////////////
                     char *generated_code = stcStr_top(stack_str);
-                    if (strcmp(generated_code, "POPFRAME\nRETURN\n\n") == 0)
+                    if (strcmp(generated_code, "\nPOPFRAME\nRETURN\n\n") == 0)
                     {  
-                        printf("LOCAL TABLE: ");
+                        PARSER_DBG_PRINT("LOCAL TABLE: ");
                         symtab_foreach(lc_var_tab, print_var);
-                        printf("\n\n");
+                        PARSER_DBG_PRINT("\n\n");
                         
-                        printf("MOVE LF@%%retval LF@%s\n", "something");
+                        // return value TODO 
+                        //printf("MOVE LF@%%retval LF@%s\n", "something");
                         
                         symtab_free(lc_var_tab);
                         lc_var_tab = NULL;
@@ -533,9 +532,9 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     }
                     else if (strcmp(act->name, "EOL") == 0)
                     {                   
-                        //////////////////////////////
-                        // GENERATE FUNCTION
-                        /////////////////////////////
+                        /////////////////////////
+                        //  GENERATE FUNCTION  //
+                        /////////////////////////
                         elem_t *fun = symtab_elem_add(fun_tab, func_key_tmp);
                         if (fun == NULL)
                             goto err_internal_main;
@@ -586,7 +585,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             }
             else
             {
-                printf("top != name ... top: %s\tact: %s\n", top->name, act->name);
+                PARSER_DBG_PRINT("top != name ... top: %s\tact: %s\n", top->name, act->name);
                 fail = true;
             }
                 
@@ -598,7 +597,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             {
                 if ( ! createTempKey(&id_key_tmp, sc_str->str))
                     goto err_internal_main;
-                //printf("id_tmp load %s\n", id_key_tmp);
+                PARSER_DBG_PRINT("id_tmp load %s\n", id_key_tmp);
             }
             else if (rule == ID_FUNC_20 || rule == ID_FUNC_21)
             {   
@@ -615,7 +614,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 if (param_arr == NULL)
                     goto err_internal_main;
                 
-                //printf("create local hash table for function\n");
+                PARSER_DBG_PRINT("create local hash table for function\n");
                 if (lc_var_tab == NULL) // TODO
                 {
                     lc_var_tab = symtab_init(func_key_tmp, VARIABLES);
@@ -628,27 +627,29 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             // need to be if (not else if) !!!
             if (rule == EXPR_INCLUDE)
             {
-                printf("********** EXPR **********\n");
+                PARSER_DBG_PRINT("********** EXPR **********\n");
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
                 
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
-                // RUN PRECEDENC ANALYSIS
-#ifdef DEBUG_PARSER              
+
+#ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
 #endif
 
+                // expression TODO
+
                 get_new_token = true;
-                printf("********** END ***********\n");
+                PARSER_DBG_PRINT("********** END ***********\n");
             }
             else if (rule == EXPR_INCLUDE_TWO)
             {
                 
-                printf("********** EXPR **********\n");
+                PARSER_DBG_PRINT("********** EXPR **********\n");
 
                 // destroy token: "[func-assign-expr]"
                 token = stcTkn_pop(stack_tkn);
@@ -659,19 +660,21 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 destroyTempKey(&id_key_tmp);
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
-                // RUN PRECEDENC ANALYSIS              
-#ifdef DEBUG_PARSER              
+            
+#ifdef PARSER_DEBUG              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab);
 #endif
 
+                // expression TODO
+
                 get_new_token = true;
-                printf("********** END ***********\n");
+                PARSER_DBG_PRINT("********** END ***********\n");
             }
             else if (rule) // in case rule == 0 -- fail
             {
-                //printf("top: %s\tact: %s\n", top->name, act->name);
+                PARSER_DBG_PRINT("top: %s\tact: %s\n", top->name, act->name);
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
@@ -681,7 +684,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             }
             else
             {
-                printf("no corresponding rule ... top: %s\tact: %s\n", top->name, act->name);
+                PARSER_DBG_PRINT("no corresponding rule ... top: %s\tact: %s\n", top->name, act->name);
                 fail = true;
             } 
         }
@@ -692,8 +695,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             case ERR_SEM_UNDEF: goto err_sem_undef;
             case ERR_SEM_FUNC:  goto err_sem_func;
             case ERR_SEM_OTHER: goto err_sem_other;
-            case SUCCESS:       printf("SUCCESS EXPR\n"); ret_val = -1; break;
-            default: break;
+            case SUCCESS:       
+                PARSER_DBG_PRINT("SUCCESS EXPR\n"); 
+                ret_val = -1; 
+                break;
+            default: 
+                break;
         }
 
     } while (succ == false && fail == false);
@@ -708,11 +715,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     if (! symtab_foreach(fun_tab, check_fun))
         goto err_sem_undef;
 
-    printf("\nGLOBAL TABLE:\n");
+    PARSER_DBG_PRINT("\nGLOBAL TABLE:\n");
     symtab_foreach(gl_var_tab, print_var);
-    printf("\n\nFUNC TABLE:\n");
+    PARSER_DBG_PRINT("\n\nFUNC TABLE:\n");
     symtab_foreach(fun_tab, print_fun);   
-    printf("\n\n");
+    PARSER_DBG_PRINT("\n\n");
 
     // free all alocated elements
     freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token);

@@ -37,9 +37,9 @@
 #include "scanner.h"
 
 #ifdef SCANNER_PRINT
-#define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
+    #define SCANNER_DBG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
-#define DEBUG_PRINT(...) do{ } while(0)
+    #define SCANNER_DBG_PRINT(...) do{ } while(0)
 #endif
 
 ////////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token; 
                     }
                     break;
@@ -396,7 +396,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;
                     }
                     if ( isspace(c) && c != '\n')
@@ -415,7 +415,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token; 
                     }
                     else
@@ -517,7 +517,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
+                    SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
                     
                     return sc_token;  
 
@@ -559,7 +559,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             if (sc_token == NULL)
                                 goto err_internal;
 
-                            DEBUG_PRINT("Token-name: %s\n", sc_token->name); 
+                            SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name); 
                             return sc_token; 
                         }
                         else if (strcmp(inBuiltin_Func(sc_str->str, builtin_func),"ID") != 0)   //Token:"BUILTIN", atribut: "name_of_func"
@@ -571,7 +571,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             if (sc_token == NULL)
                                 goto err_internal;
 
-                            DEBUG_PRINT("Token-name: %s || Value : %s\n", sc_token->name, sc_str->str );
+                            SCANNER_DBG_PRINT("Token-name: %s || Value : %s\n", sc_token->name, sc_str->str );
                             return sc_token; 
                         }
                         else
@@ -581,7 +581,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             if (sc_token == NULL)
                                 goto err_internal;
     
-                            DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                            SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                             return sc_token;  
                         }
                     
@@ -606,7 +606,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s \n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s \n", sc_token->name);
                         return sc_token;  
                     }
 
@@ -626,7 +626,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;  
                     }
 
@@ -648,7 +648,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s \n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s \n", sc_token->name);
                     return sc_token;  
 
 
@@ -689,7 +689,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
+                        SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
                         return sc_token;   
                     }
                     break;
@@ -723,7 +723,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string);
+                        SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string);
                         return sc_token;  
                     }
                     else
@@ -796,7 +796,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
+                        SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
                         return sc_token;   
                     }
                     break;
@@ -816,7 +816,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;
                     }
                     break;
@@ -829,7 +829,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -845,7 +845,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;
                     }
                     break;
@@ -858,7 +858,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -874,7 +874,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;
                     }
                     break;
@@ -887,7 +887,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -909,7 +909,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
                     
@@ -921,7 +921,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -933,7 +933,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -945,7 +945,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -957,7 +957,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
                     
@@ -969,7 +969,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -981,7 +981,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
 
@@ -993,7 +993,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     break;
             }
@@ -1009,7 +1009,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
     
 
@@ -1020,7 +1020,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;  
                 
 
@@ -1031,7 +1031,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_LCOMM:
@@ -1041,7 +1041,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token; 
 
                 case State_QUATATION2:
@@ -1054,7 +1054,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
+                    SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_str->str );
                     return sc_token;  
 
                 case State_ID:
@@ -1068,7 +1068,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             if (sc_token == NULL)
                                 goto err_internal;
     
-                            DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                            SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                             return sc_token; 
                         }
                     else
@@ -1078,7 +1078,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;  
                     }
 
@@ -1097,7 +1097,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s \n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s \n", sc_token->name);
                     return sc_token;  
 
                 case State_FUNC:
@@ -1107,7 +1107,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s \n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s \n", sc_token->name);
                     return sc_token; 
 
                 case State_INT:
@@ -1120,7 +1120,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
+                    SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
                     return sc_token; 
 
                 case State_INT0:
@@ -1133,7 +1133,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s  ||  Value :%s\n", sc_token->name, sc_info.string);
+                    SCANNER_DBG_PRINT("Token-name: %s  ||  Value :%s\n", sc_token->name, sc_info.string);
                     return sc_token;  
 
                 case State_FLOAT:
@@ -1146,7 +1146,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string);;
+                    SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string);;
                     return sc_token;   
 
                 case State_LTN:
@@ -1156,7 +1156,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;
 
                 case State_LEQ:
@@ -1166,7 +1166,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_MTN:
@@ -1176,7 +1176,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (sc_token == NULL)
                             goto err_internal;
 
-                        DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;
 
                 case State_MEQ:
@@ -1186,7 +1186,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_ASSIGN:
@@ -1196,7 +1196,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_EQ:
@@ -1206,7 +1206,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_NEQ:
@@ -1216,7 +1216,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     
                 case State_COMMA:
@@ -1226,7 +1226,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_LEFT_BRACKET:
@@ -1236,7 +1236,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_RIGHT_BRACKET:
@@ -1246,7 +1246,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_DIV:
@@ -1256,7 +1256,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
                     
                 case State_MUL:
@@ -1266,7 +1266,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_MINUS:
@@ -1276,7 +1276,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 case State_PLUS:
@@ -1286,7 +1286,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     if (sc_token == NULL)
                         goto err_internal;
 
-                    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+                    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
 
                 default:
@@ -1309,7 +1309,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
         }
         free(name);
 
-        DEBUG_PRINT("Token-name: %s\n", sc_token3->name);
+        SCANNER_DBG_PRINT("Token-name: %s\n", sc_token3->name);
         return sc_token3;
     }
 
@@ -1320,13 +1320,13 @@ err_lexical:
     sc_unget(c); 
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_LEX", sc_info);
-    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
     return sc_token;
 
 err_internal:
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_INTERNAL", sc_info);
-    DEBUG_PRINT("Token-name: %s\n", sc_token->name);
+    SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
     return sc_token;
 }
 ////////////////////////////////////////////////////////////////////////

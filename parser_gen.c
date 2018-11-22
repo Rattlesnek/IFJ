@@ -44,21 +44,22 @@ unsigned long long int count = 0;
 bool generate_if(stack_str_t *stack)
 {
     /*********Jump to ELSE if cond == false*********/ 
-    printf("JUMPIFEQ $else$%llu COND int@0\n", count);
+    printf("\nJUMPIFEQ $else$%llu COND int@0\n\n", count);
     /********* DOING IF statement *************/
 
     //Must go from bottom to top (LABEL endif -> JMP endif) viz. assembler
     //"LABEL $endif$%llu" has max length 34 bits
     char b[34];
-    sprintf(b, "LABEL $endif$%llu\n", count);
+    sprintf(b, "\nLABEL $endif$%llu\n\n", count);
     if (stcStr_push(stack, b) == false)
         return false; 
 
     /*********END IF, ELSE branch **************/
     //"LABEL $else$%llu\nJMP $endif$%llu" has max length 66 bits
     char c[66];
-    sprintf(c, "JMP $endif$%llu\n"
-                "LABEL $else$%llu\n",
+    sprintf(c,  "\n"
+                "JMP $endif$%llu\n"
+                "LABEL $else$%llu\n\n",
                 count, count);
     if (stcStr_push(stack,c) == false)
         return false;
@@ -73,8 +74,9 @@ bool generate_while_ending(stack_str_t *stack)
     /******** END of While***********/
     //"LABEL $end_while$%llu\nJUMP $while$%llu\n" has max length 72 bits
     char b[72];
-    sprintf(b,  "JUMP $while$%llu\n"
-                "LABEL $end_while$%llu\n",
+    sprintf(b,  "\n"
+                "JUMP $while$%llu\n"
+                "LABEL $end_while$%llu\n\n",
                  count,count);
     if (stcStr_push(stack, b) == false)
         return false;
@@ -93,20 +95,20 @@ bool generate_while_ending(stack_str_t *stack)
 void generate_LABEL_while()
 {
     /******* LABEL WHILE*************/
-    printf("LABEL $while$%llu\n", count);
+    printf("\nLABEL $while$%llu\n", count);
 }
 
 
 void generate_while_false()
 {
-    printf("JUMPIFEQ $end_while$%llu COND int@0\n", count);
+    printf("JUMPIFEQ $end_while$%llu COND int@0\n\n", count);
 }
 
 
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr)
 {
     printf( "\n"
-            "LABEL $%s\n" 
+            "LABEL %s\n" 
             "PUSHFRAME\n"
             "DEFVAR LF@%%retval\n"
             "MOVE LF@%%retval nil@nil\n", 
@@ -124,7 +126,7 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
     }
     printf("\n");
 
-    if (! stcStr_push(stack_str, "POPFRAME\nRETURN\n\n"))
+    if (! stcStr_push(stack_str, "\nPOPFRAME\nRETURN\n\n"))
         return false;
 
     return true;
