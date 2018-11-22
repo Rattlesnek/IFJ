@@ -2380,7 +2380,7 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
     return error;
 }
 
-#if 1
+#if 0
 
 
 int main()

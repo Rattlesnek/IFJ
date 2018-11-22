@@ -177,11 +177,11 @@ void length(symtable_t *symtab, token_t *par)
         if (symtab_find(symtab, par->info.string) == NULL)
             strcpy(frame_var, "GF");
 
-        priintf("MOVE %s@$length$tmp%llu %s@%s\n ", 
+        printf("MOVE %s@$length$tmp%llu %s@%s\n ", 
                 frame_act, count, frame_var, par->info.string);
     }
     else if ((strcmp(par->name, "STR") == 0))
-       priintf("MOVE %s@$length$tmp%llu string@%s\n ", 
+       printf("MOVE %s@$length$tmp%llu string@%s\n ", 
                 frame_act, count, par->info.string);
     
     else{
@@ -190,7 +190,7 @@ void length(symtable_t *symtab, token_t *par)
         //return error 4 
     }
     
-    priintf("STRLEN LF@%%retval %s@$length$tmp%llu\n",
+    printf("STRLEN LF@%%retval %s@$length$tmp%llu\n",
             frame_act, count);
 
     count++;
