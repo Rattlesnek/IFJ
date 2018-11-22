@@ -281,8 +281,6 @@ token_t *null_null(token_t *par1, symtable_t *symtab)
 
     label_n++;
     destroyToken(par1);
-    fprintf(stderr, "co pada omg\n");
-    fflush(stdout);
     free(print1);
     return des;
 }
@@ -780,7 +778,6 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     else
     {
-        fprintf(stderr, "%d", 4);
         label_n++;
         destroyToken(par1);
         destroyToken(par2);
@@ -788,7 +785,9 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         free(print1);
         free(print2);
         free(des);
-        return NULL;
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
     }
     label_n++;
     destroyToken(par1);
@@ -898,7 +897,6 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     else
     {
-        fprintf(stderr, "%d", 4);
         label_n++;
         destroyToken(par1);
         destroyToken(par2);
@@ -906,7 +904,9 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         free(print1);
         free(print2);
         free(des);
-        return NULL;
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
     }
     label_n++;
     destroyToken(par1);
@@ -960,7 +960,11 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
         if (print1 == NULL)
         {
-            return NULL;
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
         }
         strcpy(print1, par1->info.ptr->var.key);
     }
@@ -972,7 +976,11 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
         if (print1 == NULL)
         {
-            return NULL;
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
         }
         strcpy(print1, par1->info.string);
     }
@@ -980,7 +988,12 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
     if (print2 == NULL)
     {
-        return NULL;
+        free(des->name);
+        free(des);
+        printf("%d\n", 99);
+        token_info_t info1;
+        token_t *error = createToken("ERR_INT", info1);
+        return error;
     }
     strcpy(print2, par2->info.ptr->var.key);
 
@@ -1230,7 +1243,11 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
         if (print1 == NULL)
         {
-            return NULL;
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
         }
         strcpy(print1, par1->info.ptr->var.key);
     }
@@ -1242,7 +1259,11 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
         if (print1 == NULL)
         {
-            return NULL;
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
         }
         strcpy(print1, par1->info.string);
     }
@@ -1250,7 +1271,11 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
     if (print2 == NULL)
     {
-        return NULL;
+        free(des->name);
+        free(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_INT", info1);
+        return error;
     }
     strcpy(print2, par2->info.ptr->var.key);
 
@@ -1549,7 +1574,6 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     else
     {
-        fprintf(stderr, "%d", 4);
         label_n++;
         destroyToken(par1);
         destroyToken(par2);
@@ -1557,7 +1581,9 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         free(print1);
         free(print2);
         free(des);
-        return NULL;
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
     }
     label_n++;
     destroyToken(par1);
@@ -1610,7 +1636,11 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
         if (print1 == NULL)
         {
-            return NULL;
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
         }
         strcpy(print1, par1->info.ptr->var.key);
     }
@@ -1622,7 +1652,11 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
         if (print1 == NULL)
         {
-            return NULL;
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
         }
         strcpy(print1, par1->info.string);
     }
@@ -1630,7 +1664,11 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
     if (print2 == NULL)
     {
-        return NULL;
+        free(des->name);
+        free(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_INT", info1);
+        return error;
     }
     strcpy(print2, par2->info.ptr->var.key);
 
@@ -1714,7 +1752,6 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     }
     else
     {
-        fprintf(stderr, "%d", 4);
         label_n++;
         destroyToken(par1);
         destroyToken(par2);
@@ -1722,7 +1759,9 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         free(print1);
         free(print2);
         free(des);
-        return NULL;
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
     }
 
     label_n++;
@@ -1764,7 +1803,11 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
     if (print1 == NULL)
     {
-        return NULL;
+        free(des->name);
+        free(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_INT", info1);
+        return error;
     }
     strcpy(print1, par1->info.ptr->var.key);
 
@@ -1772,7 +1815,11 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
     if (print2 == NULL)
     {
-        return NULL;
+        free(des->name);
+        free(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_INT", info1);
+        return error;
     }
     strcpy(print2, par2->info.ptr->var.key);
 
@@ -2327,7 +2374,10 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
 
         default: break;
     }
-    return NULL;
+
+    token_info_t info1;
+    token_t *error = createToken("ERR_INT", info1);
+    return error;
 }
 
 #if 1
@@ -2374,7 +2424,7 @@ int main()
     info4.string = "7.1";
     token_t *token2 = createToken("STR", info3);
     token_t *token3 = createToken("DBL", info4);
-    token_t *tmp12 = gen_expr(op,  token5, token, symtable);
+    token_t *tmp12 = gen_expr(NULL,  token3, NULL, symtable);
     /*printf("---%s---\n", tmp12->info.ptr->var.key);
     printf("---%s---\n", tmp12->name);*/
     //token_t *tmp13 = gen_expr(op, tmp12, token2, symtable);
