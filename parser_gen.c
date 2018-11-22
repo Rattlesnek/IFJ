@@ -178,7 +178,6 @@ token_t *length(symtable_t *symtab, token_t *par)
 
     char frame_act [3] = "LF";
     char frame_var [7] = "LF";      //from which frame is variable ID
-    char *print;
     if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame_act, "GF");
@@ -231,7 +230,6 @@ token_t *length(symtable_t *symtab, token_t *par)
     printf("STRLEN %s@%s %s@$length$tmp%llu\n",
            frame_act, name, frame_act, label_n);
 
-    free(print);
     label_n++;
     return des;
 }
