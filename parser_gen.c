@@ -205,17 +205,11 @@ token_t *length(symtable_t *symtab, token_t *par)
             strcpy(frame_var, "LF");
         }
 
-        print = malloc(sizeof(char) * (strlen(par->info.ptr->var.key) + 1));
-
-
-        strcpy(print, par->info.ptr->var.key);
-        printf("MOVE %s@$length$tmp%llu %s@%s\n ",
-               frame_act, label_n, frame_var, print);
-
-
-        printf("JUMPIFEQ $%s$%llu$string %s@$length$tmp%llu string@string\n"
+        printf("MOVE %s@$length$tmp%llu %s@%s\n "
+               "JUMPIFEQ $%s$%llu$string %s@$length$tmp%llu string@string\n"
                "EXIT int4\n"
                "LABEL $%s$%llu$string\n",
+               frame_act, label_n, frame_var, par->info.ptr->var.key,
                frame_act, label_n, frame_act, label_n, frame_act, label_n);
     }
     else if (strcmp(par->name, "STR") == 0)
