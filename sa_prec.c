@@ -42,7 +42,7 @@
 #define INVALID_TOKEN -1
 #define TEST_FUNC 1
 
-#define SA_PREC_PRINT 0
+//#define SA_PREC_PRINT 0
 #ifdef SA_PREC_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
@@ -58,7 +58,7 @@ char sa_prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
 /*  )  */{ '>' , '>' , 'X' , '>' , 'X' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
 /*  i  */{ '>' , '>' , 'X' , '>' , 'X' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
 /*  -  */{ '>' , '<' , '<' , '>' , '<' , '>' , '<' ,  '>' , 'X' , 'X' , '>' , '>' },
-/*  /  */{ '>' , '<' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
+/*  /  */{ '>' , '>' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
 /* rel */{ '<' , '<' , '<' , '>' , '<' , '<' , '<' ,  'X' , '<' , 'X' , '>' , '>' },
 /* str */{ '>' , 'X' , 'X' , 'X' , 'X' , 'X' , 'X' ,  '>' , 'X' , 'X' , 'X' , '>' },
 /*  f  */{ 'X' , 'X' , '=' , 'X' , '<' , 'X' , 'X' ,  'X' , 'X' , 'X' , '<' , '>' },
@@ -524,7 +524,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     {
                         handleError(err); 
                     }
-        
+                    
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _div_)) != SUCCESS)
                     {
@@ -676,7 +676,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _rbrc_)
                         goto fail_end;
 
-                    ptr_tok[0] = stc_tokPopTop(stack, &term);
+                    token_t *expr_in_brc = ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if(term == _lbrc_)
                     {
                         destroyToken(ptr_tok[0]);
@@ -712,6 +712,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             stcTkn_push(tok_stack, ptr_tok[0]);
                             if(term == _func_)
                             {
+                                stcTkn_push(tok_stack, ptr_tok[0]);
+
                                 term = stc_popTop(stack);
                                 if(term != _sml_)
                                     goto fail_end;
@@ -729,7 +731,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             }
                             else if(term == _sml_)
                             {
-                                stc_push(stack, _E_, NULL);
+                                stc_push(stack, _E_, expr_in_brc);
                                 break;
                             }
                         }
