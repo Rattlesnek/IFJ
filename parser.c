@@ -496,18 +496,20 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     // STACK POP GENERATED CODE
                     ///////////////////////////
                     char *generated_code = stcStr_top(stack_str);
-                    printf("%s", generated_code);
-
                     if (strcmp(generated_code, "POPFRAME\nRETURN\n\n") == 0)
                     {  
                         printf("LOCAL TABLE: ");
                         symtab_foreach(lc_var_tab, print_var);
-                        printf("\n");
-
+                        printf("\n\n");
+                        
+                        printf("MOVE LF@%%retval LF@%s\n", "something");
+                        
                         symtab_free(lc_var_tab);
                         lc_var_tab = NULL;
                         var_tab = gl_var_tab;
                     }
+                    printf("%s", generated_code);
+
                     stcStr_pop(stack_str);
                 }
                 

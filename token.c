@@ -64,7 +64,10 @@ void destroyToken(token_t *token)
     return;
 
   // if token is STR then also free info.string
-  if (strcmp(token->name, "STR") == 0 || strcmp(token->name, "INT") == 0 || strcmp(token->name, "DBL" ) == 0)
+  if (strcmp(token->name, "STR") == 0 || 
+      strcmp(token->name, "INT") == 0 || 
+      strcmp(token->name, "DBL" ) == 0 || 
+      strcmp(token->name, "BUILTIN" ) == 0)
     free(token->info.string);
 
   free(token->name);

@@ -148,7 +148,8 @@ static inline int isExpr(char *term)
             strcmp(term, "STR") == 0 ||
             strcmp(term, "INT") == 0 ||
             strcmp(term, "DBL") == 0 ||
-            strcmp(term, "nil") == 0);
+            strcmp(term, "nil") == 0 ||
+            strcmp(term, "BUILTIN" == 0));
 }
 
 
