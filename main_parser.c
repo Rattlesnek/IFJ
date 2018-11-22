@@ -17,11 +17,8 @@ int main()
     queue_t *que = que_create();
 
     int ret = parser(sc_str, que);
-    
-    if (ret == 0)
-        printf("SUCCESS\n");
 
     dynamicStr_free(sc_str);
     que_destroy(que);
-    return 0;
+    return ret;
 }
