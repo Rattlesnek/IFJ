@@ -121,14 +121,12 @@ void generate_while_false(symtable_t *var_tab, char *cond)
 
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr)
 {
-    static unsigned long long label_n = 0;
     printf( "\n"
-            "LABEL %s$%llu\n"
+            "LABEL %s\n"
             "PUSHFRAME\n"
             "DEFVAR LF@%%retval\n"
             "MOVE LF@%%retval nil@nil\n",
-            fun->func.key,
-            label_n
+            fun->func.key
           );
 
     for (int i = 0; i < fun->func.n_params; i++)
@@ -141,7 +139,7 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
               );
     }
     printf("\n");
-    label_n++;
+
     if (! stcStr_push(stack_str, "\nPOPFRAME\nRETURN\n\n"))
         return false;
 
@@ -152,8 +150,6 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
 
 void generate_var(symtable_t *var_tab, char *var_name, char *right_val)
 {
-    static unsigned long long label_n = 0;
-
     char frame[3] = "LF";
     if (strcmp(var_tab->name, "$GT") == 0)
         strcpy(frame, "GF");
@@ -165,10 +161,9 @@ void generate_var(symtable_t *var_tab, char *var_name, char *right_val)
         strcpy(frame_right_val, frame);
 
     if (symtab_find(var_tab, var_name) == NULL)
-        printf("DEFVAR %s@%s$%llu\n", frame, var_name, label_n);
+        printf("DEFVAR %s@%s\n", frame, var_name);
 
-    printf("MOVE %s@%s$%llu %s@%s\n", frame, var_name, label_n, frame_right_val, right_val);
-    label_n++;
+    printf("MOVE %s@%s %s@%s\n", frame, var_name, frame_right_val, right_val);
 }
 
 token_t *length(symtable_t *symtab, token_t *par)

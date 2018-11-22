@@ -43,7 +43,7 @@
 #include "error.h"
 
 #ifdef PARSER_PRINT
-    #define PARSER_DBG_PRINT(...) do{ PARSER_DBG_PRINT( __VA_ARGS__ ); } while(0)
+    #define PARSER_DBG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
     #define PARSER_DBG_PRINT(...) do{ } while(0)
 #endif
@@ -436,6 +436,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                    if (ret_val != SUCCESS)
+                        break;
 #endif
                     
                     if (! generate_if(var_tab, stack_str, sa_prec_ret))
@@ -457,6 +459,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                    if (ret_val != SUCCESS)
+                        break;
 #endif
                     
                     generate_while_false(var_tab, sa_prec_ret);
@@ -478,6 +482,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                    if (ret_val != SUCCESS)
+                        break;
 #endif
 
                     generate_var(var_tab, id_key_tmp, sa_prec_ret); // TODO
@@ -648,6 +654,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                    if (ret_val != SUCCESS)
+                        break;
 #endif
 
                 // expression TODO
@@ -674,6 +682,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                    if (ret_val != SUCCESS)
+                        break;
 #endif
 
                 // expression TODO
@@ -698,24 +708,25 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             } 
         }
         
-        switch (ret_val){
-            case ERR_INTERNAL:  goto err_internal_main;
-            case ERR_SYN:       goto err_syntactic;
-            case ERR_SEM_UNDEF: goto err_sem_undef;
-            case ERR_SEM_FUNC:  goto err_sem_func;
-            case ERR_SEM_OTHER: goto err_sem_other;
-            case SUCCESS:       
-                PARSER_DBG_PRINT("SUCCESS EXPR\n"); 
-                ret_val = -1; 
-                break;
-            default: 
-                break;
-        }
-
     } while (succ == false && fail == false);
     /////////////////////////////////////////
     ///         END OF MAIN LOOP          ///
     /////////////////////////////////////////
+
+    switch (ret_val)
+    {
+        case ERR_INTERNAL:  goto err_internal_main;
+        case ERR_SYN:       goto err_syntactic;
+        case ERR_SEM_UNDEF: goto err_sem_undef;
+        case ERR_SEM_TYPE:  goto err_sem_type;
+        case ERR_SEM_FUNC:  goto err_sem_func;
+        case ERR_SEM_OTHER: goto err_sem_other;
+        case SUCCESS:       
+            PARSER_DBG_PRINT("SUCCESS EXPR\n"); 
+            break;
+        default: 
+            break;
+    }
 
     if (fail)     
         goto err_syntactic;
@@ -776,6 +787,12 @@ err_sem_undef:
     freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
     error_msg("semantic - undefined/redefined variable or function\n");
     return ERR_SEM_UNDEF;
+
+err_sem_type:
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    error_msg("semantic - type\n");
+    return ERR_SEM_UNDEF;
+
 
 err_sem_func:
     freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
