@@ -42,7 +42,7 @@
 #define INVALID_TOKEN -1
 #define TEST_FUNC 1
 
-
+#define SA_PREC_PRINT 0
 #ifdef SA_PREC_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
@@ -787,7 +787,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                   strcpy(func_retval, "%retval");
                   *ret_code = func_retval;
                   DEBUG_PRINT("=> Expr: %s\n", *ret_code);
-                    //printf("=======> VRACIM RESULT: %%retval\n");
                 }
                 else if(result != NULL)
                 {
@@ -797,8 +796,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 else
                 {
                     token_t *ret_tok = stc_tokPopTop(stack, &term);
-                    DEBUG_PRINT("=> Expr: %s\n", ret_tok->info.string);
-                    *ret_code = ret_tok->info.string;
+                    result = gen_expr(NULL, ret_tok, NULL, loc_symtab);
+                    if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                    {
+                        handleError(err); 
+                    } 
+
+                    DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
+                    *ret_code = result->info.ptr->var.key;
                 }
                 stcTkn_destroy(tok_stack);
                 stc_destroy(stack);
@@ -810,6 +815,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         }
         stc_print(stack);
 
+/* Tohle prijde pravdepodobne vymazat. */
+#if 1
         if(sa_detectSucEnd(stack, token_term))
         {
             if(detect_func)
@@ -825,14 +832,19 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             else
             {
                 token_t *ret_tok = stc_tokPopTop(stack, &term);
+                result = gen_expr(NULL, ret_tok, NULL, loc_symtab);
+                if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                {
+                        handleError(err); 
+                } 
                 printf("=> Expr: %s\n", ret_tok->info.string);
             }
-
             stcTkn_destroy(tok_stack);
             stc_destroy(stack);
             scanner_unget(que, token, sc_str->str);
             return SUCCESS;
         }
+#endif
 
         token = scanner_get(sc_str, que);
     }
