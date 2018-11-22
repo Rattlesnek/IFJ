@@ -171,11 +171,19 @@ void generate_var(symtable_t *var_tab, char *var_name, char *right_val)
     label_n++;
 }
 
-void length(symtable_t *symtab, token_t *par)
+token_t *length(symtable_t *symtab, token_t *par)
 {
+
     static unsigned long long label_n = 0;
+    char name[20];
+    token_info_t info;
+    sprintf(name, "LEN%lluSTR", label_n);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("INT_ID", info);
+
     char frame_act [3] = "LF";
-    char frame_var [3] = "LF";      //from which frame is variable ID
+    char frame_var [7] = "LF";      //from which frame is variable ID
+    char *print;
     if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame_act, "GF");
@@ -185,9 +193,10 @@ void length(symtable_t *symtab, token_t *par)
         strcpy(frame_act, "LF");
     }
 
-    printf("DEFVAR LF@%%retval\n"
-           "MOVE LF@%%retval nil@nil\n"
+    printf("DEFVAR %s@%s\n"
+           "MOVE %s@%s nil@nil\n"
            "DEFVAR %s@$length$tmp%llu\n",
+           frame_act, name, frame_act, name,
            frame_act, label_n);
 
     if (strcmp(par->name, "ID") == 0)
@@ -201,23 +210,42 @@ void length(symtable_t *symtab, token_t *par)
             strcpy(frame_var, "LF");
         }
 
-        printf("MOVE %s@$length$tmp%llu %s@%s\n ",
-               frame_act, label_n, frame_var, par->info.string);
-    }
-    else if ((strcmp(par->name, "STR") == 0))
-        printf("MOVE %s@$length$tmp%llu string@%s\n ",
-               frame_act, label_n, par->info.string);
+        print = malloc(sizeof(char) * (strlen(par->info.ptr->var.key) + 1));
 
+        printf("MOVE %s@$length$tmp%llu %s@%s\n ",
+               frame_act, label_n, frame_var, print);
+
+        strcpy(print, par->info.ptr->var.key);
+        printf("JUMPIFEQ $%s$%llu$string %s@$length$tmp%llu string@string\n"
+               "EXIT int4\n"
+               "LABEL $%s$%llu$string\n",
+               frame_act, label_n, frame_act, label_n, frame_act, label_n);
+    }
+    else if (strcmp(par->name, "STR") == 0)
+    {
+        strcpy(frame_var, "string");
+
+        print = malloc(sizeof(char) * (strlen(par->info.string) + 1));
+        strcpy(print, par->info.string);
+
+        printf("MOVE %s@$length$tmp%llu %s@%s\n ",
+               frame_act, label_n, frame_var, print);
+    }
     else {
         label_n++;
-        return;
-        //return error 4
+        destroyToken(par);
+        free(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
     }
 
-    printf("STRLEN LF@%%retval %s@$length$tmp%llu\n",
-           frame_act, label_n);
+    printf("STRLEN %s@%s %s@$length$tmp%llu\n",
+           frame_act, name, frame_act, label_n);
 
+    free(print);
     label_n++;
+    return des;
 }
 
 
