@@ -562,12 +562,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             DEBUG_PRINT("Token-name: %s\n", sc_token->name); 
                             return sc_token; 
                         }
-                        else if (strcmp(inBuiltin_Func(sc_str->str, builtin_func),"ID") != 0)   //Token:"$BUILTIN", atribut: "name_of_func"
+                        else if (strcmp(inBuiltin_Func(sc_str->str, builtin_func),"ID") != 0)   //Token:"BUILTIN", atribut: "name_of_func"
                         {
                             name = inBuiltin_Func(sc_str->str, builtin_func);
                             sc_info.string = malloc(sizeof(char)* (strlen(name)+1));
                             strcpy(sc_info.string, name);
-                            sc_token= createToken("$BUILTIN", sc_info);
+                            sc_token= createToken("BUILTIN", sc_info);
                             if (sc_token == NULL)
                                 goto err_internal;
 
