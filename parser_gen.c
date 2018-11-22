@@ -243,6 +243,62 @@ token_t *length(symtable_t *symtab, token_t *par)
     return des;
 }
 
+token_t *chr(symtable_t *symtab, token_t *par)  //return ascii char of value par<0,255>
+{
+    char name[24];
+    sprintf(name, "CHR%llu", count);
+    token_info_t info;
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("CHR_RET", info);
+    char frame [3] = "LF";
+    
+    if (strcmp(symtab->name, "$GT" ) == 0)
+        strcpy(frame, "GF");
+
+    //"LABEL CHR\n"
+    //"PUSHFRAME\n"
+    //"DEFVAR LF@%%retval\n"
+    printf("MOVE LF@%%retval nil@nil\n"
+           "DEFVAR %s@$chr$tmp%llu\n",
+           frame, count);
+
+    if (strcmp(par->name, "ID") == 0)
+    {
+        if (symtab_find(symtab, par->info.string) == NULL)
+
+        printf("MOVE %s@$chr$tmp%llu %s@%s\n"
+                "DEFVAR %s@$chr$tmp%llu$type\n"
+                "TYPE %s@$chr$tmp%llu$type %s@%s\n"
+                "JUMPIFEQ %s@$chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
+                "EXIT int@4\n"
+                "LABEL %s@$chr$tmp%llu$int$true\n", 
+                frame, count, frame, par->info.string,
+                frame, count,
+                frame, par->info.string,
+                frame, count, frame, count,
+                frame, count);
+    }
+    else if (strcmp(par->name, "INT") == 0)
+    {
+        printf("MOVE %s@$chr$tmp%llu int@%s\n",
+                frame, count, par->info.string);
+    }
+    else
+    {
+        printf("EXIT int@4\n");
+        count++;
+        destroyToken(par);
+        return NULL;
+    }
+    printf("INT2CHAR LF@%%retval %s@$chr$tmp%llu\n",        //INT2CHAR takes value <0,255>
+            frame, count);
+    //"POPFRAME\n"
+    //"RETURN\n"
+
+    destroyToken(par);
+    count++;
+    return des;
+}
 
 
 ////////////////////////////////////////////////////////////////////////
