@@ -167,19 +167,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
             if(c == '=')
             {
                 state = State_COMM;
-
-                /*
-                char tmp[5];
-                if(fgets(tmp, 5, stdin) != NULL)
-                {
-                    if(strncmp(tmp, "begin", 6) == 0)
-                    {
-                        //tak je to dobre a dodelej osetreni jestli je za tim white space
-                    }   
-                }
-                else
-                    goto err_internal;
-                */
             }
             else if (c == '#')
                 state = State_LCOMM;
@@ -564,7 +551,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         state = State_S;
                         sc_unget(c);
                         char *name = "ID";
-                        if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )
+                        if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )            //Token: "IF", atribut:NULL
                         {
                             name = inKeyword(sc_str->str, keywords);
                             sc_info.ptr = NULL;
@@ -575,15 +562,16 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             DEBUG_PRINT("Token-name: %s\n", sc_token->name); 
                             return sc_token; 
                         }
-                        else if (strcmp(inBuiltin_Func(sc_str->str, builtin_func),"ID") != 0)
+                        else if (strcmp(inBuiltin_Func(sc_str->str, builtin_func),"ID") != 0)   //Token:"$BUILTIN", atribut: "name_of_func"
                         {
                             name = inBuiltin_Func(sc_str->str, builtin_func);
-                            sc_info.ptr = NULL;
-                            sc_token= createToken(name, sc_info);
+                            sc_info.string = malloc(sizeof(char)* (strlen(name)+1));
+                            strcpy(sc_info.string, name);
+                            sc_token= createToken("$BUILTIN", sc_info);
                             if (sc_token == NULL)
                                 goto err_internal;
 
-                            DEBUG_PRINT("Token-name: %s\n", sc_token->name); 
+                            DEBUG_PRINT("Token-name: %s || Value : %s\n", sc_token->name, sc_str->str );
                             return sc_token; 
                         }
                         else
