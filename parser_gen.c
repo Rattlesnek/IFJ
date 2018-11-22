@@ -29,7 +29,7 @@
 #include "symtable.h"
 #include "dynamicArrParam.h"
 #include "stackStr.h"
-
+#include "token.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -158,6 +158,42 @@ void generate_var(symtable_t *var_tab, char *var_name, char *right_val)
         printf("DEFVAR %s@%s\n", frame, var_name);
 
     printf("MOVE %s@%s %s@%s\n", frame, var_name, frame_right_val, right_val);
+}
+
+void length(symtable_t *symtab, token_t *par)
+{
+    char frame_act [3] = "LF";
+    char frame_var [3] = "LF";      //from which frame is variable ID
+    if (strcmp(symtab->name, "$GT" ) == 0)
+        strcpy(frame_act, "GF");
+
+    printf("DEFVAR LF@%%retval\n"
+           "MOVE LF@%%retval nil@nil\n"
+           "DEFVAR %s@$length$tmp%llu\n",
+           frame_act, count);
+
+    if (strcmp(par->name, "ID") == 0)
+    {
+        if (symtab_find(symtab, par->info.string) == NULL)
+            strcpy(frame_var, "GF");
+
+        priintf("MOVE %s@$length$tmp%llu %s@%s\n ", 
+                frame_act, count, frame_var, par->info.string);
+    }
+    else if ((strcmp(par->name, "STR") == 0))
+       priintf("MOVE %s@$length$tmp%llu string@%s\n ", 
+                frame_act, count, par->info.string);
+    
+    else{
+        count++;
+        return;
+        //return error 4 
+    }
+    
+    priintf("STRLEN LF@%%retval %s@$length$tmp%llu\n",
+            frame_act, count);
+
+    count++;
 }
 
 
