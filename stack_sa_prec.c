@@ -37,6 +37,13 @@
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+#ifdef STACK_PRINT
+#define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
+#else
+#define DEBUG_PRINT(...) do{ } while(0)
+#endif
+
+
 /**
  * @brief Creates new stack
  *
@@ -256,10 +263,10 @@ bool stc_pushAfter(stack_sa_t *stack, table_elem_t term, table_elem_t rule)
 
 void stc_print(stack_sa_t *stack)
 {
-    printf("=> sa_prec: STACK:\n");
+    DEBUG_PRINT("=> sa_prec: STACK:\n");
     for(stack_item_t *tmp = stack->top; tmp != NULL; tmp = tmp->lptr)
     {
-        printf("%d\n", tmp->term);
+        DEBUG_PRINT("%d\n", tmp->term);
     }
 
     return;
