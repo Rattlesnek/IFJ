@@ -74,6 +74,7 @@ bool isID(token_t *token)
     {
         return true;
     }
+
     return false;
 }
 
@@ -111,7 +112,7 @@ int matrix[4][4] = {
     /*INT_index */   { INT_INT, INT_DBL, INT_STR, INT_ID },
     /*DBL_index */   { DBL_INT, DBL_DBL, DBL_STR, DBL_ID },
     /*STR_index */   { STR_INT, STR_DBL, STR_STR, STR_ID },
-    /*ID_index */    { ID_INT , ID_DBL , ID_STR , ID_ID  }
+    /*ID_index */    { ID_INT , ID_DBL , ID_STR , ID_ID  },
 };
 
 char *operator(char *op, bool alternative)
@@ -169,44 +170,121 @@ char *operator(char *op, bool alternative)
 }
 
 
-int type(char *param1, char *param2)
+int type(token_t *param1, token_t *param2)
 {
     int index_param1, index_param2;
-    if (strncmp(param1, "INT", 3) == 0)
+    if (param2 == NULL)
+    {
+        return NULL_NULL;
+    }
+    if (strncmp(param1->name, "INT", 3) == 0)
     {
         index_param1 = INT_index;
     }
-    else if (strncmp(param1, "DBL", 3) == 0)
+    else if (strncmp(param1->name, "DBL", 3) == 0)
     {
         index_param1 = DBL_index;
     }
-    else if (strncmp(param1, "STR", 3) == 0)
+    else if (strncmp(param1->name, "STR", 3) == 0)
     {
         index_param1 = STR_index;
     }
-    else if (strcmp(param1, "ID") == 0)
+    else if (strcmp(param1->name, "ID") == 0)
     {
         index_param1 = ID_index;
     }
 
-    if (strncmp(param2, "INT", 3) == 0)
+    if (strncmp(param2->name, "INT", 3) == 0)
     {
         index_param2 = INT_index;
     }
-    else if (strncmp(param2, "DBL", 3) == 0)
+    else if (strncmp(param2->name, "DBL", 3) == 0)
     {
         index_param2 = DBL_index;
     }
-    else if (strncmp(param2, "STR", 3) == 0)
+    else if (strncmp(param2->name, "STR", 3) == 0)
     {
         index_param2 = STR_index;
     }
-    else if (strcmp(param2, "ID") == 0)
+    else if (strcmp(param2->name, "ID") == 0)
     {
         index_param2 = ID_index;
     }
 
     return matrix[index_param1][index_param2];
+}
+
+token_t *null_null(token_t *par1, symtable_t *symtab)
+{
+    static unsigned long long label_n = 0;
+
+    char param1[10];
+    char frame[3];
+
+    char *print1;
+    token_t *des;
+    char name[20];
+    token_info_t info;
+
+    if (strcmp(symtab->name, "$GT" ) == 0)
+    {
+        strcpy(frame, "GF");
+    }
+    else
+    {
+        strcpy(frame, "LF");
+    }
+
+
+
+    if (strcmp(par1->name, "INT") == 0)
+    {
+        strcpy(param1, "int");
+        print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        strcpy(print1, par1->info.string);
+        sprintf(name, "INT%lluNULL", label_n);
+        info.ptr = symtab_elem_add(symtab, name);
+        des = createToken("INT_ID", info);
+    }
+
+    else if (strcmp(par1->name, "DBL") == 0)
+    {
+        strcpy(param1, "float");
+        print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        strcpy(print1, par1->info.string);
+        sprintf(name, "DBL%lluNULL", label_n);
+        info.ptr = symtab_elem_add(symtab, name);
+        des = createToken("DBL_ID", info);
+    }
+
+    else if (strcmp(par1->name, "STR") == 0)
+    {
+        strcpy(param1, "string");
+        print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        strcpy(print1, par1->info.string);
+        sprintf(name, "STR%lluNULL", label_n);
+        info.ptr = symtab_elem_add(symtab, name);
+        des = createToken("STR_ID", info);
+    }
+
+
+    printf("DEFVAR %s@%s\n"
+           "MOVE %s@%s %s@%s\n",
+
+           frame,
+           des->info.ptr->var.key,
+           frame,
+           des->info.ptr->var.key,
+           param1,
+           print1//
+          );
+
+    label_n++;
+    destroyToken(par1);
+    fprintf(stderr, "co pada omg\n");
+    fflush(stdout);
+    free(print1);
+    return des;
 }
 
 token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
@@ -222,10 +300,10 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char frame[3];
     char name[20];
     char div[2] = "";
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "INT%lluINT", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("INT_ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("INT_ID", info);
 
     char *print1;
     char *print2;
@@ -339,10 +417,10 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char param2[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "DBL%lluDBL", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("DBL_ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("DBL_ID", info);
 
     char *print1;
     char *print2;
@@ -451,10 +529,10 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     char param2[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "INT%lluDBL", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("DBL_ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("DBL_ID", info);
 
     char *print1;
     char *print2;
@@ -615,10 +693,10 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char param2[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "INT%lluSTR", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("BOOL_ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("BOOL_ID", info);
 
     char *print1;
     char *print2;
@@ -733,10 +811,10 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char param2[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "DBL%lluSTR", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("BOOL_ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("BOOL_ID", info);
 
     char *print1;
     char *print2;
@@ -851,10 +929,10 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char param1[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "INT%lluID", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("ID", info);
 
     char *print1;
     char *print2;
@@ -1121,10 +1199,10 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char param1[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "DBL%lluID", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("ID", info);
 
     char *print1;
     char *print2;
@@ -1379,10 +1457,10 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     char param2[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "STR%lluSTR", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("STR_ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("STR_ID", info);
 
     char *print1;
     char *print2;
@@ -1501,10 +1579,10 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char param1[10];
     char frame[3];
     char name[20];
-    token_info_t *info = malloc(sizeof(token_info_t));
+    token_info_t info;
     sprintf(name, "STR%lluID", label_n);
-    info->ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("ID", *info);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("ID", info);
 
     char *print1;
     char *print2;
@@ -1910,7 +1988,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     }
 
 
-    printf("JUMP ENDTHISMADNESS\n");
+    printf("JUMP ENDTHISMADNESS%llu\n", label_n);
 
     printf("LABEL $%s$%llu$float0\n", symtab->name,
            label_n);
@@ -2096,7 +2174,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
 
     }
-    printf("JUMP ENDTHISMADNESS\n");
+    printf("JUMP ENDTHISMADNESS%llu\n", label_n);
 
     printf("LABEL $%s$%llu$string0\n", symtab->name,
            label_n);
@@ -2180,7 +2258,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
     }
 
-    printf("LABEL ENDTHISMADNESS\n");
+    printf("LABEL ENDTHISMADNESS%llu\n", label_n);
 
     label_n++;
     destroyToken(par1);
@@ -2193,7 +2271,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
 token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *symtab)
 {
-    switch (type(param1->name, param2->name))
+    switch (type(param1, param2))
     {
         case INT_INT:
             return int_int(op, param1, param2, symtab);
@@ -2243,28 +2321,31 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
         case ID_ID:
             return id_id(op, param1, param2, symtab, 0);
             break;
+        case NULL_NULL:
+            return null_null(param1, symtab);
+            break;
 
         default: break;
     }
     return NULL;
 }
 
-#if 0
+#if 1
 
 
 int main()
 {
     elem_t elem;
     elem.var.key = "jsemID1";
-    token_info_t *info = malloc(sizeof(token_info_t));
-    info->ptr = &elem;
-    token_t *token = createToken("ID", *info);
+    token_info_t info;
+    info.ptr = &elem;
+    token_t *token = createToken("ID", info);
 
     elem_t elem5;
     elem5.var.key = "jsemID2";
-    token_info_t *info6 = malloc(sizeof(token_info_t));
-    info6->ptr = &elem5;
-    token_t *token5 = createToken("ID", *info6);
+    token_info_t info6;
+    info6.ptr = &elem5;
+    token_t *token5 = createToken("ID", info6);
 
 
     elem_t elem1;
@@ -2286,7 +2367,7 @@ int main()
     tmp.ptr = NULL;
 
 
-    token_t *op = createToken("!=", tmp);
+    token_t *op = createToken("+", tmp);
     token_info_t info3;
     info3.string = "ahoj";
     token_info_t info4;
