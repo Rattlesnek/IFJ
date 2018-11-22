@@ -70,7 +70,8 @@ typedef enum index_switch {
   ID_INT,
   ID_DBL,
   ID_STR,
-  ID_ID
+  ID_ID,
+  NULL_NULL
 } index_switch_t;
 
 /**
@@ -148,7 +149,7 @@ char *operator(char *op, bool alternative);
  *
  * @return     { description_of_the_return_value }
  */
-int type(char *param1, char *param2);
+int type(token_t *param1, token_t *param2);
 /**
  * @brief      { function_description }
  *
