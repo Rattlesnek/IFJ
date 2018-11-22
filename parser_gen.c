@@ -207,10 +207,12 @@ token_t *length(symtable_t *symtab, token_t *par)
 
         print = malloc(sizeof(char) * (strlen(par->info.ptr->var.key) + 1));
 
+
+        strcpy(print, par->info.ptr->var.key);
         printf("MOVE %s@$length$tmp%llu %s@%s\n ",
                frame_act, label_n, frame_var, print);
 
-        strcpy(print, par->info.ptr->var.key);
+
         printf("JUMPIFEQ $%s$%llu$string %s@$length$tmp%llu string@string\n"
                "EXIT int4\n"
                "LABEL $%s$%llu$string\n",
@@ -220,11 +222,8 @@ token_t *length(symtable_t *symtab, token_t *par)
     {
         strcpy(frame_var, "string");
 
-        print = malloc(sizeof(char) * (strlen(par->info.string) + 1));
-        strcpy(print, par->info.string);
-
         printf("MOVE %s@$length$tmp%llu %s@%s\n ",
-               frame_act, label_n, frame_var, print);
+               frame_act, label_n, frame_var, par->info.string);
     }
     else {
         label_n++;
@@ -251,7 +250,7 @@ token_t *chr(symtable_t *symtab, token_t *par)  //return ascii char of value par
     info.ptr = symtab_elem_add(symtab, name);
     token_t *des = createToken("CHR_RET", info);
     char frame [3] = "LF";
-    
+
     if (strcmp(symtab->name, "$GT" ) == 0)
         strcpy(frame, "GF");
 
@@ -266,22 +265,22 @@ token_t *chr(symtable_t *symtab, token_t *par)  //return ascii char of value par
     {
         if (symtab_find(symtab, par->info.string) == NULL)
 
-        printf("MOVE %s@$chr$tmp%llu %s@%s\n"
-                "DEFVAR %s@$chr$tmp%llu$type\n"
-                "TYPE %s@$chr$tmp%llu$type %s@%s\n"
-                "JUMPIFEQ %s@$chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
-                "EXIT int@4\n"
-                "LABEL %s@$chr$tmp%llu$int$true\n", 
-                frame, count, frame, par->info.string,
-                frame, count,
-                frame, par->info.string,
-                frame, count, frame, count,
-                frame, count);
+            printf("MOVE %s@$chr$tmp%llu %s@%s\n"
+                   "DEFVAR %s@$chr$tmp%llu$type\n"
+                   "TYPE %s@$chr$tmp%llu$type %s@%s\n"
+                   "JUMPIFEQ %s@$chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
+                   "EXIT int@4\n"
+                   "LABEL %s@$chr$tmp%llu$int$true\n",
+                   frame, count, frame, par->info.string,
+                   frame, count,
+                   frame, par->info.string,
+                   frame, count, frame, count,
+                   frame, count);
     }
     else if (strcmp(par->name, "INT") == 0)
     {
         printf("MOVE %s@$chr$tmp%llu int@%s\n",
-                frame, count, par->info.string);
+               frame, count, par->info.string);
     }
     else
     {
@@ -291,7 +290,7 @@ token_t *chr(symtable_t *symtab, token_t *par)  //return ascii char of value par
         return NULL;
     }
     printf("INT2CHAR LF@%%retval %s@$chr$tmp%llu\n",        //INT2CHAR takes value <0,255>
-            frame, count);
+           frame, count);
     //"POPFRAME\n"
     //"RETURN\n"
 
