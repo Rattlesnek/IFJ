@@ -121,14 +121,12 @@ void generate_while_false(symtable_t *var_tab, char *cond)
 
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr)
 {
-    static unsigned long long label_n = 0;
     printf( "\n"
-            "LABEL %s$%llu\n"
+            "LABEL %s\n"
             "PUSHFRAME\n"
             "DEFVAR LF@%%retval\n"
             "MOVE LF@%%retval nil@nil\n",
-            fun->func.key,
-            label_n
+            fun->func.key
           );
 
     for (int i = 0; i < fun->func.n_params; i++)
@@ -141,7 +139,7 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
               );
     }
     printf("\n");
-    label_n++;
+
     if (! stcStr_push(stack_str, "\nPOPFRAME\nRETURN\n\n"))
         return false;
 
@@ -152,8 +150,6 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
 
 void generate_var(symtable_t *var_tab, char *var_name, char *right_val)
 {
-    static unsigned long long label_n = 0;
-
     char frame[3] = "LF";
     if (strcmp(var_tab->name, "$GT") == 0)
         strcpy(frame, "GF");
@@ -165,17 +161,23 @@ void generate_var(symtable_t *var_tab, char *var_name, char *right_val)
         strcpy(frame_right_val, frame);
 
     if (symtab_find(var_tab, var_name) == NULL)
-        printf("DEFVAR %s@%s$%llu\n", frame, var_name, label_n);
+        printf("DEFVAR %s@%s\n", frame, var_name);
 
-    printf("MOVE %s@%s$%llu %s@%s\n", frame, var_name, label_n, frame_right_val, right_val);
-    label_n++;
+    printf("MOVE %s@%s %s@%s\n", frame, var_name, frame_right_val, right_val);
 }
 
-void length(symtable_t *symtab, token_t *par)
+token_t *length(symtable_t *symtab, token_t *par)
 {
+
     static unsigned long long label_n = 0;
+    char name[20];
+    token_info_t info;
+    sprintf(name, "LEN%lluSTR", label_n);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("INT_ID", info);
+
     char frame_act [3] = "LF";
-    char frame_var [3] = "LF";      //from which frame is variable ID
+    char frame_var [7] = "LF";      //from which frame is variable ID
     if (strcmp(symtab->name, "$GT" ) == 0)
     {
         strcpy(frame_act, "GF");
@@ -185,9 +187,10 @@ void length(symtable_t *symtab, token_t *par)
         strcpy(frame_act, "LF");
     }
 
-    printf("DEFVAR LF@%%retval\n"
-           "MOVE LF@%%retval nil@nil\n"
+    printf("DEFVAR %s@%s\n"
+           "MOVE %s@%s nil@nil\n"
            "DEFVAR %s@$length$tmp%llu\n",
+           frame_act, name, frame_act, name,
            frame_act, label_n);
 
     if (strcmp(par->name, "ID") == 0)
@@ -201,25 +204,92 @@ void length(symtable_t *symtab, token_t *par)
             strcpy(frame_var, "LF");
         }
 
+        printf("MOVE %s@$length$tmp%llu %s@%s\n "
+               "JUMPIFEQ $%s$%llu$string %s@$length$tmp%llu string@string\n"
+               "EXIT int4\n"
+               "LABEL $%s$%llu$string\n",
+               frame_act, label_n, frame_var, par->info.ptr->var.key,
+               frame_act, label_n, frame_act, label_n, frame_act, label_n);
+    }
+    else if (strcmp(par->name, "STR") == 0)
+    {
+        strcpy(frame_var, "string");
+
         printf("MOVE %s@$length$tmp%llu %s@%s\n ",
                frame_act, label_n, frame_var, par->info.string);
     }
-    else if ((strcmp(par->name, "STR") == 0))
-        printf("MOVE %s@$length$tmp%llu string@%s\n ",
-               frame_act, label_n, par->info.string);
-
     else {
         label_n++;
-        return;
-        //return error 4
+        destroyToken(par);
+        free(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
     }
 
-    printf("STRLEN LF@%%retval %s@$length$tmp%llu\n",
-           frame_act, label_n);
+    printf("STRLEN %s@%s %s@$length$tmp%llu\n",
+           frame_act, name, frame_act, label_n);
 
     label_n++;
+    return des;
 }
 
+token_t *chr(symtable_t *symtab, token_t *par)  //return ascii char of value par<0,255>
+{
+    char name[24];
+    sprintf(name, "CHR%llu", count);
+    token_info_t info;
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("CHR_RET", info);
+    char frame [3] = "LF";
+
+    if (strcmp(symtab->name, "$GT" ) == 0)
+        strcpy(frame, "GF");
+
+    //"LABEL CHR\n"
+    //"PUSHFRAME\n"
+    //"DEFVAR LF@%%retval\n"
+    printf("MOVE LF@%%retval nil@nil\n"
+           "DEFVAR %s@$chr$tmp%llu\n",
+           frame, count);
+
+    if (strcmp(par->name, "ID") == 0)
+    {
+        if (symtab_find(symtab, par->info.string) == NULL)
+
+            printf("MOVE %s@$chr$tmp%llu %s@%s\n"
+                   "DEFVAR %s@$chr$tmp%llu$type\n"
+                   "TYPE %s@$chr$tmp%llu$type %s@%s\n"
+                   "JUMPIFEQ %s@$chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
+                   "EXIT int@4\n"
+                   "LABEL %s@$chr$tmp%llu$int$true\n",
+                   frame, count, frame, par->info.string,
+                   frame, count,
+                   frame, par->info.string,
+                   frame, count, frame, count,
+                   frame, count);
+    }
+    else if (strcmp(par->name, "INT") == 0)
+    {
+        printf("MOVE %s@$chr$tmp%llu int@%s\n",
+               frame, count, par->info.string);
+    }
+    else
+    {
+        printf("EXIT int@4\n");
+        count++;
+        destroyToken(par);
+        return NULL;
+    }
+    printf("INT2CHAR LF@%%retval %s@$chr$tmp%llu\n",        //INT2CHAR takes value <0,255>
+           frame, count);
+    //"POPFRAME\n"
+    //"RETURN\n"
+
+    destroyToken(par);
+    count++;
+    return des;
+}
 
 
 ////////////////////////////////////////////////////////////////////////
