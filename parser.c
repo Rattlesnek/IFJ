@@ -523,7 +523,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                         var_tab = gl_var_tab;
                     }
                     printf("%s", generated_code);
-
+                    
                     stcStr_pop(stack_str);
                 }
                 

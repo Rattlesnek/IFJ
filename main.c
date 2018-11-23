@@ -22,6 +22,8 @@
 #include "error.h"
 int main()
 {
+    int a = '\t';
+    printf("%d\n", a);
     dynamicStr_t str;
     dynamicStr_t *sc_str = &str;
 
@@ -54,9 +56,18 @@ int main()
                 token_t *str = scanner_get(sc_str, que);
                 token_t *coma = scanner_get(sc_str, que);
                 token_t *position = scanner_get(sc_str, que);
-                printf("token namen : %s\n", str->name);
-                printf("token namen : %s\n", position->name);
-                ord(gl_var_tab, str, position);
+                if( strcmp(bra->name, "(") == 0)
+                {
+                    printf("token namen : %s\n", str->name);
+                    printf("token namen : %s\n", position->name);
+                    ord(gl_var_tab, str, position);
+                }
+                else{
+                    printf("token namen : %s\n", str->name);
+                    printf("token namen : %s\n", position->name);
+                    ord(gl_var_tab, bra, coma);
+                }
+                
             }
             destroyToken(bra);
         }

@@ -1,20 +1,6 @@
-=begin
+inputs 45
 
-=end
-inputi()
-print()
-chr(i)
-
-a= 45
-if a > 3 then
-else
-end
-while 1 do
-    end
-
-if a ==3 then
-else
-end
 b = 12.547
 c = "Hello \\s \x1"
 d = "Ahoj\nSve'te\s\\\x22 "
+ord "hello", 2

@@ -32,6 +32,7 @@
 #include "error.h"
 #include "stackTkn.h"
 #include "codeGen.h"
+#include "parser_gen.h"
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -78,43 +79,43 @@ char sa_prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
     else if(err == ERR_SYN)         \
         goto fail_end;              \
 
-#define callFunc(is_builtin)                                  \
-do {                                                          \
-    if(is_builtin)                                            \
-    {                                                         \
-        DEBUG_PRINT("Je to builtin: %d\n", num_params);       \
-        switch(is_builtin)                                    \
-        {                                                     \
-            case inputs: if(num_params != 0) goto sem_fail;   \
-                break;                                        \
-            case inputi: if(num_params != 0) goto sem_fail;   \
-                break;                                        \
-            case inputf: if(num_params != 0) goto sem_fail;   \
-                break;                                        \
-            case length: if(num_params != 1) goto sem_fail;   \
-                break;                                        \
-            case chr   : if(num_params != 1) goto sem_fail;   \
-                break;                                        \
-            case ord   : if(num_params != 2) goto sem_fail;   \
-                break;                                        \
-            case substr: if(num_params != 3) goto sem_fail;   \
-                break;                                        \
-            case print : if(num_params == 0) goto sem_fail;   \
-        }                                                     \
-        sa_callFunc(tok_stack, true);                         \
-    }                                                         \
-    else                                                      \
-    {                                                         \
-        if(!func_elem->func.is_defined)                       \
-            func_elem->func.n_params = num_params;            \
-        else if(func_elem->func.n_params != num_params)       \
-            goto sem_fail;                                    \
-                                                              \
-        sa_callFunc(tok_stack, false);                        \
-    }                                                         \
-                                                              \
-    func_read = 1;                                            \
-} while(0);                                                   \
+#define callFunc(is_builtin)                                    \
+do {                                                            \
+    if(is_builtin)                                              \
+    {                                                           \
+        DEBUG_PRINT("Je to builtin: %d\n", is_builtin);         \
+        switch(is_builtin)                                      \
+        {                                                       \
+            case _inputs_: if(num_params != 0) goto sem_fail;   \
+                break;                                          \
+            case _inputi_: if(num_params != 0) goto sem_fail;   \
+                break;                                          \
+            case _inputf_: if(num_params != 0) goto sem_fail;   \
+                break;                                          \
+            case _length_: if(num_params != 1) goto sem_fail;   \
+                break;                                          \
+            case _chr_   : if(num_params != 1) goto sem_fail;   \
+                break;                                          \
+            case _ord_   : if(num_params != 2) goto sem_fail;   \
+                break;                                          \
+            case _substr_: if(num_params != 3) goto sem_fail;   \
+                break;                                          \
+            case _print_ : if(num_params == 0) goto sem_fail;   \
+        }                                                       \
+        result = sa_callFunc(tok_stack, is_builtin, loc_symtab);\
+    }                                                           \
+    else                                                        \
+    {                                                           \
+        if(!func_elem->func.is_defined)                         \
+            func_elem->func.n_params = num_params;              \
+        else if(func_elem->func.n_params != num_params)         \
+            goto sem_fail;                                      \
+                                                                \
+        sa_callFunc(tok_stack, false, loc_symtab);              \
+    }                                                           \
+                                                                \
+    func_read = 1;                                              \
+} while(0);                                                     \
 
 static inline int destroyTokenArr(token_t *token_arr [], int state)
 {
@@ -231,19 +232,19 @@ char sa_getTokenIndex(token_t *token)
 int sa_builtinType(token_t *token)
 {
     if(strcmp(token->info.string, "inputs") == 0)
-        return inputs;
+        return _inputs_;
     else if(strcmp(token->info.string, "inputi") == 0)
-        return inputi;
+        return _inputi_;
     else if(strcmp(token->info.string, "inputf") == 0)
-        return inputf;
+        return _inputf_;
     else if(strcmp(token->info.string, "length") == 0)
-        return length;
+        return _length_;
     else if(strcmp(token->info.string, "chr") == 0)
-        return chr;
+        return _chr_;
     else if(strcmp(token->info.string, "ord") == 0)
-        return ord;
+        return _ord_;
     else if(strcmp(token->info.string, "substr") == 0)
-        return substr;
+        return _substr_;
 
     return INVALID_TOKEN;
 }
@@ -301,8 +302,9 @@ char *strToUpper(char str[])
     return str;
 }
 
-void sa_callFunc(stack_tkn_t *stack, char is_builtin)
+token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
 {
+    DEBUG_PRINT("=>sa_callFunc: %d\n", is_builtin);
     if(!is_builtin)
     {
         token_t *func = stcTkn_pop(stack);
@@ -333,37 +335,48 @@ void sa_callFunc(stack_tkn_t *stack, char is_builtin)
         if(is_builtin)
             printf("CALL $%s\n", func->info.string);
         else
-            printf("CALL $%s\n", func->info.ptr->func.key);
+            printf("CALL %s\n", func->info.ptr->func.key);
 
-        //destroyToken(func);
+        destroyToken(func);
+        return NULL;
     }
-/*
     else
     {
-        token_t *params[3] = NULL;
-
+        token_t *tmp = stcTkn_pop(stack);
+        printf("tmp->name: %s\n", tmp->name);
+        token_t *tmp2 = stcTkn_pop(stack);
+        printf("tmp->name: %s\n", tmp2->name);
         token_t *result = NULL;
+        printf("stack->array[0]: %s\n", stack->array[0]->name);
         switch(is_builtin)
         {
-            case inputs: DEBUG_PRINT("Volas inputs o.O\n");
+            case _inputs_: DEBUG_PRINT("Volas inputs o.O\n");
                 break;
-            case inputi: DEBUG_PRINT("Volas inputi o.O\n");
+            case _inputi_: DEBUG_PRINT("Volas inputi o.O\n");
                 break;
-            case inputf: DEBUG_PRINT("Volas inputf o.O\n");
+            case _inputf_: DEBUG_PRINT("Volas inputf o.O\n");
                 break;
-            case length: DEBUG_PRINT("Volas length o.O\n");
+            case _length_: DEBUG_PRINT("Volas length o.O\n");
                 break;
-            case chr   : ;  
+            case _chr_   : result = chr(symtable, stack->array[0]);
+                           if(strcmp(result->name, "ERR_SEM") == 0)
+                            {
+                                destroyToken(result);
+                                return NULL;
+                            }
                 break;
-            case ord   : 
+            case _ord_   : DEBUG_PRINT("Volas ord o.O\n");
                 break;
-            case substr: DEBUG_PRINT("Volas substr o.O\n");
+            case _substr_: DEBUG_PRINT("Volas substr o.O\n");
                 break;
-            case print : DEBUG_PRINT("Volas print o.O\n");
+            case _print_ : DEBUG_PRINT("Volas print o.O\n");
                 break; 
         }
+
+        printf("result: %s\n", result->info.ptr->var.key);
+        return result;
     }
-*/
+
 }
 
 bool sa_isOperator(table_elem_t term)
@@ -394,7 +407,6 @@ bool sa_isOperator(table_elem_t term)
  */   
 int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, char **ret_code)
 {
-    DEBUG_PRINT("=================================================================\n");
     stack_sa_t *stack = stc_init();
     stc_push(stack, _empt_, NULL);
 
@@ -425,6 +437,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         {
             detect_func = 1;
             builtin_func = sa_builtinType(token);
+            DEBUG_PRINT("builtin_func: %d\n", builtin_func);
         }
 
         if(token_term == _id_ && (strcmp(token->name, "ID") == 0))
@@ -444,7 +457,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             else if(func_elem != NULL)
             {
                 if(detect_func == 1 || count != 0)
-                    goto fail_end;
+                    goto sem_fail_defined;
 
                 token->info.ptr = func_elem;
                 token_term = _func_;
@@ -514,6 +527,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         goto fail_end;
 
                     stc_push(stack, _E_, ptr_tok[0]);
+                    
 
                     if(detect_func)
                         num_params++;
@@ -718,7 +732,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         goto fail_end;
 
                     stc_push(stack, _F_, NULL);
-                    
+
                     callFunc(builtin_func);
                     break;
 
@@ -856,9 +870,24 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
                 if(detect_func)
                 {
+                    if(builtin_func)
+                    {
+                        char *func_retval = malloc(strlen(result->info.ptr->var.key) * sizeof(char) + 1);
+                        strcpy(func_retval, result->info.ptr->var.key);
+                        *ret_code = func_retval;
+                    }
+                    else
+                    {
+                        char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
+                        strcpy(func_retval, "%retval");
+                        *ret_code = func_retval;
+                        DEBUG_PRINT("=> Expr: %s\n", *ret_code);
+                    }
+/*
                   *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
                   strcpy(*ret_code, "%retval");
                   DEBUG_PRINT("=> Expr: %s\n", *ret_code);
+*/
                 }
                 else if(result != NULL)
                 {
@@ -879,7 +908,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     strcpy(*ret_code, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
                 }
-                stcTkn_destroy(tok_stack);
+                if(!builtin_func)
+                    stcTkn_destroy(tok_stack);
                 stc_destroy(stack);
                 scanner_unget(que, token, sc_str->str);
                 return SUCCESS;
@@ -897,11 +927,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
               char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
               strcpy(func_retval, "%retval");
-              printf("=> Expr: %s\n", func_retval);
+              DEBUG_PRINT("=> Expr: %s\n", func_retval);
             }
             else if(result != NULL)
             {
-                printf("=> Expr: %s\n", token->name);
+                DEBUG_PRINT("=> Expr: %s\n", token->name);
             }
             else
             {
@@ -911,7 +941,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 {
                         handleError(err); 
                 } 
-                printf("=> Expr: %s\n", ret_tok->info.string);
+                DEBUG_PRINT("=> Expr: %s\n", ret_tok->info.string);
             }
             stcTkn_destroy(tok_stack);
             stc_destroy(stack);
@@ -948,7 +978,8 @@ fail_end:
     return ERR_SYN;
 
 sem_fail:
-    stcTkn_destroy(tok_stack);
+    if(!builtin_func)
+        stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
     //destroyToken(token);

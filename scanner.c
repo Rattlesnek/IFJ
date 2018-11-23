@@ -36,7 +36,7 @@
 
 #include "scanner.h"
 
-#ifdef SCANNER_PRINT
+#ifndef SCANNER_PRINT
     #define SCANNER_DBG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
     #define SCANNER_DBG_PRINT(...) do{ } while(0)
@@ -435,6 +435,13 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     }
                     else if (c == '"')
                         state = State_QUATATION2;
+                    /*//////////////////////////////////////////////
+                    else if (c = " ")
+                    {
+                        if(!dynamicStr_add(sc_str, '\032'))
+                            goto err_internal;
+                    }
+                    *//////////////////////////////////////////////////////
                     else 
                     {
                         if(!dynamicStr_add(sc_str, c))
@@ -571,7 +578,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             if (sc_token == NULL)
                                 goto err_internal;
 
-                            SCANNER_DBG_PRINT("Token-name: %s || Value : %s\n", sc_token->name, sc_str->str );
+                            SCANNER_DBG_PRINT("Token-name: %s || Value : %s\n", sc_token->name, sc_token->info.string );
                             return sc_token; 
                         }
                         else
