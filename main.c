@@ -43,12 +43,12 @@ int main()
         token = scanner_get(sc_str, que);
         if (strcmp(token->name, "BUILTIN") == 0)
         {
-            printf("builtin namen : %s\n", token->info.string);
+           // printf("builtin namen : %s\n", token->info.string);
             token_t *bra = scanner_get(sc_str, que);
             if (strcmp(token->info.string, "chr") == 0)
             {
                 token_t *in = scanner_get(sc_str, que);
-                printf("token namen : %s\n", in->name);
+                //printf("token namen : %s\n", in->name);
                 chr(gl_var_tab, in);
             }
             else if (strcmp(token->info.string, "ord") == 0)
@@ -58,13 +58,13 @@ int main()
                 token_t *position = scanner_get(sc_str, que);
                 if( strcmp(bra->name, "(") == 0)
                 {
-                    printf("token namen : %s\n", str->name);
-                    printf("token namen : %s\n", position->name);
+                   // printf("token namen : %s\n", str->name);
+                   // printf("token namen : %s\n", position->name);
                     ord(gl_var_tab, str, position);
                 }
                 else{
-                    printf("token namen : %s\n", str->name);
-                    printf("token namen : %s\n", position->name);
+                   // printf("token namen : %s\n", str->name);
+                   // printf("token namen : %s\n", position->name);
                     ord(gl_var_tab, bra, coma);
                 }
                 

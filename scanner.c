@@ -36,7 +36,7 @@
 
 #include "scanner.h"
 
-#ifdef SCANNER_PRINT
+#ifndef SCANNER_PRINT
     #define SCANNER_DBG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
     #define SCANNER_DBG_PRINT(...) do{ } while(0)
@@ -438,7 +438,16 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     ///////////////////////////////////////////////
                     else if (c == ' ')
                     {
-                        if(!dynamicStr_add(sc_str, '\032'))
+                        if(!dynamicStr_add(sc_str, '\\'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '0'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '3'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '2'))
                             goto err_internal;
                     }
                     /////////////////////////////////////////////////////
@@ -1076,6 +1085,18 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                                 goto err_internal;
     
                             SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
+                            return sc_token; 
+                        }
+                    else if (strcmp(inBuiltin_Func(sc_str->str, builtin_func),"ID") != 0)   //Token:"BUILTIN", atribut: "name_of_func"
+                        {
+                            name = inBuiltin_Func(sc_str->str, builtin_func);
+                            sc_info.string = malloc(sizeof(char)* (strlen(name)+1));
+                            strcpy(sc_info.string, name);
+                            sc_token= createToken("BUILTIN", sc_info);
+                            if (sc_token == NULL)
+                                goto err_internal;
+
+                            SCANNER_DBG_PRINT("Token-name: %s || Value : %s\n", sc_token->name, sc_token->info.string );
                             return sc_token; 
                         }
                     else

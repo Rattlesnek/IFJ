@@ -1,6 +1,1 @@
-inputs 45
-
-b = 12.547
-c = "Hello \\s \x1"
-d = "Ahoj\nSve'te\s\\\x22 "
-ord "hello", 2
+inputi
