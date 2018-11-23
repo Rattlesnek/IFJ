@@ -42,7 +42,7 @@
 #define INVALID_TOKEN -1
 #define TEST_FUNC 1
 
-#define SA_PREC_PRINT 0
+//#define SA_PREC_PRINT 0
 #ifdef SA_PREC_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
@@ -856,17 +856,15 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
                 if(detect_func)
                 {
-                  char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
-                  strcpy(func_retval, "%retval");
-                  *ret_code = func_retval;
+                  *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
+                  strcpy(*ret_code, "%retval");
                   DEBUG_PRINT("=> Expr: %s\n", *ret_code);
                 }
                 else if(result != NULL)
                 {
-                    char *func_retval = malloc(strlen(result->info.ptr->var.key) * sizeof(char) + 1);
-                    strcpy(func_retval, result->info.ptr->var.key);
+                    *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
+                    strcpy(*ret_code, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
-                    *ret_code = func_retval;
                 }
                 else
                 {
@@ -877,8 +875,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         handleError(err); 
                     } 
 
+                    *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
+                    strcpy(*ret_code, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
-                    *ret_code = result->info.ptr->var.key;
                 }
                 stcTkn_destroy(tok_stack);
                 stc_destroy(stack);
