@@ -111,6 +111,12 @@ bool DobtoStr (char *s, dynamicStr_t *sc_str);
 
 char* inKeyword(char *str, char **keywords);
 
+bool HextoStr(dynamicStr_t *sc_str, int position);
+
+char* inKeyword(char *str, char **keywords);
+
+char *inBuiltin_Func(char *str, char **builtin_func);
+
 #endif
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///

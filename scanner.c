@@ -67,6 +67,46 @@ void sc_unget(int c)
     ungetc(c, stdin);
 }
 
+bool HextoStr(dynamicStr_t *sc_str, int position)
+{
+    if (position > sc_str->length)
+        return false;
+
+    unsigned int count = 0;
+    char hex[4];
+    char *endptr;
+    long ret = strtol(sc_str->str + position, &endptr, 16);
+    if(*endptr)
+        return false;
+
+    sprintf(hex, "%d", ret);  
+    if (strlen(hex) < 2)
+    {   
+        sc_str->length = sc_str->length - 1;
+
+        if(!dynamicStr_add(sc_str, '0'))
+            return false;
+
+        if(!dynamicStr_add(sc_str, '0'))
+            return false;
+
+    }
+    else if (strlen(hex) < 3)
+    {
+        sc_str->length = position;
+        if(!dynamicStr_add(sc_str, '0'))
+            return false;
+    }
+    for (unsigned int i = 0; i < strlen(hex); i++)
+    {
+        if(!dynamicStr_add(sc_str, hex[count]))
+            return false;
+
+        count++;
+    }
+    return true;
+}
+
 /**
  * @brief Converts str from input to str according to task to format of int
  * 

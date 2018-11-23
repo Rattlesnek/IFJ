@@ -22,8 +22,6 @@
 #include "error.h"
 int main()
 {
-    int a = '\t';
-    printf("%d\n", a);
     dynamicStr_t str;
     dynamicStr_t *sc_str = &str;
 
