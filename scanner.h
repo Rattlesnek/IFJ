@@ -111,7 +111,7 @@ bool DobtoStr (char *s, dynamicStr_t *sc_str);
 
 char* inKeyword(char *str, char **keywords);
 
-bool HextoStr(dynamicStr_t *sc_str, int position);
+bool HextoStr(dynamicStr_t *sc_str, unsigned int position);
 
 char* inKeyword(char *str, char **keywords);
 

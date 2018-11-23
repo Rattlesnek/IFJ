@@ -441,7 +441,7 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
 
 #if 1
 
-
+/*
 int main()
 {
     elem_t elem;
@@ -509,10 +509,10 @@ int main()
     free(token3);
     free(token4);*/
     //free(token5);
-    symtab_free(symtable);
+/*  symtab_free(symtable);
     return 0;
 }
-
+*/
 #endif
 
 ////////////////////////////////////////////////////////////////////////
