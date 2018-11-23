@@ -421,7 +421,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
         return error;
     }
 
-    printf("STR2INT LF@%%retval %s@$ord$string%llu %s@$ord$position%llu",
+    printf("STR2INT LF@%%retval %s@$ord$string%llu %s@$ord$position%llu\n",
            frame, label_n, frame, label_n );
 
     destroyToken(par1);
