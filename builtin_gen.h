@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    [if_while.h]
+  FileName    [builtin_gen.h]
 
   SystemName  [IFJ - PROJECT]
 
@@ -8,11 +8,11 @@
 
   Synopsis    []
 
-  Author      [Jindrich Sestak]
+  Author      [Jindrich Sestak, Lukas Valek]
 
   Affiliation []
 
-  Date        [20/11/2018]
+  Date        [--/--/2018]
 
   Revision    []
 
@@ -31,6 +31,7 @@
 #include "stackStr.h"
 #include "token.h"
 
+
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
@@ -45,42 +46,13 @@
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-/**
- * @brief Function to generate IF-ELSE
- *
- * @param stack Stack to store orders
- *              /Ret_val accepted from parser
- * @return true Returns true if everything pushed on stack properly
- * @return false Returns false if error occured
- */
-bool generate_if(symtable_t *var_tab, stack_str_t *stack, char *cond);
+token_t *input(symtable_t *symtab, int type);
 
-/**
- * @brief Function to generate WHILE
- *
- * @param stack Stack to store orders
- *              /Ret_val accepted from parser
- * @return true Returns true if everything pushed on stack properly
- * @return false Returns false if error occured
- */
-bool generate_while_ending(stack_str_t *stack);
+token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2);
 
-/**
- * @brief Prints "LABEL $while$%llu\n"
- */
-void generate_LABEL_while();
+token_t *chr(symtable_t *symtab, token_t *par);
 
-/**
- * @brief Prints "JUMPIFEQ $end_while$%llu COND int@0\n" ergo ==> Condition of while
- *
- */
-void generate_while_false(symtable_t *var_tab, char *cond);
-
-
-bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr);
-
-
-void generate_var(symtable_t *var_tab, char *var_name, char *right_val);
+token_t *length(symtable_t *symtab, token_t *par);
 
 #endif
 ////////////////////////////////////////////////////////////////////////
