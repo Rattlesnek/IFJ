@@ -376,12 +376,13 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
         strcpy(frame, "GF");
 
     token_t *tmp;
+    int iterator = stack->top + 1;
 
     printf("DEFVAR %s@%s\n"
            "MOVE %s@%s nil@nil\n",
            frame, des->info.ptr->var.key, frame, des->info.ptr->var.key);
 
-    for (int i = 0; i < stack->top + 1; ++i)
+    for (int i = 0; i < iterator; ++i)
     {
         tmp = stcTkn_pop(stack);
         if (strcmp(tmp->name, "ID") == 0)
@@ -424,7 +425,7 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
     return des;
 }
 
-#if 0
+#if 1
 
 
 int main()
@@ -471,6 +472,10 @@ int main()
 
     stack_tkn_t *stack = stcTkn_create();
     stcTkn_push(stack, token2);
+    stcTkn_push(stack, token3);
+    stcTkn_push(stack, token5);
+    stcTkn_push(stack, token);
+
 
     token_t *tmp12 = print(symtable, stack);
     //token_t *tmp12 = gen_expr(NULL,  token3, NULL, symtable);
