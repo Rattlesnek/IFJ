@@ -308,7 +308,6 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
 
 token_t *input(symtable_t *symtab, int type)
 {
-
     static unsigned long long label_n = 0;
     char name[20];
     token_info_t info;
@@ -349,8 +348,6 @@ token_t *input(symtable_t *symtab, int type)
         return NULL;
     }
 
-
-
     printf("DEFVAR %s@%s\n"
            "READ %s@%s string@%s\n",
            frame, name, frame, name, param);
@@ -366,7 +363,6 @@ token_t *input(symtable_t *symtab, int type)
 
 token_t *print(symtable_t *symtab, stack_tkn_t *stack)
 {
-
     static unsigned long long label_n = 0;
     char name[20];
     token_info_t info;
@@ -387,9 +383,9 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
 
     for (int i = 0; i < stack->top + 1; ++i)
     {
+        tmp = stcTkn_pop(stack);
         if (strcmp(tmp->name, "ID") == 0)
         {
-            tmp = stcTkn_pop(stack);
             if (strcmp(symtab->name, "$GT" ) == 0)
             {
                 strcpy(param, "GF");
@@ -424,6 +420,7 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
     }
 
     label_n++;
+    free(print);
     return des;
 }
 
@@ -472,7 +469,10 @@ int main()
     token_t *token2 = createToken("STR", info3);
     token_t *token3 = createToken("DBL", info4);
 
-    token_t *tmp12 = input(symtable, 2);
+    stack_tkn_t *stack = stcTkn_create();
+    stcTkn_push(stack, token2);
+
+    token_t *tmp12 = print(symtable, stack);
     //token_t *tmp12 = gen_expr(NULL,  token3, NULL, symtable);
     /*printf("---%s---\n", tmp12->info.ptr->var.key);
     printf("---%s---\n", tmp12->name);*/
