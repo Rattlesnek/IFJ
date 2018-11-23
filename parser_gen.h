@@ -21,14 +21,15 @@
 ////////////////////////////////////////////////////////////////////////
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
-#ifndef TEMPLATE_H
-#define TEMPLATE_H
+#ifndef PARSER_GEN_H
+#define PARSER_GEN_H
 
 #include <stdbool.h>
 
 #include "symtable.h"
 #include "dynamicArrParam.h"
 #include "stackStr.h"
+#include "token.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
@@ -81,7 +82,7 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
 
 void generate_var(symtable_t *var_tab, char *var_name, char *right_val);
 
-
+token_t *chr(symtable_t *symtab, token_t *par);
 #endif
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
