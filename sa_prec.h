@@ -56,7 +56,16 @@ typedef enum {
 
 } table_elem_t;
 
-
+typedef enum {
+  inputs = 1,       // 0 param
+  inputi,           // 0 param
+  inputf,           // 0 param
+  length,           // 1 param
+  chr,              // 1 param
+  ord,              // 2 params
+  substr,           // 3 params
+  print,            // X params
+} test;
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////

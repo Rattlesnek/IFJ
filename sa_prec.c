@@ -42,7 +42,7 @@
 #define INVALID_TOKEN -1
 #define TEST_FUNC 1
 
-//#define SA_PREC_PRINT 0
+#define SA_PREC_PRINT 0
 #ifdef SA_PREC_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
@@ -77,6 +77,44 @@ char sa_prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
         goto sem_internal;          \
     else if(err == ERR_SYN)         \
         goto fail_end;              \
+
+#define callFunc(is_builtin)                                  \
+do {                                                          \
+    if(is_builtin)                                            \
+    {                                                         \
+        DEBUG_PRINT("Je to builtin: %d\n", num_params);       \
+        switch(is_builtin)                                    \
+        {                                                     \
+            case inputs: if(num_params != 0) goto sem_fail;   \
+                break;                                        \
+            case inputi: if(num_params != 0) goto sem_fail;   \
+                break;                                        \
+            case inputf: if(num_params != 0) goto sem_fail;   \
+                break;                                        \
+            case length: if(num_params != 1) goto sem_fail;   \
+                break;                                        \
+            case chr   : if(num_params != 1) goto sem_fail;   \
+                break;                                        \
+            case ord   : if(num_params != 2) goto sem_fail;   \
+                break;                                        \
+            case substr: if(num_params != 3) goto sem_fail;   \
+                break;                                        \
+            case print : if(num_params == 0) goto sem_fail;   \
+        }                                                     \
+        sa_callFunc(tok_stack, true);                         \
+    }                                                         \
+    else                                                      \
+    {                                                         \
+        if(!func_elem->func.is_defined)                       \
+            func_elem->func.n_params = num_params;            \
+        else if(func_elem->func.n_params != num_params)       \
+            goto sem_fail;                                    \
+                                                              \
+        sa_callFunc(tok_stack, false);                        \
+    }                                                         \
+                                                              \
+    func_read = 1;                                            \
+} while(0);                                                   \
 
 static inline int destroyTokenArr(token_t *token_arr [], int state)
 {
@@ -182,8 +220,30 @@ char sa_getTokenIndex(token_t *token)
         return _rel_;
     else if(strcmp(token->name, ",") == 0)
         return _coma_;
+    else if(strcmp(token->name, "BUILTIN") == 0)
+        return _func_;
     else if(sa_isEndToken(token))
         return _empt_;
+
+    return INVALID_TOKEN;
+}
+
+int sa_builtinType(token_t *token)
+{
+    if(strcmp(token->info.string, "inputs") == 0)
+        return inputs;
+    else if(strcmp(token->info.string, "inputi") == 0)
+        return inputi;
+    else if(strcmp(token->info.string, "inputf") == 0)
+        return inputf;
+    else if(strcmp(token->info.string, "length") == 0)
+        return length;
+    else if(strcmp(token->info.string, "chr") == 0)
+        return chr;
+    else if(strcmp(token->info.string, "ord") == 0)
+        return ord;
+    else if(strcmp(token->info.string, "substr") == 0)
+        return substr;
 
     return INVALID_TOKEN;
 }
@@ -241,34 +301,69 @@ char *strToUpper(char str[])
     return str;
 }
 
-void sa_callFunc(stack_tkn_t *stack)
+void sa_callFunc(stack_tkn_t *stack, char is_builtin)
 {
-    token_t *func = stcTkn_pop(stack);
-
-    printf("CREATEFRAME\n");
-    token_t *param;
-    int i = 1;
-    char *val = NULL;
-
-    while((param = stcTkn_pop(stack)) != NULL)
+    if(!is_builtin)
     {
-        val = sa_isExprVar(param) ? param->info.string : 
-                                    param->info.ptr->var.key;
-                                    
-        printf("DEFVAR TF@%%%d\n"
-               "MOVE TF@%%%d %s@%s\n",
-                i,
-                i,
-                strToLower(param->name),
-                val
-              );
+        token_t *func = stcTkn_pop(stack);
 
-        strToUpper(param->name);
-        i++;
-        destroyToken(param);
+        printf("CREATEFRAME\n");
+        token_t *param;
+        int i = 1;
+        char *val = NULL;
+
+        while((param = stcTkn_pop(stack)) != NULL)
+        {
+            val = sa_isExprVar(param) ? param->info.string : 
+                                        param->info.ptr->var.key;
+                                        
+            printf("DEFVAR TF@%%%d\n"
+                   "MOVE TF@%%%d %s@%s\n",
+                    i,
+                    i,
+                    strToLower(param->name),
+                    val
+                  );
+
+            strToUpper(param->name);
+            i++;
+            destroyToken(param);
+        }
+
+        if(is_builtin)
+            printf("CALL $%s\n", func->info.string);
+        else
+            printf("CALL $%s\n", func->info.ptr->func.key);
+
+        //destroyToken(func);
     }
-    printf("CALL $%s\n", func->info.ptr->func.key);
-    destroyToken(func);
+/*
+    else
+    {
+        token_t *params[3] = NULL;
+
+        token_t *result = NULL;
+        switch(is_builtin)
+        {
+            case inputs: DEBUG_PRINT("Volas inputs o.O\n");
+                break;
+            case inputi: DEBUG_PRINT("Volas inputi o.O\n");
+                break;
+            case inputf: DEBUG_PRINT("Volas inputf o.O\n");
+                break;
+            case length: DEBUG_PRINT("Volas length o.O\n");
+                break;
+            case chr   : ;  
+                break;
+            case ord   : 
+                break;
+            case substr: DEBUG_PRINT("Volas substr o.O\n");
+                break;
+            case print : DEBUG_PRINT("Volas print o.O\n");
+                break; 
+        }
+    }
+*/
 }
 
 bool sa_isOperator(table_elem_t term)
@@ -299,6 +394,7 @@ bool sa_isOperator(table_elem_t term)
  */   
 int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, char **ret_code)
 {
+    DEBUG_PRINT("=================================================================\n");
     stack_sa_t *stack = stc_init();
     stc_push(stack, _empt_, NULL);
 
@@ -317,6 +413,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     stack_tkn_t *tok_stack = stcTkn_create();
     token_t *result = NULL;
     int err = 0;
+    int builtin_func = 0;
     while(42)
     {
         stack_top_term = stc_topTerm(stack);
@@ -324,6 +421,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         token_term = sa_getTokenIndex(token);
         if(token_term == INVALID_TOKEN)
             goto fail_end;
+        if(token_term == _func_)
+        {
+            detect_func = 1;
+            builtin_func = sa_builtinType(token);
+        }
 
         if(token_term == _id_ && (strcmp(token->name, "ID") == 0))
         {
@@ -603,7 +705,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             goto fail_end;
                     }
                     else if(term == _func_)
-                    {   
+                    {  
                        stcTkn_push(tok_stack, ptr_tok[0]); 
                     }
                     else
@@ -616,13 +718,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         goto fail_end;
 
                     stc_push(stack, _F_, NULL);
-                    if(!func_elem->func.is_defined)
-                        func_elem->func.n_params = num_params;
-                    else if(func_elem->func.n_params != num_params)
-                            goto sem_fail;
-
-                    sa_callFunc(tok_stack);
-                    func_read = 1;
+                    
+                    callFunc(builtin_func);
                     break;
 
                 /* F -> f E, ... , E */    
@@ -653,14 +750,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         goto fail_end;  
 
                     stc_push(stack, _F_, NULL);
-
-                    if(!func_elem->func.is_defined)
-                            func_elem->func.n_params = num_params;
-                    else if(func_elem->func.n_params != num_params)
-                            goto sem_fail;
-
-                    sa_callFunc(tok_stack);
-                    func_read = 1;
+                    callFunc(builtin_func);
                     break;
 
                 /* 
@@ -691,14 +781,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             goto fail_end;
 
                         stc_push(stack, _F_, NULL);
-    
-                        if(!func_elem->func.is_defined)
-                            func_elem->func.n_params = num_params;
-                        else if(func_elem->func.n_params != num_params)
-                            goto sem_fail;
-
-                        sa_callFunc(tok_stack);
-                        func_read = 1;
+                        callFunc(builtin_func);
+                   
                         break;
                     }
                     else if(term == _E_)
@@ -712,21 +796,15 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             stcTkn_push(tok_stack, ptr_tok[0]);
                             if(term == _func_)
                             {
-                                stcTkn_push(tok_stack, ptr_tok[0]);
+                                //stcTkn_push(tok_stack, ptr_tok[0]);
 
                                 term = stc_popTop(stack);
                                 if(term != _sml_)
                                     goto fail_end;
 
                                 stc_push(stack, _F_, NULL);
-
-                                if(!func_elem->func.is_defined)
-                                    func_elem->func.n_params = num_params;
-                                else if(func_elem->func.n_params != num_params)
-                                    goto sem_fail;
-
-                                sa_callFunc(tok_stack);
-                                func_read = 1;
+                                callFunc(builtin_func);
+                             
                                 break;
                             }
                             else if(term == _sml_)
@@ -764,14 +842,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                                 goto fail_end;
 
                             stc_push(stack, _F_, NULL);
- 
-                            if(!func_elem->func.is_defined)
-                                func_elem->func.n_params = num_params;
-                            else if(func_elem->func.n_params != num_params)
-                                goto sem_fail;
-
-                            sa_callFunc(tok_stack);
-                            func_read = 1;
+                            callFunc(builtin_func);
                             break;
                         }
 
@@ -792,8 +863,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 }
                 else if(result != NULL)
                 {
+                    char *func_retval = malloc(strlen(result->info.ptr->var.key) * sizeof(char) + 1);
+                    strcpy(func_retval, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
-                    *ret_code = result->info.ptr->var.key;
+                    *ret_code = func_retval;
                 }
                 else
                 {

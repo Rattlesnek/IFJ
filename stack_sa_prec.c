@@ -37,6 +37,7 @@
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+#define STACK_PRINT 1
 #ifdef STACK_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
@@ -137,6 +138,9 @@ char stc_popTop(stack_sa_t *stack)
 
 token_t *stc_tokPopTop(stack_sa_t *stack, table_elem_t *term)
 {
+    if(stack->top == NULL && stack->bot == NULL)
+        return NULL;
+
     token_t *token = stack->top->token;
     *term = stack->top->term;
     
