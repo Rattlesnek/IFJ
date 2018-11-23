@@ -49,7 +49,7 @@ bool generate_if(symtable_t *var_tab, stack_str_t *stack, char *cond)
         strcpy(frame, "GF");
 
     /*********Jump to ELSE if cond == false*********/
-    printf("\nJUMPIFEQ $else$%llu %s@%s int@0\n\n", label_n, frame, cond);
+    printf("\nJUMPIFEQ $else$%llu %s@%s bool@false\n\n", label_n, frame, cond);
     /********* DOING IF statement *************/
 
     //Must go from bottom to top (LABEL endif -> JMP endif) viz. assembler
@@ -114,7 +114,7 @@ void generate_while_false(symtable_t *var_tab, char *cond)
     if (strcmp(var_tab->name, "$GT") == 0)
         strcpy(frame, "GF");
 
-    printf("JUMPIFEQ $end_while$%llu %s@%s int@0\n\n", label_n, frame, cond);
+    printf("JUMPIFEQ $end_while$%llu %s@%s bool@false\n\n", label_n, frame, cond);
     label_n++;
 }
 
