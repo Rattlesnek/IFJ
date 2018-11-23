@@ -30,6 +30,7 @@
 #include "dynamicArrParam.h"
 #include "stackStr.h"
 #include "token.h"
+#include "error.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -41,15 +42,18 @@
 ////////////////////////////////////////////////////////////////////////
 //kdyby jsi mel if a v nem hned
 
-bool generate_if(symtable_t *var_tab, stack_str_t *stack, char *cond)
+int generate_if(symtable_t *var_tab, stack_str_t *stack, token_t *cond)
 {
+    if (strcmp(cond->name, "BOOL_ID") != 0)
+        return ERR_SEM_OTHER;
+    
     static unsigned long long label_n = 0;
     char frame[3] = "LF";
     if (strcmp(var_tab->name, "$GT") == 0)
         strcpy(frame, "GF");
 
     /*********Jump to ELSE if cond == false*********/
-    printf("\nJUMPIFEQ $else$%llu %s@%s bool@false\n\n", label_n, frame, cond);
+    printf("\nJUMPIFEQ $else$%llu %s@%s bool@false\n\n", label_n, frame, cond->info.ptr->var.key);
     /********* DOING IF statement *************/
 
     //Must go from bottom to top (LABEL endif -> JMP endif) viz. assembler
@@ -57,7 +61,7 @@ bool generate_if(symtable_t *var_tab, stack_str_t *stack, char *cond)
     char b[34];
     sprintf(b, "\nLABEL $endif$%llu\n\n", label_n);
     if (stcStr_push(stack, b) == false)
-        return false;
+        return ERR_INTERNAL;
 
     /*********END IF, ELSE branch **************/
     //"LABEL $else$%llu\nJMP $endif$%llu" has max length 66 bits
@@ -67,10 +71,11 @@ bool generate_if(symtable_t *var_tab, stack_str_t *stack, char *cond)
             "LABEL $else$%llu\n\n",
             label_n, label_n);
     if (stcStr_push(stack, c) == false)
-        return false;
+        return ERR_INTERNAL;
 
     label_n++;
-    return true;
+
+    return SUCCESS;
 }
 
 
@@ -107,15 +112,21 @@ void generate_LABEL_while()
 }
 
 
-void generate_while_false(symtable_t *var_tab, char *cond)
+int generate_while_false(symtable_t *var_tab, token_t *cond)
 {
+    if (strcmp(cond->name, "BOOL_ID") != 0)
+        return ERR_SEM_OTHER;
+    
     static unsigned long long label_n = 0;
     char frame[3] = "LF";
     if (strcmp(var_tab->name, "$GT") == 0)
         strcpy(frame, "GF");
 
-    printf("JUMPIFEQ $end_while$%llu %s@%s bool@false\n\n", label_n, frame, cond);
+
+    printf("JUMPIFEQ $end_while$%llu %s@%s bool@false\n\n", label_n, frame, cond->info.ptr->var.key);
     label_n++;
+
+    return SUCCESS;
 }
 
 
@@ -147,23 +158,87 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
 }
 
 
-
-void generate_var(symtable_t *var_tab, char *var_name, char *right_val)
+int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3], char *frame_or_type[7], char **var_or_const)
 {
-    char frame[3] = "LF";
     if (strcmp(var_tab->name, "$GT") == 0)
-        strcpy(frame, "GF");
-
-    char frame_right_val[3];
-    if (strcmp(right_val, "%retval") == 0) // TODO
-        strcpy(frame_right_val, "TF");
+        strcpy(*frame, "GF");
     else
-        strcpy(frame_right_val, frame);
+        strcpy(*frame, "LF");
+
+
+    if (strcmp(right_val->name, "ID") == 0 || strcmp(right_val->name, "INT_ID") == 0 || strcmp(right_val->name, "DBL_ID") == 0 || strcmp(right_val->name, "STR_ID") == 0)
+    {
+        strcpy(*frame_or_type, *frame);
+        *var_or_const = malloc( (strlen(right_val->info.ptr->var.key) + 1) + sizeof(char) );
+        if (*var_or_const == NULL)
+            return ERR_INTERNAL;
+        strcpy(*var_or_const, right_val->info.ptr->var.key);
+    }
+    else if (strcmp(right_val->name, "%retval") == 0)
+    {
+        strcpy(*frame_or_type, "TF");
+        *var_or_const = malloc( (strlen("%retval") + 1) + sizeof(char) );
+        if (*var_or_const == NULL)
+            return ERR_INTERNAL;
+        strcpy(*var_or_const, "%retval");
+    }
+    else if (strcmp(right_val->name, "INT") == 0)
+    {
+        strcpy(*frame_or_type, "int");
+        *var_or_const = malloc( (strlen(right_val->info.string) + 1) + sizeof(char) );
+        if (*var_or_const == NULL)
+            return ERR_INTERNAL;
+        strcpy(*var_or_const, right_val->info.string);
+    }   
+    else if (strcmp(right_val->name, "DBL") == 0)
+    {
+        strcpy(*frame_or_type, "float");
+        *var_or_const = malloc( (strlen(right_val->info.string) + 1) + sizeof(char) );
+        if (*var_or_const == NULL)
+            return ERR_INTERNAL;
+        strcpy(*var_or_const, right_val->info.string);
+    }
+    else if (strcmp(right_val->name, "STR") == 0)
+    {
+        strcpy(*frame_or_type, "string");
+        *var_or_const = malloc( (strlen(right_val->info.string) + 1) + sizeof(char) );
+        if (*var_or_const == NULL)
+            return ERR_INTERNAL;
+        strcpy(*var_or_const, right_val->info.string);
+    }
+    else if (strcmp(right_val->name, "nil") == 0)
+    {
+        strcpy(*frame_or_type, "nil");
+        *var_or_const = malloc( (strlen("nil") + 1) + sizeof(char) );
+        if (*var_or_const == NULL)
+            return ERR_INTERNAL;
+        strcpy(*var_or_const, "nil");
+    }
+    else
+        return ERR_SEM_OTHER;
+
+    return SUCCESS;
+}
+
+
+int generate_var(symtable_t *var_tab, char *var_name, token_t *right_val)
+{
+    char frame[3];
+    char frame_or_type[7];
+    char *var_or_const;
+
+    int ret_val = return_right_strings(var_tab, right_val, &frame, &frame_or_type, &var_or_const);
+    if (ret_val != SUCCESS)
+        return ret_val;
+
 
     if (symtab_find(var_tab, var_name) == NULL)
         printf("DEFVAR %s@%s\n", frame, var_name);
 
-    printf("MOVE %s@%s %s@%s\n", frame, var_name, frame_right_val, right_val);
+    printf("MOVE %s@%s %s@%s\n", frame, var_name, frame_or_type, var_or_const);
+    
+    free(var_or_const); // it is dynamically allocated
+    return SUCCESS;
 }
 
 
