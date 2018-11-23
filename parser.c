@@ -274,7 +274,7 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
              symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab,
              dynamicArrParam_t *param_arr, 
              char **id_key_tmp, char **func_key_tmp, char **sa_prec_ret,
-             token_t *act, token_t *token)
+             token_t *act, token_t *token, token_t *id_token_tmp)
 {
     stcTkn_destroy(stack_tkn);
     stcStr_destroy(stack_str);
@@ -292,6 +292,7 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
     
     destroyToken(act);
     destroyToken(token);
+    destroyToken(id_token_tmp);
 }
 
 #ifdef PARSER_DEBUG
@@ -338,6 +339,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     char *sa_prec_ret = NULL;
 
     char *id_key_tmp = NULL;
+    token_t *id_token_tmp = NULL;
     
     char *func_key_tmp = NULL;
     int param_cnt;
@@ -612,6 +614,16 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
             {
                 if ( ! createTempKey(&id_key_tmp, sc_str->str))
                     goto err_internal_main;
+                
+                if (strcmp(act->name, "BUILTIN") == 0)
+                {
+                    info.string = malloc( (strlen(act->info.string) + 1) * sizeof(char) );
+                    strcpy(info.string, act->info.string);
+                }
+                else
+                    info.ptr = NULL;
+                
+                id_token_tmp = createToken(act->name, info);
                 PARSER_DBG_PRINT("id_tmp load %s\n", id_key_tmp);
             }
             else if (rule == ID_FUNC_20 || rule == ID_FUNC_21)
@@ -673,7 +685,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 destroyToken(token);
                 token = NULL;
                 
-                scanner_unget(que, createToken("ID", info), id_key_tmp);
+                scanner_unget(que, id_token_tmp, id_key_tmp);
+                id_token_tmp = NULL;
                 destroyTempKey(&id_key_tmp);
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
@@ -742,7 +755,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     PARSER_DBG_PRINT("\n\n");
 
     // free all alocated elements
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token, id_token_tmp);
     return SUCCESS;
 
 ///////////////////////////////////////
@@ -769,38 +782,38 @@ err_internal_3:
     return ERR_INTERNAL;
 
 err_internal_main:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token, id_token_tmp);
     error_msg("internal\n");
     return ERR_INTERNAL;
 
 err_lexical:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token, id_token_tmp);
     error_msg("lexical\n");
     return ERR_LEX;
 
 err_syntactic:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token, id_token_tmp);
     error_msg("syntactic\n");
     return ERR_SYN;
 
 err_sem_undef:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token, id_token_tmp);
     error_msg("semantic - undefined/redefined variable or function\n");
     return ERR_SEM_UNDEF;
 
 err_sem_type:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token, id_token_tmp);
     error_msg("semantic - type\n");
     return ERR_SEM_UNDEF;
 
 
 err_sem_func:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token, id_token_tmp);
     error_msg("semantic - wrong number of function parameters\n");
     return ERR_SEM_FUNC;
 
 err_sem_other:
-    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token);
+    freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, &sa_prec_ret, act, token, id_token_tmp);
     error_msg("semantic - other\n");
     return ERR_SEM_OTHER;
 }
