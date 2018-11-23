@@ -90,7 +90,7 @@ typedef enum {
  *          false     If analysed expression is incorrect 
  */   
 int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtable, 
-             symtable_t *func_symtable, char **ret_code);
+             symtable_t *func_symtable, token_t **ret_token);
 
 
 

@@ -136,7 +136,9 @@ void stcTkn_destroy(stack_tkn_t *stack)
 {
     token_t *token;
     while ((token = stcTkn_pop(stack)) != NULL)
+    {
         destroyToken(token);
+    }
     
     free(stack->array);
     free(stack);
