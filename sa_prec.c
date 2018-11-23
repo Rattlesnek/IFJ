@@ -43,7 +43,7 @@
 #define INVALID_TOKEN -1
 #define TEST_FUNC 1
 
-#define SA_PREC_PRINT 0
+//#define SA_PREC_PRINT 0
 #ifdef SA_PREC_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
@@ -335,7 +335,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
         if(is_builtin)
             printf("CALL $%s\n", func->info.string);
         else
-            printf("CALL $%s\n", func->info.ptr->func.key);
+            printf("CALL %s\n", func->info.ptr->func.key);
 
         destroyToken(func);
         return NULL;
@@ -883,13 +883,17 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         *ret_code = func_retval;
                         DEBUG_PRINT("=> Expr: %s\n", *ret_code);
                     }
+/*
+                  *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
+                  strcpy(*ret_code, "%retval");
+                  DEBUG_PRINT("=> Expr: %s\n", *ret_code);
+*/
                 }
                 else if(result != NULL)
                 {
-                    char *func_retval = malloc(strlen(result->info.ptr->var.key) * sizeof(char) + 1);
-                    strcpy(func_retval, result->info.ptr->var.key);
+                    *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
+                    strcpy(*ret_code, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
-                    *ret_code = func_retval;
                 }
                 else
                 {
@@ -900,8 +904,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         handleError(err); 
                     } 
 
+                    *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
+                    strcpy(*ret_code, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
-                    *ret_code = result->info.ptr->var.key;
                 }
                 if(!builtin_func)
                     stcTkn_destroy(tok_stack);
@@ -922,11 +927,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
               char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
               strcpy(func_retval, "%retval");
-              printf("=> Expr: %s\n", func_retval);
+              DEBUG_PRINT("=> Expr: %s\n", func_retval);
             }
             else if(result != NULL)
             {
-                printf("=> Expr: %s\n", token->name);
+                DEBUG_PRINT("=> Expr: %s\n", token->name);
             }
             else
             {
@@ -936,7 +941,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 {
                         handleError(err); 
                 } 
-                printf("=> Expr: %s\n", ret_tok->info.string);
+                DEBUG_PRINT("=> Expr: %s\n", ret_tok->info.string);
             }
             stcTkn_destroy(tok_stack);
             stc_destroy(stack);

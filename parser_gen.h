@@ -47,7 +47,7 @@
 
 /**
  * @brief Function to generate IF-ELSE
- * 
+ *
  * @param stack Stack to store orders
  *              /Ret_val accepted from parser
  * @return true Returns true if everything pushed on stack properly
@@ -57,7 +57,7 @@ bool generate_if(symtable_t *var_tab, stack_str_t *stack, char *cond);
 
 /**
  * @brief Function to generate WHILE
- * 
+ *
  * @param stack Stack to store orders
  *              /Ret_val accepted from parser
  * @return true Returns true if everything pushed on stack properly
@@ -72,7 +72,7 @@ void generate_LABEL_while();
 
 /**
  * @brief Prints "JUMPIFEQ $end_while$%llu COND int@0\n" ergo ==> Condition of while
- * 
+ *
  */
 void generate_while_false(symtable_t *var_tab, char *cond);
 
@@ -82,7 +82,16 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
 
 void generate_var(symtable_t *var_tab, char *var_name, char *right_val);
 
+
+token_t *input(symtable_t *symtab, int type);
+
+token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2);
+
+
 token_t *chr(symtable_t *symtab, token_t *par);
+
+token_t *length(symtable_t *symtab, token_t *par);
+
 #endif
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
