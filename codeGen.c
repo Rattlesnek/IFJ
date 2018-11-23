@@ -173,10 +173,10 @@ char *operator(char *op, bool alternative)
 int type(token_t *param1, token_t *param2)
 {
     int index_param1, index_param2;
-    if (param2 == NULL)
+    /*if (param2 == NULL)
     {
         return NULL_NULL;
-    }
+    }*/
     if (strncmp(param1->name, "INT", 3) == 0)
     {
         index_param1 = INT_index;
@@ -214,7 +214,7 @@ int type(token_t *param1, token_t *param2)
     return matrix[index_param1][index_param2];
 }
 
-token_t *null_null(token_t *par1, symtable_t *symtab)
+/*token_t *null_null(token_t *par1, symtable_t *symtab)
 {
     static unsigned long long label_n = 0;
 
@@ -284,7 +284,7 @@ token_t *null_null(token_t *par1, symtable_t *symtab)
     free(print1);
     return des;
 }
-
+*/
 token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 {
     if (operator(op->name, 0) == NULL)
@@ -327,6 +327,14 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.ptr->var.key);
     }
     else if (strcmp(par1->name, "INT") == 0)
@@ -334,6 +342,14 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param1, "int");
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.string);
     }
     if (strcmp(par2->name, "INT_ID") == 0)
@@ -348,6 +364,14 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.ptr->var.key);
     }
     else if (strcmp(par2->name, "INT") == 0)
@@ -355,6 +379,14 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param2, "int");
 
         print2 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.string);
     }
 
@@ -444,6 +476,14 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.ptr->var.key);
     }
     else if (strcmp(par1->name, "DBL") == 0)
@@ -451,6 +491,14 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param1, "float");
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.string);
     }
     if (strcmp(par2->name, "DBL_ID") == 0)
@@ -465,6 +513,14 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.ptr->var.key);
     }
     else if (strcmp(par2->name, "DBL") == 0)
@@ -472,6 +528,14 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param2, "float");
 
         print2 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.string);
     }
 
@@ -556,6 +620,14 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
         }
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.ptr->var.key);
     }
     else if (strcmp(par1->name, "INT" ) == 0 || strcmp(par1->name, "DBL") == 0)
@@ -570,6 +642,14 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
         }
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.string);
     }
     if (strcmp(par2->name, "INT_ID") == 0 || strcmp(par2->name, "DBL_ID") == 0)
@@ -584,6 +664,14 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
         }
 
         print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.ptr->var.key);
 
     }
@@ -599,6 +687,14 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
         }
 
         print2 = malloc(sizeof(char) * (strlen(par2->info.string) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.string);
     }
 
@@ -720,6 +816,14 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.ptr->var.key);
     }
     else if (strcmp(par1->name, "INT") == 0)
@@ -727,6 +831,14 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param1, "int");
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.string);
     }
     if (strcmp(par2->name, "STR_ID") == 0)
@@ -741,6 +853,14 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.ptr->var.key);
     }
     else if (strcmp(par2->name, "STR") == 0)
@@ -748,6 +868,14 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param2, "string");
 
         print2 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.string);
     }
 
@@ -839,6 +967,14 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.ptr->var.key);
     }
     else if (strcmp(par1->name, "DBL") == 0)
@@ -846,6 +982,14 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param1, "float");
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.string);
     }
     if (strcmp(par2->name, "STR_ID") == 0)
@@ -860,6 +1004,14 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.ptr->var.key);
     }
     else if (strcmp(par2->name, "STR") == 0)
@@ -867,6 +1019,14 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param2, "string");
 
         print2 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.string);
     }
 
@@ -958,6 +1118,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         }
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
+
         if (print1 == NULL)
         {
             free(des->name);
@@ -1511,6 +1672,14 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.ptr->var.key);
     }
     else if (strcmp(par1->name, "STR") == 0)
@@ -1518,6 +1687,14 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param1, "string");
 
         print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print1 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print1, par1->info.string);
     }
     if (strcmp(par2->name, "STR_ID") == 0)
@@ -1532,6 +1709,14 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         }
 
         print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.ptr->var.key);
     }
     else if (strcmp(par2->name, "STR") == 0)
@@ -1539,6 +1724,14 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         strcpy(param2, "string");
 
         print2 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
+        if (print2 == NULL)
+        {
+            free(des->name);
+            free(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_INT", info1);
+            return error;
+        }
         strcpy(print2, par2->info.string);
     }
 
@@ -2368,9 +2561,9 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
         case ID_ID:
             return id_id(op, param1, param2, symtab, 0);
             break;
-        case NULL_NULL:
+        /*case NULL_NULL:
             return null_null(param1, symtab);
-            break;
+            break;*/
 
         default: break;
     }

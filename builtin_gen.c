@@ -364,11 +364,9 @@ token_t *input(symtable_t *symtab, int type)
 token_t *print(symtable_t *symtab, stack_tkn_t *stack)
 {
     static unsigned long long label_n = 0;
-    char name[20];
     token_info_t info;
-    sprintf(name, "PRINT%llu", label_n);
-    info.ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("STR_ID", info);
+    info.string = "nil";
+    token_t *des = createToken("nil", info);
     char param[7];      //from which frame is variable ID
     char frame[3] = "LF";
     char *print;
@@ -378,9 +376,9 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
     token_t *tmp;
     int iterator = stack->top + 1;
 
-    printf("DEFVAR %s@%s\n"
+    /*printf("DEFVAR %s@%s\n"
            "MOVE %s@%s nil@nil\n",
-           frame, des->info.ptr->var.key, frame, des->info.ptr->var.key);
+           frame, des->info.ptr->var.key, frame, des->info.ptr->var.key);*/
 
     for (int i = 0; i < iterator; ++i)
     {
@@ -397,11 +395,27 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
             }
 
             print = malloc(sizeof(char) * (strlen(tmp->info.ptr->var.key) + 1));
+            if (print == NULL)
+            {
+                free(des->name);
+                free(des);
+                token_info_t info1;
+                token_t *error = createToken("ERR_INT", info1);
+                return error;
+            }
             strcpy(print, tmp->info.ptr->var.key);
         }
         else
         {
             print = malloc(sizeof(char) * (strlen(tmp->info.string) + 1));
+            if (print == NULL)
+            {
+                free(des->name);
+                free(des);
+                token_info_t info1;
+                token_t *error = createToken("ERR_INT", info1);
+                return error;
+            }
             strcpy(print, tmp->info.string);
             if (strcmp(tmp->name, "INT") == 0)
             {
