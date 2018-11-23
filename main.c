@@ -24,7 +24,7 @@ int main()
 {
     dynamicStr_t str;
     dynamicStr_t *sc_str = &str;
-    
+
     dynamicStr_init(sc_str);
     queue_t *que = que_create();
     ///////////////////////////////////////////////
@@ -37,7 +37,7 @@ int main()
     do {
         if (token != NULL)
             destroyToken(token);
-        
+
         token = scanner_get(sc_str, que);
         if (strcmp(token->name, "BUILTIN") == 0)
         {
