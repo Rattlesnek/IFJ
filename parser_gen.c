@@ -489,6 +489,64 @@ token_t *input(symtable_t *symtab, int type)
     return des;
 }
 
+token_t *print(symtable_t *symtab, token_t **token_arr, unsigned arr_len)
+{
+
+    static unsigned long long label_n = 0;
+    char name[20];
+    token_info_t info;
+    token_t *des;
+    char er[10];
+    char param[7];      //from which frame is variable ID
+    char frame[3] = "LF";
+    if (strcmp(symtab->name, "$GT" ) == 0)
+        strcpy(frame, "GF");
+
+    if (type == 0)
+    {
+        sprintf(name, "IN%lluINT", label_n);
+        info.ptr = symtab_elem_add(symtab, name);
+        des = createToken("IN_INT", info);
+        strcpy(param, "int");
+        strcpy(er, "int@0");
+
+    }
+    else if (type == 1)
+    {
+        sprintf(name, "IN%lluDBL", label_n);
+        info.ptr = symtab_elem_add(symtab, name);
+        des = createToken("IN_DBL", info);
+        strcpy(param, "float");
+        strcpy(er, "float@0.0");
+    }
+    else if (type == 2)
+    {
+        sprintf(name, "IN%lluSTR", label_n);
+        info.ptr = symtab_elem_add(symtab, name);
+        des = createToken("IN_STR", info);
+        strcpy(param, "string");
+        strcpy(er, "nil@nil");
+    }
+    else
+    {
+        return NULL;
+    }
+
+
+
+    printf("DEFVAR %s@%s\n"
+           "READ %s@%s string@%s\n",
+           frame, name, frame, name, param);
+
+    printf("JUMPIFEQ $%s$%llu$%s %s@%s string@%s\n"
+           "MOVE %s@%s %s\n"
+           "LABEL $%s$%llu$%s\n",
+           symtab->name, label_n, param, frame, name, param, frame, name, er,  symtab->name, label_n, param);
+
+    label_n++;
+    return des;
+}
+
 #if 0
 
 
