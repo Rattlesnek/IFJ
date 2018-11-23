@@ -30,6 +30,7 @@
 #include "dynamicArrParam.h"
 #include "stackStr.h"
 #include "token.h"
+#include "stackTkn.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -48,7 +49,7 @@ token_t *length(symtable_t *symtab, token_t *par)
     token_info_t info;
     sprintf(name, "LEN%lluSTR", label_n);
     info.ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("LEN_STR_RET", info);
+    token_t *des = createToken("INT_ID", info);
 
     char frame_act [3] = "LF";
     char frame_par [7] = "LF";      //from which frame is variable ID
@@ -110,7 +111,7 @@ token_t *chr(symtable_t *symtab, token_t *par)
     sprintf(name, "CHR%llu", label_n);
     token_info_t info;
     info.ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("CHR_RET", info);
+    token_t *des = createToken("STR_ID", info);
 
     char frame[3] = "LF";
 
@@ -194,7 +195,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
     sprintf(name, "ORD%llu", label_n);
     token_info_t info;
     info.ptr = symtab_elem_add(symtab, name);
-    token_t *des = createToken("ORD_RET", info);
+    token_t *des = createToken("INT_ID", info);
 
     char frame[3] = "LF";
 
@@ -322,7 +323,7 @@ token_t *input(symtable_t *symtab, int type)
     {
         sprintf(name, "IN%lluINT", label_n);
         info.ptr = symtab_elem_add(symtab, name);
-        des = createToken("IN_INT", info);
+        des = createToken("INT_ID", info);
         strcpy(param, "int");
         strcpy(er, "int@0");
 
@@ -331,7 +332,7 @@ token_t *input(symtable_t *symtab, int type)
     {
         sprintf(name, "IN%lluDBL", label_n);
         info.ptr = symtab_elem_add(symtab, name);
-        des = createToken("IN_DBL", info);
+        des = createToken("DBL_ID", info);
         strcpy(param, "float");
         strcpy(er, "float@0.0");
     }
@@ -339,7 +340,7 @@ token_t *input(symtable_t *symtab, int type)
     {
         sprintf(name, "IN%lluSTR", label_n);
         info.ptr = symtab_elem_add(symtab, name);
-        des = createToken("IN_STR", info);
+        des = createToken("STR_ID", info);
         strcpy(param, "string");
         strcpy(er, "nil@nil");
     }
@@ -362,65 +363,70 @@ token_t *input(symtable_t *symtab, int type)
     label_n++;
     return des;
 }
-/*
-token_t *print(symtable_t *symtab, token_t **token_arr, unsigned arr_len)
+
+token_t *print(symtable_t *symtab, stack_tkn_t *stack)
 {
 
     static unsigned long long label_n = 0;
     char name[20];
     token_info_t info;
-    token_t *des;
-    char er[10];
+    sprintf(name, "PRINT%llu", label_n);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("STR_ID", info);
     char param[7];      //from which frame is variable ID
     char frame[3] = "LF";
+    char *print;
     if (strcmp(symtab->name, "$GT" ) == 0)
         strcpy(frame, "GF");
 
-    if (type == 0)
-    {
-        sprintf(name, "IN%lluINT", label_n);
-        info.ptr = symtab_elem_add(symtab, name);
-        des = createToken("IN_INT", info);
-        strcpy(param, "int");
-        strcpy(er, "int@0");
-
-    }
-    else if (type == 1)
-    {
-        sprintf(name, "IN%lluDBL", label_n);
-        info.ptr = symtab_elem_add(symtab, name);
-        des = createToken("IN_DBL", info);
-        strcpy(param, "float");
-        strcpy(er, "float@0.0");
-    }
-    else if (type == 2)
-    {
-        sprintf(name, "IN%lluSTR", label_n);
-        info.ptr = symtab_elem_add(symtab, name);
-        des = createToken("IN_STR", info);
-        strcpy(param, "string");
-        strcpy(er, "nil@nil");
-    }
-    else
-    {
-        return NULL;
-    }
-
-
+    token_t *tmp;
 
     printf("DEFVAR %s@%s\n"
-           "READ %s@%s string@%s\n",
-           frame, name, frame, name, param);
+           "MOVE %s@%s nil@nil\n",
+           frame, des->info.ptr->var.key, frame, des->info.ptr->var.key);
 
-    printf("JUMPIFEQ $%s$%llu$%s %s@%s string@%s\n"
-           "MOVE %s@%s %s\n"
-           "LABEL $%s$%llu$%s\n",
-           symtab->name, label_n, param, frame, name, param, frame, name, er,  symtab->name, label_n, param);
+    for (int i = 0; i < stack->top + 1; ++i)
+    {
+        if (strcmp(tmp->name, "ID") == 0)
+        {
+            tmp = stcTkn_pop(stack);
+            if (strcmp(symtab->name, "$GT" ) == 0)
+            {
+                strcpy(param, "GF");
+            }
+            else
+            {
+                strcpy(param, "LF");
+            }
+
+            print = malloc(sizeof(char) * (strlen(tmp->info.ptr->var.key) + 1));
+            strcpy(print, tmp->info.ptr->var.key);
+        }
+        else
+        {
+            print = malloc(sizeof(char) * (strlen(tmp->info.string) + 1));
+            strcpy(print, tmp->info.string);
+            if (strcmp(tmp->name, "INT") == 0)
+            {
+                strcpy(param, "int");
+            }
+            else if (strcmp(tmp->name, "DBL") == 0)
+            {
+                strcpy(param, "float");
+            }
+            else if (strcmp(tmp->name, "STR") == 0)
+            {
+                strcpy(param, "string");
+            }
+        }
+
+        printf("WRITE %s@%s\n", param, print);
+    }
 
     label_n++;
     return des;
 }
-*/
+
 #if 0
 
 

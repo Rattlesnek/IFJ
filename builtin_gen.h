@@ -54,6 +54,8 @@ token_t *chr(symtable_t *symtab, token_t *par);
 
 token_t *length(symtable_t *symtab, token_t *par);
 
+
+
 #endif
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
