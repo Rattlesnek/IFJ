@@ -333,7 +333,7 @@ void sa_callFunc(stack_tkn_t *stack, char is_builtin)
         if(is_builtin)
             printf("CALL $%s\n", func->info.string);
         else
-            printf("CALL $%s\n", func->info.ptr->func.key);
+            printf("CALL %s\n", func->info.ptr->func.key);
 
         //destroyToken(func);
     }
@@ -897,11 +897,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
               char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
               strcpy(func_retval, "%retval");
-              printf("=> Expr: %s\n", func_retval);
+              DEBUG_PRINT("=> Expr: %s\n", func_retval);
             }
             else if(result != NULL)
             {
-                printf("=> Expr: %s\n", token->name);
+                DEBUG_PRINT("=> Expr: %s\n", token->name);
             }
             else
             {
@@ -911,7 +911,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 {
                         handleError(err); 
                 } 
-                printf("=> Expr: %s\n", ret_tok->info.string);
+                DEBUG_PRINT("=> Expr: %s\n", ret_tok->info.string);
             }
             stcTkn_destroy(tok_stack);
             stc_destroy(stack);
