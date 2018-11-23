@@ -115,60 +115,24 @@ token_t *chr(symtable_t *symtab, token_t *par)
 
     char frame[3] = "LF";
 
-    ///////TESTING in scanner main
-    if (symtab == NULL)
+    if (strcmp(symtab->name, "$GT" ) == 0)
+        strcpy(frame, "GF");
+
+    //"LABEL CHR\n"
+    //"PUSHFRAME\n"
+    //
+    printf("DEFVAR %s@%s\n"
+            "MOVE %s@%s nil@nil\n"
+            "DEFVAR %s@$chr$tmp%llu\n",
+            frame, name,
+            frame, name,
+            frame, label_n);
+
+    if (strcmp(par->name, "ID") == 0)
     {
-        printf("MOVE %s@$chr$tmp%llu int@%s\n",
-               frame, label_n, par->info.string);
-        printf("INT2CHAR LF@%%retval %s@$chr$tmp%llu\n",    //INT2CHAR takes value <0,255>
-               frame, label_n);
-    }
-    /////////////////////////////////////////
-    else
-    {
-        if (strcmp(symtab->name, "$GT" ) == 0)
-            strcpy(frame, "GF");
-
-        //"LABEL CHR\n"
-        //"PUSHFRAME\n"
-        //"DEFVAR LF@%%retval\n"
-        printf("MOVE LF@%%retval nil@nil\n"
-               "DEFVAR %s@$chr$tmp%llu\n",
-               frame, label_n);
-
-        if (strcmp(par->name, "ID") == 0)
+        if (symtab_find(symtab, par->info.ptr->var.key) == NULL)
         {
-            if (symtab_find(symtab, par->info.ptr->var.key) == NULL)
-            {
-                //Variable doesn't exist
-                printf("EXIT int@4\n");
-                label_n++;
-                destroyToken(par);
-                free(des);
-                token_info_t info1;
-                token_t *error = createToken("ERR_SEM", info1);
-                return error;
-            }
-
-            printf("MOVE %s@$chr$tmp%llu %s@%s\n"
-                   "DEFVAR %s@$chr$tmp%llu$type\n"
-                   "TYPE %s@$chr$tmp%llu$type %s@%s\n"
-                   "JUMPIFEQ %s@$chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
-                   "EXIT int@4\n"
-                   "LABEL %s@$chr$tmp%llu$int$true\n",
-                   frame, label_n, frame, par->info.ptr->var.key,
-                   frame, label_n,
-                   frame, label_n, frame, par->info.ptr->var.key,
-                   frame, label_n, frame, label_n,
-                   frame, label_n);
-        }
-        else if (strcmp(par->name, "INT") == 0)
-        {
-            printf("MOVE %s@$chr$tmp%llu int@%s\n",
-                   frame, label_n, par->info.string);
-        }
-        else
-        {
+            //Variable doesn't exist
             printf("EXIT int@4\n");
             label_n++;
             destroyToken(par);
@@ -177,11 +141,38 @@ token_t *chr(symtable_t *symtab, token_t *par)
             token_t *error = createToken("ERR_SEM", info1);
             return error;
         }
-        printf("INT2CHAR LF@%%retval %s@$chr$tmp%llu\n",        //INT2CHAR takes value <0,255>
-               frame, label_n);
-        //"POPFRAME\n"
-        //"RETURN\n"
+
+        printf("MOVE %s@$chr$tmp%llu %s@%s\n"
+                "DEFVAR %s@$chr$tmp%llu$type\n"
+                "TYPE %s@$chr$tmp%llu$type %s@%s\n"
+                "JUMPIFEQ %s@$chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
+                "EXIT int@4\n"
+                "LABEL %s@$chr$tmp%llu$int$true\n",
+                frame, label_n, frame, par->info.ptr->var.key,
+                frame, label_n,
+                frame, label_n, frame, par->info.ptr->var.key,
+                frame, label_n, frame, label_n,
+                frame, label_n);
     }
+    else if (strcmp(par->name, "INT") == 0)
+    {
+        printf("MOVE %s@$chr$tmp%llu int@%s\n",
+                frame, label_n, par->info.string);
+    }
+    else
+    {
+        printf("EXIT int@4\n");
+        label_n++;
+        destroyToken(par);
+        free(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
+    }
+    printf("INT2CHAR %s@%s %s@$chr$tmp%llu\n",        //INT2CHAR takes value <0,255>
+            frame, name, frame, label_n);
+    //"POPFRAME\n"
+    //"RETURN\n"
 
     destroyToken(par);
     label_n++;
@@ -202,9 +193,12 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
     if (strcmp(symtab->name, "$GT" ) == 0)
         strcpy(frame, "GF");
 
-    printf("MOVE LF@%%retval nil@nil\n"
+    printf("DEFVAR %s@%s\n"
+           "MOVE %s@%s nil@nil\n"
            "DEFVAR %s@$ord$string%llu\n"
            "DEFVAR %s@$ord$position%llu\n",
+           frame, name,
+           frame, name,
            frame, label_n,
            frame, label_n);
 
@@ -296,8 +290,8 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
         return error;
     }
 
-    printf("STR2INT LF@%%retval %s@$ord$string%llu %s@$ord$position%llu\n",
-           frame, label_n, frame, label_n );
+    printf("STR2INT %s@%s %s@$ord$string%llu %s@$ord$position%llu\n",
+           frame, name, frame, label_n, frame, label_n );
 
     destroyToken(par1);
     destroyToken(par2);
