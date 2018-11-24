@@ -439,8 +439,9 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
     return des;
 }
 
-#if 1
+#if 0
 
+//gcc builtin_gen.c symtable.c dynamicArrParam.c stackStr.c token.c stackTkn.c -o gen
 
 int main()
 {

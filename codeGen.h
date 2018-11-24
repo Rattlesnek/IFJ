@@ -70,8 +70,7 @@ typedef enum index_switch {
   ID_INT,
   ID_DBL,
   ID_STR,
-  ID_ID,
-  NULL_NULL
+  ID_ID
 } index_switch_t;
 
 /**

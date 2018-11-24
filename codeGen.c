@@ -928,6 +928,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 
 token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 {
+
     if (operator(op->name, 0) == NULL)
     {
         return NULL;
@@ -1068,6 +1069,7 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         token_t *error = createToken("ERR_SEM", info1);
         return error;
     }
+
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
@@ -2511,6 +2513,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
 token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *symtab)
 {
+
     switch (type(param1, param2))
     {
         case INT_INT:
@@ -2609,15 +2612,14 @@ int main()
     token_info_t tmp;
     tmp.ptr = NULL;
 
-
-    token_t *op = createToken("+", tmp);
+    token_t *op = createToken("==", tmp);
     token_info_t info3;
     info3.string = "ahoj";
     token_info_t info4;
     info4.string = "7.1";
     token_t *token2 = createToken("STR", info3);
     token_t *token3 = createToken("DBL", info4);
-    token_t *tmp12 = gen_expr(NULL,  token3, NULL, symtable);
+    token_t *tmp12 = gen_expr(op,  token3, token2, symtable);
     /*printf("---%s---\n", tmp12->info.ptr->var.key);
     printf("---%s---\n", tmp12->name);*/
     //token_t *tmp13 = gen_expr(op, tmp12, token2, symtable);
