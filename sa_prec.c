@@ -740,9 +740,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
 
-                    stc_push(stack, _F_, NULL);
+                    callFunc(builtin_func);       // Zmena tady
+                    stc_push(stack, _F_, result); // Zmena tady
 
-                    callFunc(builtin_func);
+                    //callFunc(builtin_func);
                     break;
 
                 /* F -> f E, ... , E */    
@@ -772,8 +773,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;  
 
-                    stc_push(stack, _F_, NULL);
-                    callFunc(builtin_func);
+                    callFunc(builtin_func);           // Zmena tady
+                    stc_push(stack, _F_, result);     // Zmena tady
+                   // callFunc(builtin_func);
                     break;
 
                 /* 
@@ -803,8 +805,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         if(term != _sml_)
                             goto fail_end;
 
-                        stc_push(stack, _F_, NULL);
-                        callFunc(builtin_func);
+                        callFunc(builtin_func);         // Zmena tady
+                        stc_push(stack, _F_, result);   // Zmena tady
+                        //callFunc(builtin_func);
                    
                         break;
                     }
@@ -825,8 +828,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                                 if(term != _sml_)
                                     goto fail_end;
 
-                                stc_push(stack, _F_, NULL);
-                                callFunc(builtin_func);
+                                callFunc(builtin_func);         // Zmena tady
+                                stc_push(stack, _F_, result);   // Zmena tady
+                                //callFunc(builtin_func);
                              
                                 break;
                             }
@@ -864,8 +868,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             if(term != _sml_)
                                 goto fail_end;
 
-                            stc_push(stack, _F_, NULL);
                             callFunc(builtin_func);
+                            stc_push(stack, _F_, result);
+                            //callFunc(builtin_func);
                             break;
                         }
 
@@ -888,7 +893,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         strcpy(func_retval, result->info.ptr->var.key);
                         *ret_code = func_retval;
                         */
-                        *ret_token = stc_tokPopTop(stack, &term);
+                        
+                        *ret_token = stc_tokPopTop(stack, &term); 
                     }
                     else
                     {
