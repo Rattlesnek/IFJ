@@ -1,1 +1,6 @@
-inputi
+x = "Hello World\x0A!"
+a = "Ahoj\nSve'te\s\\\x22"
+b = "hej \x1 balbasbdajsda"
+
+chr(25)
+ord "HELL",  "in"

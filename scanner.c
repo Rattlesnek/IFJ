@@ -67,7 +67,7 @@ void sc_unget(int c)
     ungetc(c, stdin);
 }
 
-bool HextoStr(dynamicStr_t *sc_str, int position)
+bool HextoStr(dynamicStr_t *sc_str,unsigned int position)
 {
     if (position > sc_str->length)
         return false;
@@ -79,7 +79,7 @@ bool HextoStr(dynamicStr_t *sc_str, int position)
     if(*endptr)
         return false;
 
-    sprintf(hex, "%d", ret);  
+    sprintf(hex, "%li", ret);  
     if (strlen(hex) < 2)
     {   
         sc_str->length = sc_str->length - 1;
@@ -475,7 +475,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     }
                     else if (c == '"')
                         state = State_QUATATION2;
-                    ///////////////////////////////////////////////
+
                     else if (c == ' ')
                     {
                         if(!dynamicStr_add(sc_str, '\\'))
@@ -490,7 +490,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if(!dynamicStr_add(sc_str, '2'))
                             goto err_internal;
                     }
-                    /////////////////////////////////////////////////////
+
                     else 
                     {
                         if(!dynamicStr_add(sc_str, c))
@@ -501,22 +501,66 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     break;
 
                 case State_SPEC_CHAR:
-                    if (c == 'n' || c == 't' || c == 's' || c == '\\')
+                    state = State_QUATATION1;
+                    if (c == '\\')
                     {   
-                        if(!dynamicStr_add(sc_str, '\\'))   //First I add '\\'
+                        if(!dynamicStr_add(sc_str, '\\'))
                             goto err_internal;
 
-                        if(!dynamicStr_add(sc_str, c))
+                        if(!dynamicStr_add(sc_str, '0'))
                             goto err_internal;
 
-                        state = State_QUATATION1;
+                        if(!dynamicStr_add(sc_str, '9'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '2'))
+                            goto err_internal;
+                    }
+                    else if (c == 't')
+                    {
+                        if(!dynamicStr_add(sc_str, '\\'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '0'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '0'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '9'))
+                            goto err_internal;
+                    }
+                    else if (c == 'n')
+                    {
+                        if(!dynamicStr_add(sc_str, '\\'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '0'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '1'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '0'))
+                            goto err_internal;
+                    }
+                    else if (c == 's')
+                    {
+                        if(!dynamicStr_add(sc_str, '\\'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '0'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '3'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '2'))
+                            goto err_internal;
                     }
                     else if (c == 'x')
                     {
                         if(!dynamicStr_add(sc_str, '\\')) //First I add '\\'
-                            goto err_internal;
-
-                        if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
 
                         state = State_HEX;
@@ -545,18 +589,27 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
 
+                        if ((HextoStr(sc_str, sc_str->length - 2)) == false)
+                            goto err_internal;
+
                         state = State_QUATATION1;
                     }
                     else if (c == '\n')
                         goto err_lexical;
 
                     else if (c == '"')
-                        state = State_QUATATION2;
+                    {
+                        if ((HextoStr(sc_str, sc_str->length - 1)) == false)
+                            goto err_internal;
 
+                        state = State_QUATATION2;
+                    }
                     else
                     {
-                        if(!dynamicStr_add(sc_str, c))
+                        if ((HextoStr(sc_str, sc_str->length - 1)) == false)
                             goto err_internal;
+                        
+                        sc_unget(c);
 
                         state = State_QUATATION1;
                     }

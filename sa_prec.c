@@ -19,8 +19,7 @@
 ***********************************************************************/
 /* 
  * TODO:
- *  | | Nefunguje test.rb s parserem... Chyba je u volani f-ce bez parametru (Chyba je pravdepodobne u NULL sc_str->str)
- *  | | Memory leaky
+ *  
  */
 ////////////////////////////////////////////////////////////////////////
 ///                          INCLUDES                                ///
@@ -32,7 +31,7 @@
 #include "error.h"
 #include "stackTkn.h"
 #include "codeGen.h"
-#include "parser_gen.h"
+#include "builtin_gen.h"
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -245,6 +244,8 @@ int sa_builtinType(token_t *token)
         return _ord_;
     else if(strcmp(token->info.string, "substr") == 0)
         return _substr_;
+    else if(strcmp(token->info.string, "print") == 0)
+        return _print_;
 
     return INVALID_TOKEN;
 }
@@ -342,38 +343,46 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
     }
     else
     {
-        token_t *tmp = stcTkn_pop(stack);
-        printf("tmp->name: %s\n", tmp->name);
-        token_t *tmp2 = stcTkn_pop(stack);
-        printf("tmp->name: %s\n", tmp2->name);
+
         token_t *result = NULL;
-        printf("stack->array[0]: %s\n", stack->array[0]->name);
+     
         switch(is_builtin)
         {
-            case _inputs_: DEBUG_PRINT("Volas inputs o.O\n");
+            case _inputs_: result = input(symtable, 2);
                 break;
-            case _inputi_: DEBUG_PRINT("Volas inputi o.O\n");
+            case _inputi_: result = input(symtable, 0);
                 break;
-            case _inputf_: DEBUG_PRINT("Volas inputf o.O\n");
+            case _inputf_: result = input(symtable, 1);
                 break;
-            case _length_: DEBUG_PRINT("Volas length o.O\n");
+            case _length_: result = length(symtable, stack->array[0]);
                 break;
             case _chr_   : result = chr(symtable, stack->array[0]);
+                           destroyToken(stack->array[1]);
                            if(strcmp(result->name, "ERR_SEM") == 0)
-                            {
+                           {
                                 destroyToken(result);
                                 return NULL;
-                            }
+                           }
                 break;
-            case _ord_   : DEBUG_PRINT("Volas ord o.O\n");
+            case _ord_   : result = ord(symtable, stack->array[1], stack->array[0]);
+                           if(strcmp(result->name, "ERR_SEM") == 0)
+                           {
+                                destroyToken(result);
+                                return NULL;
+                           }
                 break;
             case _substr_: DEBUG_PRINT("Volas substr o.O\n");
                 break;
-            case _print_ : DEBUG_PRINT("Volas print o.O\n");
+            case _print_ : stcTkn_pop(stack);
+                           result = print(symtable, stack);
+                           if(strcmp(result->name, "ERR_SEM") == 0)
+                           {
+                                destroyToken(result);
+                                return NULL;
+                           }
                 break; 
         }
 
-        printf("result: %s\n", result->info.ptr->var.key);
         return result;
     }
 
@@ -405,7 +414,7 @@ bool sa_isOperator(table_elem_t term)
  * @return  true      If analysed expression is correct  
  *          false     If analysed expression is incorrect 
  */   
-int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, char **ret_code)
+int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, token_t **ret_token)
 {
     stack_sa_t *stack = stc_init();
     stc_push(stack, _empt_, NULL);
@@ -872,31 +881,45 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 {
                     if(builtin_func)
                     {
+                        if(result == NULL)
+                            goto sem_gen;
+                        /*
                         char *func_retval = malloc(strlen(result->info.ptr->var.key) * sizeof(char) + 1);
                         strcpy(func_retval, result->info.ptr->var.key);
                         *ret_code = func_retval;
+                        */
+                        *ret_token = stc_tokPopTop(stack, &term);
                     }
                     else
                     {
+                        /*
                         char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
                         strcpy(func_retval, "%retval");
                         *ret_code = func_retval;
+                        */
+                        token_info_t info;
+                        *ret_token = createToken("%retval", info);
+                        /*
+                        *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
+                        strcpy(*ret_code, "%retval");
                         DEBUG_PRINT("=> Expr: %s\n", *ret_code);
+                        */
                     }
-/*
-                  *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
-                  strcpy(*ret_code, "%retval");
-                  DEBUG_PRINT("=> Expr: %s\n", *ret_code);
-*/
                 }
                 else if(result != NULL)
                 {
+                    token_t *tmp = stc_tokPopTop(stack, &term);
+                    printf("result: %s\n", tmp->info.ptr->var.key);
+                    *ret_token = tmp;
+                    /*
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
                     strcpy(*ret_code, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
+                    */
                 }
                 else
                 {
+                    /*
                     token_t *ret_tok = stc_tokPopTop(stack, &term);
                     result = gen_expr(NULL, ret_tok, NULL, loc_symtab);
                     if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
@@ -907,6 +930,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
                     strcpy(*ret_code, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
+                    */
+                    token_t *tmp = stc_tokPopTop(stack, &term);
+                    printf("result: %s\n", tmp->info.ptr->var.key);
+                    *ret_token = tmp;
                 }
                 if(!builtin_func)
                     stcTkn_destroy(tok_stack);

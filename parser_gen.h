@@ -53,7 +53,7 @@
  * @return true Returns true if everything pushed on stack properly
  * @return false Returns false if error occured
  */
-bool generate_if(symtable_t *var_tab, stack_str_t *stack, char *cond);
+int generate_if(symtable_t *var_tab, stack_str_t *stack, token_t *cond);
 
 /**
  * @brief Function to generate WHILE
@@ -74,13 +74,15 @@ void generate_LABEL_while();
  * @brief Prints "JUMPIFEQ $end_while$%llu COND int@0\n" ergo ==> Condition of while
  *
  */
-void generate_while_false(symtable_t *var_tab, char *cond);
+int generate_while_false(symtable_t *var_tab, token_t *cond);
 
 
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr);
 
 
-void generate_var(symtable_t *var_tab, char *var_name, char *right_val);
+int generate_var(symtable_t *var_tab, char *var_name, token_t *right_val);
+
+int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3], char *frame_or_type[7], char **var_or_const);
 
 #endif
 ////////////////////////////////////////////////////////////////////////
