@@ -820,7 +820,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         state = State_EXP;
                     }
 
-                    else if (isspace(c))
+                    else if ( (isspace(c)) || c == ',' || c == ')')
                     {
                         state = State_S;
                         sc_unget(c);

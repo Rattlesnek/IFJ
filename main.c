@@ -22,6 +22,7 @@
 #include "error.h"
 int main()
 {
+    printf(".IFJcode18\n");
     dynamicStr_t str;
     dynamicStr_t *sc_str = &str;
 

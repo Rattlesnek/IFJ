@@ -1,6 +1,9 @@
-x = "Hello World\x0A!"
-a = "Ahoj\nSve'te\s\\\x22"
-b = "hej \x1 balbasbdajsda"
 
-chr(25)
-ord "HELL",  "in"
+ord("HELLO", 3)
+ord("IFJ mastr race", 1)
+
+chr(185)
+chr(48)
+
+substr("TORTUGA",0,6)
+substr("IFJ je zabijak", 8,10)

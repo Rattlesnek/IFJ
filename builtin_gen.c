@@ -122,7 +122,7 @@ token_t *chr(symtable_t *symtab, token_t *par)
     //"PUSHFRAME\n"
     //
     printf("DEFVAR %s@%s\n"
-           "MOVE %s@%s nil@nil\n"
+           "MOVE %s@%s string@\n"
            "DEFVAR %s@$chr$tmp%llu\n",
            frame, name,
            frame, name,
@@ -145,14 +145,14 @@ token_t *chr(symtable_t *symtab, token_t *par)
         printf("MOVE %s@$chr$tmp%llu %s@%s\n"
                "DEFVAR %s@$chr$tmp%llu$type\n"
                "TYPE %s@$chr$tmp%llu$type %s@%s\n"
-               "JUMPIFEQ %s@$chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
+               "JUMPIFEQ $chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
                "EXIT int@4\n"
-               "LABEL %s@$chr$tmp%llu$int$true\n",
+               "LABEL $chr$tmp%llu$int$true\n",
                frame, label_n, frame, par->info.ptr->var.key,
                frame, label_n,
                frame, label_n, frame, par->info.ptr->var.key,
-               frame, label_n, frame, label_n,
-               frame, label_n);
+               label_n, frame, label_n,
+               label_n);
     }
     else if (strcmp(par->name, "INT") == 0)
     {
@@ -194,7 +194,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
         strcpy(frame, "GF");
 
     printf("DEFVAR %s@%s\n"
-           "MOVE %s@%s nil@nil\n"
+           "MOVE %s@%s int@0\n"
            "DEFVAR %s@$ord$string%llu\n"
            "DEFVAR %s@$ord$position%llu\n",
            frame, name,
@@ -220,14 +220,14 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
         printf("MOVE %s@$ord$string%llu %s@%s\n"
                "DEFVAR %s@$ord$string%llu$type\n"
                "TYPE %s@$ord$string%llu$type %s@%s\n"
-               "JUMPIFEQ %s@$ord$string%llu$string$true %s@$ord$string%llu$type string@string\n"
+               "JUMPIFEQ $ord$string%llu$string$true %s@$ord$string%llu$type string@string\n"
                "EXIT int@4\n"
-               "LABEL %s@$ord$string%llu$string$true\n",
+               "LABEL $ord$string%llu$string$true\n",
                frame, label_n, frame, par1->info.ptr->var.key,
                frame, label_n,
                frame, label_n, frame, par1->info.ptr->var.key,
-               frame, label_n, frame, label_n,
-               frame, label_n);
+               label_n, frame, label_n,
+               label_n);
     }
     else if (strcmp(par1->name, "STR") == 0)
     {
@@ -264,14 +264,14 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
         printf("MOVE %s@$ord$position%llu %s@%s\n"
                "DEFVAR %s@$ord$positiong%llu$type\n"
                "TYPE %s@$ord$position%llu$type %s@%s\n"
-               "JUMPIFEQ %s@$ord$position%llu$int$true %s@$ord$position%llu$type string@int\n"
+               "JUMPIFEQ $ord$position%llu$int$true %s@$ord$position%llu$type string@int\n"
                "EXIT int@4\n"
-               "LABEL %s@$ord$string%llu$string$true\n",
+               "LABEL $ord$string%llu$string$true\n",
                frame, label_n, frame, par2->info.ptr->var.key,
                frame, label_n,
                frame, label_n, frame, par2->info.ptr->var.key,
-               frame, label_n, frame, label_n,
-               frame, label_n);
+               label_n, frame, label_n,
+               label_n);
     }
     else if (strcmp(par2->name, "INT") == 0)
     {
@@ -290,7 +290,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
         return error;
     }
 
-    printf("STR2INT %s@%s %s@$ord$string%llu %s@$ord$position%llu\n",
+    printf("STRI2INT %s@%s %s@$ord$string%llu %s@$ord$position%llu\n",
            frame, name, frame, label_n, frame, label_n );
 
     destroyToken(par1);
@@ -315,7 +315,7 @@ token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *en
         strcpy(frame, "GF");
 
     printf("DEFVAR %s@%s\n"
-           "MOVE %s@%s nil@nil\n"
+           "MOVE %s@%s string@\n"
            "DEFVAR %s@$substr$string%llu\n"
            "DEFVAR %s@$substr$begin%llu\n"
            "DEFVAR %s@$substr$end%llu\n",
@@ -345,14 +345,14 @@ token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *en
         printf("MOVE %s@$substr$string%llu %s@%s\n"
                "DEFVAR %s@$substr$string%llu$type\n"
                "TYPE %s@$substr$string%llu$type %s@%s\n"
-               "JUMPIFEQ %s@$substr$string%llu$string$true %s@$substr$string%llu$type string@string\n"
+               "JUMPIFEQ $substr$string%llu$string$true %s@$substr$string%llu$type string@string\n"
                "EXIT int@4\n"
-               "LABEL %s@$substr$string%llu$string$true\n",
+               "LABEL $substr$string%llu$string$true\n",
                frame, label_n, frame, string->info.ptr->var.key,
                frame, label_n,
                frame, label_n, frame, string->info.ptr->var.key,
-               frame, label_n, frame, label_n,
-               frame, label_n);
+               label_n, frame, label_n,
+               label_n);
     }
     else if (strcmp(string->name, "STR") == 0)
     {
@@ -392,14 +392,14 @@ token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *en
         printf("MOVE %s@$substr$begin%llu %s@%s\n"
                "DEFVAR %s@$substr$begin%llu$type\n"
                "TYPE %s@$substr$begin%llu$type %s@%s\n"
-               "JUMPIFEQ %s@$substr$begin%llu$int$true %s@$substr$begin%llu$type string@int\n"
+               "JUMPIFEQ $substr$begin%llu$int$true %s@$substr$begin%llu$type string@int\n"
                "EXIT int@4\n"
-               "LABEL %s@$substr$begin%llu$int$true\n",
+               "LABEL $substr$begin%llu$int$true\n",
                frame, label_n, frame, begin->info.ptr->var.key,
                frame, label_n,
                frame, label_n, frame, begin->info.ptr->var.key,
-               frame, label_n, frame, label_n,
-               frame, label_n);
+               label_n, frame, label_n,
+               label_n);
     }
     else if (strcmp(begin->name, "INT") == 0)
     {
@@ -438,13 +438,13 @@ token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *en
 
         printf("DEFVAR %s@$substr$end%llu$type\n"
                "TYPE %s@$substr$end%llu$type %s@%s\n"
-               "JUMPIFEQ %s@$substr$end%llu$int$true %s@$substr$end%llu$type string@int\n"
+               "JUMPIFEQ $substr$end%llu$int$true %s@$substr$end%llu$type string@int\n"
                "EXIT int@4\n"
-               "LABEL %s@$substr$end%llu$int$true\n",
+               "LABEL $substr$end%llu$int$true\n",
                frame, label_n,
                frame, label_n,frame, end->info.ptr->var.key,
-               frame, label_n, frame,label_n,
-               frame, label_n);
+               label_n, frame,label_n,
+               label_n);
     }
     else if (strcmp(end->name, "INT") == 0)
     {
@@ -471,35 +471,35 @@ token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *en
             "STRLEN %s@$substr$lenstr%llu %s@$substr$string%llu\n"
             "DEFVAR %s@$substr$cmp%llu\n"
             "LT %s@$substr$cmp%llu %s@$substr$lenstr%llu %s@$substr$end%llu\n"      // LEN(STR) < IDX-max ==> do till end of STR
-            "JUMPIFEQ %s@$substr$wholestr%llu %s@$substr$cmp%llu bool@true\n"
+            "JUMPIFEQ $substr$wholestr%llu %s@$substr$cmp%llu bool@true\n"
 /////////////////////////**ONLY REQUIRED SIZE**////////////////////////////////
-            "LABEL %s@$substr$reqsize%llu\n"
+            "LABEL $substr$reqsize%llu\n"
             "LT %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$end%llu\n"       //BEGIN < IDX-max ==> again
-            "JUMPIFEQ %s@$substr$nextchar%llu %s@$substr$cmp%llu bool@true\n"
-            "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$end%llu\n"    //BEGIN == IDX-max ==> once more
-            "JUMPIFEQ %s@$substr$nextchar%llu %s@$substr$cmp%llu bool@true\n"
-            "JUMP %s@$substr$end%llu\n"
+            "JUMPIFEQ $substr$nextchar%llu %s@$substr$cmp%llu bool@true\n"
+        //    "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$end%llu\n"    //BEGIN == IDX-max ==> once more
+         //   "JUMPIFEQ $substr$nextchar%llu %s@$substr$cmp%llu bool@true\n"
+            "JUMP $substr$end%llu\n"
 
-            "LABEL %s@$substr$nextchar%llu\n"
+            "LABEL $substr$nextchar%llu\n"
             "GETCHAR %s@$substr$tmp%llu %s@$substr$string%llu %s@$substr$begin%llu\n"
             "CONCAT %s@%s %s@%s %s@$substr$tmp%llu\n"                                //frame,name,frame,name,frame,label_n
             "ADD %s@$substr$begin%llu %s@$substr$begin%llu int@1\n"
-            "JUMP %s@$substr$reqsize%llu"
+            "JUMP $substr$reqsize%llu\n"
             
 /////////////////////////**TILL THE END OF STRING**////////////////////////////////
-            "LABEL %s@$substr$wholestr%llu\n"
+            "LABEL $substr$wholestr%llu\n"
             "LT %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$lenstr%llu\n"    //BEGIN < LEN(STR) ==> again
-            "JUMPIFEQ %s@$substr$nextcharwhole%llu %s@$substr$cmp%llu bool@true\n"
-            "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$lenstr%llu\n"    //BEGIN == LEN(STR) ==> once more
-            "JUMPIFEQ %s@$substr$nextcharwhole%llu %s@$substr$cmp%llu bool@true\n"
-            "JUMP %s@$substr$end%llu\n"
+            "JUMPIFEQ $substr$nextcharwhole%llu %s@$substr$cmp%llu bool@true\n"
+        //    "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$lenstr%llu\n"    //BEGIN == LEN(STR) ==> once more
+        //    "JUMPIFEQ $substr$nextcharwhole%llu %s@$substr$cmp%llu bool@true\n"
+            "JUMP $substr$end%llu\n"
 
-            "LABEL %s@$substr$nextcharwhole%llu\n"
+            "LABEL $substr$nextcharwhole%llu\n"
             "GETCHAR %s@$substr$tmp%llu %s@$substr$string%llu %s@$substr$begin%llu\n"
             "CONCAT %s@%s %s@%s %s@$substr$tmp%llu\n"                            //frame,name,frame,name,frame,label_n
             "ADD %s@$substr$begin%llu %s@$substr$begin%llu int@1\n"
-            "JUMP %s@$substr$wholestr%llu\n"
-            "LABEL %s@$substr$end%llu\n",
+            "JUMP $substr$wholestr%llu\n"
+            "LABEL $substr$end%llu\n",
      
             frame, label_n, frame, label_n, frame, label_n,
             frame, label_n,
@@ -507,34 +507,34 @@ token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *en
             frame, label_n,frame, label_n,
             frame, label_n,
             frame, label_n, frame, label_n, frame, label_n,
-            frame, label_n, frame, label_n,
+            label_n, frame, label_n,
             
-            frame, label_n,
+            label_n,
             frame, label_n, frame, label_n, frame, label_n,
-            frame, label_n, frame, label_n, 
-            frame, label_n, frame, label_n, frame, label_n,
-            frame, label_n, frame, label_n,
-            frame, label_n,
+            label_n, frame, label_n, 
+         //   frame, label_n, frame, label_n, frame, label_n,
+         //   label_n, frame, label_n,
+            label_n,
             
-            frame, label_n,
+            label_n,
             frame, label_n, frame, label_n, frame, label_n,
             frame,name,frame,name,frame,label_n,
             frame, label_n, frame, label_n,
-            frame, label_n,
+            label_n,
             
-            frame, label_n,
+            label_n,
             frame, label_n, frame, label_n, frame, label_n,
-            frame, label_n, frame, label_n,
-            frame, label_n, frame, label_n, frame, label_n,
-            frame, label_n, frame, label_n,
-            frame, label_n,
+            label_n, frame, label_n,
+         //   frame, label_n, frame, label_n, frame, label_n,
+         //   label_n, frame, label_n,
+            label_n,
             
-            frame, label_n,
+            label_n,
             frame, label_n, frame, label_n, frame, label_n,
             frame,name,frame,name,frame,label_n,
             frame, label_n, frame, label_n,
-            frame, label_n,
-            frame, label_n);
+            label_n,
+            label_n);
 
     destroyToken(string);
     destroyToken(begin);
