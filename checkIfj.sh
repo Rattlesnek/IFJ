@@ -16,12 +16,12 @@ ERR_INTERNAL=9
 
 test_valgrind()
 {
-    valgrind --leak-check=yes --error-exitcode=1 ./parser < sc_test.rb &> /dev/null  
+    valgrind --leak-check=full --error-exitcode=1 ./parser < sc_test.rb &> /dev/null  
     if [[ $? -eq 0 ]]
     then
         printf "${GREEN}(*)${NC}: "
     else
-         printf "${RED}(*)${NC}: "
+        printf "${RED}(X)${NC}: "
     fi
 }
 
@@ -50,7 +50,6 @@ test_function() {
      fi
 }
 
-test_f "a = 1+1"
 # BUILTIN FUNKCE
 
 if [[ "${1}" == "-builtin" ]]
