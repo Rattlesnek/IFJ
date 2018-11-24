@@ -96,6 +96,8 @@ token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *en
 
 token_t *print(symtable_t *symtab, stack_tkn_t *stack);
 
+token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *end);
+
 #endif
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
