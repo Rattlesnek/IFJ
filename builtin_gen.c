@@ -300,6 +300,249 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
 
 }
 
+token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *end)
+{
+    static unsigned long long label_n = 0;
+    char name[24];
+    sprintf(name, "SUBS%llu", label_n);
+    token_info_t info;
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("STR_ID", info);
+
+    char frame[3] = "LF";
+
+    if (strcmp(symtab->name, "$GT" ) == 0)
+        strcpy(frame, "GF");
+
+    printf("DEFVAR %s@%s\n"
+           "MOVE %s@%s nil@nil\n"
+           "DEFVAR %s@$substr$string%llu\n"
+           "DEFVAR %s@$substr$begin%llu\n"
+           "DEFVAR %s@$substr$end%llu\n",
+           frame, name,
+           frame, name,
+           frame, label_n,
+           frame, label_n,
+           frame, label_n);
+
+    //////////////////////**FIRST PARAMETR**////////////////////////////////
+    if (strcmp(string->name, "ID") == 0)
+    {
+        if (symtab_find(symtab, string->info.ptr->var.key) == NULL)
+        {
+            //Variable doesn't exist
+            printf("EXIT int@4\n");
+            label_n++;
+            destroyToken(string);
+            destroyToken(begin);
+            destroyToken(end);
+            destroyToken(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_SEM", info1);
+            return error;
+        }
+
+        printf("MOVE %s@$substr$string%llu %s@%s\n"
+               "DEFVAR %s@$substr$string%llu$type\n"
+               "TYPE %s@$substr$string%llu$type %s@%s\n"
+               "JUMPIFEQ %s@$substr$string%llu$string$true %s@$substr$string%llu$type string@string\n"
+               "EXIT int@4\n"
+               "LABEL %s@$substr$string%llu$string$true\n",
+               frame, label_n, frame, string->info.ptr->var.key,
+               frame, label_n,
+               frame, label_n, frame, string->info.ptr->var.key,
+               frame, label_n, frame, label_n,
+               frame, label_n);
+    }
+    else if (strcmp(string->name, "STR") == 0)
+    {
+        printf("MOVE %s@$substr$string%llu string@%s\n",
+               frame, label_n, string->info.string);
+    }
+    else
+    {
+        printf("EXIT int@4\n");
+        label_n++;
+        destroyToken(string);
+        destroyToken(begin);
+        destroyToken(end);
+        destroyToken(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
+    }
+
+    //////////////////////**SECOND PARAMETR**////////////////////////////////
+    if (strcmp(begin->name, "ID") == 0)
+    {
+        if (symtab_find(symtab, begin->info.ptr->var.key) == NULL)
+        {
+            //Variable doesn't exist
+            printf("EXIT int@4\n");
+            label_n++;
+            destroyToken(string);
+            destroyToken(begin);
+            destroyToken(end);
+            destroyToken(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_SEM", info1);
+            return error;
+        }
+
+        printf("MOVE %s@$substr$begin%llu %s@%s\n"
+               "DEFVAR %s@$substr$begin%llu$type\n"
+               "TYPE %s@$substr$begin%llu$type %s@%s\n"
+               "JUMPIFEQ %s@$substr$begin%llu$int$true %s@$substr$begin%llu$type string@int\n"
+               "EXIT int@4\n"
+               "LABEL %s@$substr$begin%llu$int$true\n",
+               frame, label_n, frame, begin->info.ptr->var.key,
+               frame, label_n,
+               frame, label_n, frame, begin->info.ptr->var.key,
+               frame, label_n, frame, label_n,
+               frame, label_n);
+    }
+    else if (strcmp(begin->name, "INT") == 0)
+    {
+        printf("MOVE %s@$substr$begin%llu int@%s\n",
+               frame, label_n, begin->info.string);
+    }
+    else
+    {
+        printf("EXIT int@4\n");
+        label_n++;
+        destroyToken(string);
+        destroyToken(begin);
+        destroyToken(end);
+        destroyToken(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
+    }
+
+     //////////////////////**THIRD PARAMETR**////////////////////////////////
+    if (strcmp(end->name, "ID") == 0)
+    {
+        if (symtab_find(symtab, end->info.ptr->var.key) == NULL)
+        {
+            //Variable doesn't exist
+            printf("EXIT int@4\n");
+            label_n++;
+            destroyToken(string);
+            destroyToken(begin);
+            destroyToken(end);
+            destroyToken(des);
+            token_info_t info1;
+            token_t *error = createToken("ERR_SEM", info1);
+            return error;
+        }
+
+        printf("DEFVAR %s@$substr$end%llu$type\n"
+               "TYPE %s@$substr$end%llu$type %s@%s\n"
+               "JUMPIFEQ %s@$substr$end%llu$int$true %s@$substr$end%llu$type string@int\n"
+               "EXIT int@4\n"
+               "LABEL %s@$substr$end%llu$int$true\n",
+               frame, label_n,
+               frame, label_n,frame, end->info.ptr->var.key,
+               frame, label_n, frame,label_n,
+               frame, label_n);
+    }
+    else if (strcmp(end->name, "INT") == 0)
+    {
+        printf("MOVE %s@$substr$end%llu int@%s\n",
+               frame, label_n, end->info.string);
+    }
+    else
+    {
+        printf("EXIT int@4\n");
+        label_n++;
+        destroyToken(string);
+        destroyToken(begin);
+        destroyToken(end);
+        destroyToken(des);
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
+    }
+/////////////////////////////**FINAL**////////////////////////////////////////
+
+     printf("ADD %s@$substr$end%llu %s@$substr$begin%llu %s@$substr$end%llu\n"                   //%s@$substr$end%llu = begin + end == the last index
+            "DEFVAR %s@$substr$lenstr%llu\n"                                        //LENGTH OF STRING
+            "DEFVAR %s@$substr$tmp%llu\n"                                       //save one char at time to %s@$substr$tmp%llu
+            "STRLEN %s@$substr$lenstr%llu %s@$substr$string%llu\n"
+            "DEFVAR %s@$substr$cmp%llu\n"
+            "LT %s@$substr$cmp%llu %s@$substr$lenstr%llu %s@$substr$end%llu\n"      // LEN(STR) < IDX-max ==> do till end of STR
+            "JUMPIFEQ %s@$substr$wholestr%llu %s@$substr$cmp%llu bool@true\n"
+/////////////////////////**ONLY REQUIRED SIZE**////////////////////////////////
+            "LABEL %s@$substr$reqsize%llu\n"
+            "LT %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$end%llu\n"       //BEGIN < IDX-max ==> again
+            "JUMPIFEQ %s@$substr$nextchar%llu %s@$substr$cmp%llu bool@true\n"
+            "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$end%llu\n"    //BEGIN == IDX-max ==> once more
+            "JUMPIFEQ %s@$substr$nextchar%llu %s@$substr$cmp%llu bool@true\n"
+            "JUMP %s@$substr$end%llu\n"
+
+            "LABEL %s@$substr$nextchar%llu\n"
+            "GETCHAR %s@$substr$tmp%llu %s@$substr$string%llu %s@$substr$begin%llu\n"
+            "CONCAT %s@%s %s@%s %s@$substr$tmp%llu\n"                                //frame,name,frame,name,frame,label_n
+            "ADD %s@$substr$begin%llu %s@$substr$begin%llu int@1\n"
+            "JUMP %s@$substr$reqsize%llu"
+            
+/////////////////////////**TILL THE END OF STRING**////////////////////////////////
+            "LABEL %s@$substr$wholestr%llu\n"
+            "LT %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$lenstr%llu\n"    //BEGIN < LEN(STR) ==> again
+            "JUMPIFEQ %s@$substr$nextcharwhole%llu %s@$substr$cmp%llu bool@true\n"
+            "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$lenstr%llu\n"    //BEGIN == LEN(STR) ==> once more
+            "JUMPIFEQ %s@$substr$nextcharwhole%llu %s@$substr$cmp%llu bool@true\n"
+            "JUMP %s@$substr$end%llu\n"
+
+            "LABEL %s@$substr$nextcharwhole%llu\n"
+            "GETCHAR %s@$substr$tmp%llu %s@$substr$string%llu %s@$substr$begin%llu\n"
+            "CONCAT %s@%s %s@%s %s@$substr$tmp%llu\n"                            //frame,name,frame,name,frame,label_n
+            "ADD %s@$substr$begin%llu %s@$substr$begin%llu int@1\n"
+            "JUMP %s@$substr$wholestr%llu\n"
+            "LABEL %s@$substr$end%llu\n",
+     
+            frame, label_n, frame, label_n, frame, label_n,
+            frame, label_n,
+            frame, label_n,
+            frame, label_n,frame, label_n,
+            frame, label_n,
+            frame, label_n, frame, label_n, frame, label_n,
+            frame, label_n, frame, label_n,
+            
+            frame, label_n,
+            frame, label_n, frame, label_n, frame, label_n,
+            frame, label_n, frame, label_n, 
+            frame, label_n, frame, label_n, frame, label_n,
+            frame, label_n, frame, label_n,
+            frame, label_n,
+            
+            frame, label_n,
+            frame, label_n, frame, label_n, frame, label_n,
+            frame,name,frame,name,frame,label_n,
+            frame, label_n, frame, label_n,
+            frame, label_n,
+            
+            frame, label_n,
+            frame, label_n, frame, label_n, frame, label_n,
+            frame, label_n, frame, label_n,
+            frame, label_n, frame, label_n, frame, label_n,
+            frame, label_n, frame, label_n,
+            frame, label_n,
+            
+            frame, label_n,
+            frame, label_n, frame, label_n, frame, label_n,
+            frame,name,frame,name,frame,label_n,
+            frame, label_n, frame, label_n,
+            frame, label_n,
+            frame, label_n);
+
+    destroyToken(string);
+    destroyToken(begin);
+    destroyToken(end);
+    label_n++;
+    return des;
+}
+
 token_t *input(symtable_t *symtab, int type)
 {
     static unsigned long long label_n = 0;

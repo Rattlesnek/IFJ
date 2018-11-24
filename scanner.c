@@ -36,7 +36,7 @@
 
 #include "scanner.h"
 
-#ifndef SCANNER_PRINT
+#ifdef SCANNER_PRINT
     #define SCANNER_DBG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
     #define SCANNER_DBG_PRINT(...) do{ } while(0)
@@ -1442,12 +1442,14 @@ err_lexical:
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_LEX", sc_info);
     SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
+    error_msg("ERR_LEXICAL\n");
     return sc_token;
 
 err_internal:
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_INTERNAL", sc_info);
     SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
+    error_msg("ERR_INTERNAL\n");
     return sc_token;
 }
 ////////////////////////////////////////////////////////////////////////

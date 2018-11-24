@@ -47,7 +47,9 @@ int main()
             {
                 token_t *in = scanner_get(sc_str, que);
                 //printf("token namen : %s\n", in->name);
-                chr(gl_var_tab, in);
+                token_t *ret = chr(gl_var_tab, in);
+                destroyToken(bra);
+                destroyToken(ret);
             }
             else if (strcmp(token->info.string, "ord") == 0)
             {
@@ -56,18 +58,45 @@ int main()
                 token_t *position = scanner_get(sc_str, que);
                 if( strcmp(bra->name, "(") == 0)
                 {
-                   // printf("token namen : %s\n", str->name);
-                   // printf("token namen : %s\n", position->name);
-                    ord(gl_var_tab, str, position);
+                    token_t *ret = ord(gl_var_tab, str, position);
+
+                    destroyToken(ret);
+                    destroyToken(bra);
+                    destroyToken(coma);
                 }
                 else{
                    // printf("token namen : %s\n", str->name);
                    // printf("token namen : %s\n", position->name);
-                    ord(gl_var_tab, bra, coma);
+                    token_t *ret = ord(gl_var_tab, bra, coma);
+                    destroyToken(ret);
+                    destroyToken(str);
+                    destroyToken(position);
                 }
                 
             }
-            destroyToken(bra);
+            else if (strcmp(token->info.string, "substr") == 0)
+            {
+                token_t *str = scanner_get(sc_str, que);
+                token_t *coma = scanner_get(sc_str, que);
+                token_t *idx = scanner_get(sc_str, que);
+                token_t *coma2 = scanner_get(sc_str, que);
+                token_t *end = scanner_get(sc_str, que);
+                if( strcmp(bra->name, "(") == 0)
+                {
+                    token_t *ret = substr(gl_var_tab, str, idx, end);
+                    destroyToken(bra);
+                    destroyToken(coma);
+                    destroyToken(coma2);
+                    destroyToken(ret);
+                }   
+                else{
+                    token_t *ret = substr(gl_var_tab, bra,coma, coma2);
+                    destroyToken(str);
+                    destroyToken(idx);
+                    destroyToken(end);
+                    destroyToken(ret);
+                }
+            }
         }
 
     } while (strcmp(token->name, "EOF") != 0);
@@ -76,6 +105,7 @@ int main()
 
     dynamicStr_free(sc_str);
     que_destroy(que);
+    symtab_free(gl_var_tab);
 
     return 0;
 }
