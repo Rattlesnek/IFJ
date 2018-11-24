@@ -343,13 +343,13 @@ token_t *input(symtable_t *symtab, int type)
     }
 
     printf("DEFVAR %s@%s\n"
-           "READ %s@%s string@%s\n",
+           "READ %s@%s %s\n",
            frame, name, frame, name, param);
 
-    printf("JUMPIFEQ $%s$%llu$%s %s@%s string@%s\n"
+    /*printf("JUMPIFEQ $%s$%llu$%s %s@%s string@%s\n"
            "MOVE %s@%s %s\n"
            "LABEL $%s$%llu$%s\n",
-           symtab->name, label_n, param, frame, name, param, frame, name, er,  symtab->name, label_n, param);
+           symtab->name, label_n, param, frame, name, param, frame, name, er,  symtab->name, label_n, param);*/
 
     label_n++;
     return des;
