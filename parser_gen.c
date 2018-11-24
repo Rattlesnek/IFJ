@@ -67,7 +67,7 @@ int generate_if(symtable_t *var_tab, stack_str_t *stack, token_t *cond)
     //"LABEL $else$%llu\nJMP $endif$%llu" has max length 66 bits
     char c[66];
     sprintf(c,  "\n"
-            "JMP $endif$%llu\n"
+            "JUMP $endif$%llu\n"
             "LABEL $else$%llu\n\n",
             label_n, label_n);
     if (stcStr_push(stack, c) == false)
