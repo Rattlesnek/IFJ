@@ -16,12 +16,12 @@ ERR_INTERNAL=9
 
 test_valgrind()
 {
-    valgrind --leak-check=full --error-exitcode=1 ./parser < sc_test.rb &> /dev/null  
-    if [[ $? -eq 0 ]]
+    valgrind --leak-check=yes --error-exitcode=20 ./parser < sc_test.rb &> /dev/null
+    if [[ "$?" == "20" ]]
     then
-        printf "${GREEN}(*)${NC}: "
-    else
         printf "${RED}(X)${NC}: "
+    else
+        printf "${GREEN}(*)${NC}: "
     fi
 }
 
@@ -90,8 +90,19 @@ then
         test_function "a = ord(\"string\", 1, 2)" $ERR_SEM_FUNC $3
     fi
 
+    if [[ "${2}" == "-err_sem_type" ]]
+    then
+        test_function "a = chr \"tortuga\"" $ERR_SEM_TYPE $3
+        test_function "a = chr(\"tortuga\")" $ERR_SEM_TYPE $3
+        test_function "a = length 1" $ERR_SEM_TYPE $3
+        test_function "a = length(1)" $ERR_SEM_TYPE $3
+        test_function "a = ord \"string\", \"tortuga\"" $ERR_SEM_TYPE $3
+        test_function "a = ord(\"string\", 2.3)" $ERR_SEM_TYPE $3
+    fi
+
 fi
 
+# E
 if [[ "$1" == "-expr" ]]
 then
     if [[ "${2}" == "-success" ]]
