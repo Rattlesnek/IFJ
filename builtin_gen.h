@@ -30,7 +30,7 @@
 #include "dynamicArrParam.h"
 #include "stackStr.h"
 #include "token.h"
-
+#include "stackTkn.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
@@ -93,6 +93,8 @@ token_t *length(symtable_t *symtab, token_t *par);
  * @return token_t* 
  */
 token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *end);
+
+token_t *print(symtable_t *symtab, stack_tkn_t *stack);
 
 #endif
 ////////////////////////////////////////////////////////////////////////
