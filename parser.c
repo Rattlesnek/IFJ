@@ -321,6 +321,7 @@ int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
  */
 int parser(dynamicStr_t *sc_str, queue_t *que)
 {
+    printf(".IFJcode18\n");
     PARSER_DBG_PRINT("Parser started\n"); 
     
     // DEFINE LOCAL VARIABLES
