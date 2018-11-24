@@ -82,7 +82,7 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
 
 int generate_var(symtable_t *var_tab, char *var_name, token_t *right_val);
 
-int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3], char *frame_or_type[7], char **var_or_const);
+int return_right_strings(symtable_t *var_tab, token_t *right_val, char frame[3], char frame_or_type[7], char **var_or_const);
 
 #endif
 ////////////////////////////////////////////////////////////////////////

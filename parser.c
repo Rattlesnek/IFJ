@@ -440,6 +440,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
                     if (ret_val != SUCCESS)
                         break;
+                    PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
+                    PARSER_DBG_PRINT("Returned Token val: %s\n", sa_prec_ret->info.ptr->var.key);
 #endif
                     
                     ret_val = generate_if(var_tab, stack_str, sa_prec_ret);
@@ -466,6 +468,8 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
                     if (ret_val != SUCCESS)
                         break;
+                    PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
+                    PARSER_DBG_PRINT("Returned Token val: %s\n", sa_prec_ret->info.ptr->var.key);
 #endif
                     
                     ret_val = generate_while_false(var_tab, sa_prec_ret);
@@ -494,6 +498,13 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
                     if (ret_val != SUCCESS)
                         break;
+
+                    if (sa_prec_ret == NULL)
+                        PARSER_DBG_PRINT("token is NULL\n");
+                    else if (sa_prec_ret->name == NULL)
+                        PARSER_DBG_PRINT("token->name is NULL\n");
+                    PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
+                    //PARSER_DBG_PRINT("Returned Token val: %s\n", sa_prec_ret->info.string);
 #endif
 
                     ret_val = generate_var(var_tab, id_key_tmp, sa_prec_ret); // TODO
@@ -675,11 +686,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 act = NULL;
 
 #ifdef PARSER_DEBUG              
-                    ret_val = prec_tmp(sc_str, que);
+                ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
-                    if (ret_val != SUCCESS)
-                        break;
+                ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                if (ret_val != SUCCESS)
+                    break;
+                PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
 
                 // expression TODO
@@ -706,11 +718,12 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 act = NULL;
             
 #ifdef PARSER_DEBUG              
-                    ret_val = prec_tmp(sc_str, que);
+                ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
-                    if (ret_val != SUCCESS)
-                        break;
+                ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                if (ret_val != SUCCESS)
+                    break;
+                PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
 
                 // expression TODO

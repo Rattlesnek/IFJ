@@ -158,17 +158,16 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
 }
 
 
-int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3], char *frame_or_type[7], char **var_or_const)
+int return_right_strings(symtable_t *var_tab, token_t *right_val, char frame[3], char frame_or_type[7], char **var_or_const)
 {
     if (strcmp(var_tab->name, "$GT") == 0)
-        strcpy(*frame, "GF");
+        strcpy(frame, "GF");
     else
-        strcpy(*frame, "LF");
-
+        strcpy(frame, "LF");
 
     if (strcmp(right_val->name, "ID") == 0 || strcmp(right_val->name, "INT_ID") == 0 || strcmp(right_val->name, "DBL_ID") == 0 || strcmp(right_val->name, "STR_ID") == 0)
     {
-        strcpy(*frame_or_type, *frame);
+        strcpy(frame_or_type, frame);
         *var_or_const = malloc( (strlen(right_val->info.ptr->var.key) + 1) + sizeof(char) );
         if (*var_or_const == NULL)
             return ERR_INTERNAL;
@@ -176,7 +175,7 @@ int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3]
     }
     else if (strcmp(right_val->name, "%retval") == 0)
     {
-        strcpy(*frame_or_type, "TF");
+        strcpy(frame_or_type, "TF");
         *var_or_const = malloc( (strlen("%retval") + 1) + sizeof(char) );
         if (*var_or_const == NULL)
             return ERR_INTERNAL;
@@ -184,7 +183,7 @@ int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3]
     }
     else if (strcmp(right_val->name, "INT") == 0)
     {
-        strcpy(*frame_or_type, "int");
+        strcpy(frame_or_type, "int");
         *var_or_const = malloc( (strlen(right_val->info.string) + 1) + sizeof(char) );
         if (*var_or_const == NULL)
             return ERR_INTERNAL;
@@ -192,7 +191,7 @@ int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3]
     }   
     else if (strcmp(right_val->name, "DBL") == 0)
     {
-        strcpy(*frame_or_type, "float");
+        strcpy(frame_or_type, "float");
         *var_or_const = malloc( (strlen(right_val->info.string) + 1) + sizeof(char) );
         if (*var_or_const == NULL)
             return ERR_INTERNAL;
@@ -200,7 +199,7 @@ int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3]
     }
     else if (strcmp(right_val->name, "STR") == 0)
     {
-        strcpy(*frame_or_type, "string");
+        strcpy(frame_or_type, "string");
         *var_or_const = malloc( (strlen(right_val->info.string) + 1) + sizeof(char) );
         if (*var_or_const == NULL)
             return ERR_INTERNAL;
@@ -208,7 +207,7 @@ int return_right_strings(symtable_t *var_tab, token_t *right_val, char *frame[3]
     }
     else if (strcmp(right_val->name, "nil") == 0)
     {
-        strcpy(*frame_or_type, "nil");
+        strcpy(frame_or_type, "nil");
         *var_or_const = malloc( (strlen("nil") + 1) + sizeof(char) );
         if (*var_or_const == NULL)
             return ERR_INTERNAL;
@@ -227,7 +226,7 @@ int generate_var(symtable_t *var_tab, char *var_name, token_t *right_val)
     char frame_or_type[7];
     char *var_or_const;
 
-    int ret_val = return_right_strings(var_tab, right_val, &frame, &frame_or_type, &var_or_const);
+    int ret_val = return_right_strings(var_tab, right_val, frame, frame_or_type, &var_or_const);
     if (ret_val != SUCCESS)
         return ret_val;
 

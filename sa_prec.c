@@ -909,7 +909,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 else if(result != NULL)
                 {
                     token_t *tmp = stc_tokPopTop(stack, &term);
-                    printf("result: %s\n", tmp->info.ptr->var.key);
                     *ret_token = tmp;
                     /*
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
@@ -932,7 +931,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
                     */
                     token_t *tmp = stc_tokPopTop(stack, &term);
-                    printf("result: %s\n", tmp->info.ptr->var.key);
                     *ret_token = tmp;
                 }
                 if(!builtin_func)
