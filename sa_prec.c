@@ -51,7 +51,7 @@
 
 
 char sa_prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
-/*         +      *     (     )     i     -     /     rel    str    f     ,    $  */
+/*          +      *     (     )     i     -     /     rel    str    f    ,    $  */
 /*  +  */{ '>' , '<' , '<' , '>' , '<' , '>' , '<' ,  '>' , '<' , '<' , '>' , '>' }, 
 /*  *  */{ '>' , '>' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , '<' , '>' , '>' },
 /*  (  */{ '<' , '<' , '<' , '=' , '<' , '<' , '<' ,  '<' , 'X' , '<' , '=' , 'X' },
@@ -63,7 +63,7 @@ char sa_prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
 /* str */{ '>' , 'X' , 'X' , 'X' , 'X' , 'X' , 'X' ,  '>' , 'X' , 'X' , 'X' , '>' },
 /*  f  */{ 'X' , 'X' , '=' , 'X' , '<' , 'X' , 'X' ,  'X' , 'X' , 'X' , '<' , '>' },
 /*  ,  */{ '<' , '<' , '<' , '=' , '<' , '<' , '<' ,  '<' , '<' , '<' , '=' , '>' },
-/*  $  */{ '<' , '<' , '<' , 'X' , '<' , 'X' , '<' ,  '<' , '<' , '<' , 'X' , 'X' }
+/*  $  */{ '<' , '<' , '<' , 'X' , '<' , '<' , '<' ,  '<' , '<' , '<' , 'X' , 'X' }
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -343,9 +343,10 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
     }
     else
     {
-
         token_t *result = NULL;
-     
+        token_t *func_name = stcTkn_pop(stack);
+        token_t *array[3];
+        free(func_name);
         switch(is_builtin)
         {
             case _inputs_: result = input(symtable, 2);
@@ -354,27 +355,37 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
                 break;
             case _inputf_: result = input(symtable, 1);
                 break;
-            case _length_: result = length(symtable, stack->array[0]);
+            case _length_: array[0] = stcTkn_pop(stack); 
+                           result = length(symtable, array[0]);
                 break;
-            case _chr_   : result = chr(symtable, stack->array[0]);
-                           destroyToken(stack->array[1]);
+            case _chr_   : array[0] = stcTkn_pop(stack);
+                           result = chr(symtable, array[0]);
                            if(strcmp(result->name, "ERR_SEM") == 0)
                            {
                                 destroyToken(result);
                                 return NULL;
                            }
                 break;
-            case _ord_   : result = ord(symtable, stack->array[1], stack->array[0]);
+            case _ord_   : array[0] = stcTkn_pop(stack);
+                           array[1] = stcTkn_pop(stack);
+                           result = ord(symtable, array[0], array[1]);
                            if(strcmp(result->name, "ERR_SEM") == 0)
                            {
                                 destroyToken(result);
                                 return NULL;
                            }
                 break;
-            case _substr_: DEBUG_PRINT("Volas substr o.O\n");
+            case _substr_: array[0] = stcTkn_pop(stack);
+                           array[1] = stcTkn_pop(stack);
+                           array[2] = stcTkn_pop(stack);
+                           result = substr(symtable, array[0], array[1], array[2]);
+                           if(strcmp(result->name, "ERR_SEM") == 0)
+                           {
+                                destroyToken(result);
+                                return NULL;
+                           }
                 break;
-            case _print_ : stcTkn_pop(stack);
-                           result = print(symtable, stack);
+            case _print_ : result = print(symtable, stack);
                            if(strcmp(result->name, "ERR_SEM") == 0)
                            {
                                 destroyToken(result);
@@ -382,7 +393,6 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
                            }
                 break; 
         }
-
 
         return result;
     }
@@ -418,7 +428,9 @@ bool sa_isOperator(table_elem_t term)
 int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, token_t **ret_token)
 {
     stack_sa_t *stack = stc_init();
-    stc_push(stack, _empt_, NULL);
+    token_info_t info;
+    token_t *empty_token = createToken("$", info);
+    stc_push(stack, _empt_, empty_token);
 
     token_t *token = scanner_get(sc_str, que);
     int token_term = 0;
@@ -447,7 +459,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         {
             detect_func = 1;
             builtin_func = sa_builtinType(token);
-            DEBUG_PRINT("builtin_func: %d\n", builtin_func);
         }
 
         if(token_term == _id_ && (strcmp(token->name, "ID") == 0))
@@ -645,18 +656,19 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                 /* E -> E / E */
                 case _div_:
+
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
                     {
                         handleError(err); 
                     }
-                    
+
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
                     if((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _div_)) != SUCCESS)
                     {
                         handleError(err); 
                     }
-
+                    
                     ptr_tok[2] = stc_tokPopTop(stack, &term);
                     if((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
                     {
@@ -880,7 +892,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     break;
             }
             stc_print(stack);
-
             if(sa_detectSucEnd(stack, token_term))
             {
                 if(detect_func)
