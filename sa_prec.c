@@ -306,7 +306,7 @@ char *strToUpper(char str[])
     return str;
 }
 
-char *sa_retType(char *type)
+char *sa_retType(char *type, char *gl_lf)
 {
     if(strcmp(type, "INT") == 0)
         return "int";
@@ -314,6 +314,8 @@ char *sa_retType(char *type)
         return "float";
     else if(strcmp(type, "STR") == 0)
         return "string";
+    else
+        return gl_lf;
 
     return NULL;
 }
@@ -345,7 +347,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
                     i,
                     gl_lf,
                     i,
-                    sa_retType(param->name),
+                    sa_retType(param->name, gl_lf),
                     val
                   );
 
