@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include "token.h"
 #include "symtable.h"
-#include "codeGen.h"
+#include "code_gen.h"
 
 
 
@@ -105,6 +105,15 @@ bool isSTR_ID(token_t *token)
     return false;
 }
 
+bool isNIL(token_t *token)
+{
+    if (strcmp(token->name, "nil") == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
 
 
 int matrix[4][4] = {
@@ -173,10 +182,7 @@ char *operator(char *op, bool alternative)
 int type(token_t *param1, token_t *param2)
 {
     int index_param1, index_param2;
-    /*if (param2 == NULL)
-    {
-        return NULL_NULL;
-    }*/
+
     if (strncmp(param1->name, "INT", 3) == 0)
     {
         index_param1 = INT_index;
@@ -192,6 +198,10 @@ int type(token_t *param1, token_t *param2)
     else if (strcmp(param1->name, "ID") == 0)
     {
         index_param1 = ID_index;
+    }
+    else if (strcmp(param1->name, "nil") == 0 )
+    {
+        return NIL_ID;
     }
 
     if (strncmp(param2->name, "INT", 3) == 0)
@@ -209,6 +219,10 @@ int type(token_t *param1, token_t *param2)
     else if (strcmp(param2->name, "ID") == 0)
     {
         index_param2 = ID_index;
+    }
+    else if (strcmp(param2->name, "nil") == 0 )
+    {
+        return ID_NIL;
     }
 
     return matrix[index_param1][index_param2];
@@ -285,6 +299,76 @@ int type(token_t *param1, token_t *param2)
     return des;
 }
 */
+
+token_t *nil(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
+{
+
+    if (strcmp(op->name, "==") != 0 && strcmp(op->name, "!=") != 0)
+    {
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
+    }
+
+    static unsigned long long label_n = 0;
+
+    char frame[3];
+    char name[20];
+    token_info_t info;
+    sprintf(name, "nil%llu", label_n);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("BOOL_ID", info);
+
+
+    if (strcmp(symtab->name, "$GT" ) == 0)
+    {
+        strcpy(frame, "GF");
+    }
+    else
+    {
+        strcpy(frame, "LF");
+    }
+
+
+    if (strcmp(par2->name, "nil") == 0)
+    {
+        if (strcmp(op->name, "==") == 0)
+        {
+            printf("DEFVAR %s@%s\n"
+                   "MOVE %s@%s bool@true\n",
+                   frame, name, frame, name);
+        }
+        else
+        {
+            printf("DEFVAR %s@%s\n"
+                   "MOVE %s@%s bool@false\n",
+                   frame, name, frame, name);
+        }
+    }
+    else
+    {
+        if (strcmp(op->name, "==") == 0)
+        {
+            printf("DEFVAR %s@%s\n"
+                   "MOVE %s@%s bool@false\n",
+                   frame, name, frame, name);
+        }
+        else
+        {
+            printf("DEFVAR %s@%s\n"
+                   "MOVE %s@%s bool@true\n",
+                   frame, name, frame, name);
+        }
+    }
+
+    label_n++;
+    destroyToken(par1);
+    destroyToken(par2);
+    destroyToken(op);
+    return des;
+
+}
+
 token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 {
     if (operator(op->name, 0) == NULL)
@@ -718,8 +802,8 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     }
 
     printf("DEFVAR %s@%s\n", frame, name);
-    printf("DEFVAR %s@%llu$tmp$1\n"
-           "INT2FLOAT %s@%llu$tmp$1 %s@%s\n",
+    printf("DEFVAR %s@$tmp%llu$1\n"
+           "INT2FLOAT %s@$tmp%llu$1 %s@%s\n",
            frame,
            label_n,//
            frame,
@@ -730,7 +814,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
     if (switched)
     {
-        printf("%s %s@%s %s@%s %s@%llu$tmp$1\n", operator(op->name, 0),
+        printf("%s %s@%s %s@%s %s@$tmp%llu$1\n", operator(op->name, 0),
                frame,
                des->info.ptr->var.key,
                param2,
@@ -742,7 +826,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     }
     else
     {
-        printf("%s %s@%s %s@%llu$tmp$1 %s@%s\n", operator(op->name, 0),
+        printf("%s %s@%s %s@$tmp%llu$1 %s@%s\n", operator(op->name, 0),
                frame,
                des->info.ptr->var.key,
                frame,
@@ -759,7 +843,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
         printf("DEFVAR %s@%s$eq\n"
                "DEFVAR %s@%s$or\n"
                "MOVE %s@%s$or %s@%s\n"
-               "EQ %s@%s$eq %s@%s %s@%llu$tmp$1\n"
+               "EQ %s@%s$eq %s@%s %s@$tmp%llu$1\n"
                "OR %s@%s %s@%s$eq %s@%s$or\n",
                frame,
                des->info.ptr->var.key,//
@@ -1196,15 +1280,15 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     {
         printf("DEFVAR %s@%s%llu$type\n"
                "DEFVAR %s@%s%llu$tmp\n"
-               "DEFVAR %s@%llu$tmp$int\n"
+               "DEFVAR %s@$tmp%llu$int\n"
                "TYPE %s@%s%llu$type %s@%s\n"
                "MOVE %s@%s%llu$tmp %s@%s\n"
-               "MOVE %s@%llu$tmp$int %s@%s\n"
+               "MOVE %s@$tmp%llu$int %s@%s\n"
                "JUMPIFEQ $%s$%llu$int %s@%s%llu$type string@int\n"
                "JUMPIFEQ $%s$%llu$int %s@%s%llu$type string@string\n"
-               "INT2FLOAT %s@%llu$tmp$int %s@%s\n"
+               "INT2FLOAT %s@$tmp%llu$int %s@%s\n"
                "LABEL $%s$%llu$int\n"
-               "%s %s@%s %s@%s%llu$tmp %s@%llu$tmp$int\n",
+               "%s %s@%s %s@%s%llu$tmp %s@$tmp%llu$int\n",
                frame,
                print2,
                label_n,//
@@ -1276,15 +1360,15 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     {
         printf("DEFVAR %s@%s%llu$type\n"
                "DEFVAR %s@%s%llu$tmp\n"
-               "DEFVAR %s@%llu$tmp$int\n"
+               "DEFVAR %s$tmp%llu$int\n"
                "TYPE %s@%s%llu$type %s@%s\n"
                "MOVE %s@%s%llu$tmp %s@%s\n"
-               "MOVE %s@%llu$tmp$int %s@%s\n"
+               "MOVE %s@$tmp%llu$int %s@%s\n"
                "JUMPIFEQ $%s$%llu$int %s@%s%llu$type string@int\n"
                "JUMPIFEQ $%s$%llu$float %s@%s%llu$type string@float\n"
                "EXIT int@4\n"
                "LABEL $%s$%llu$float\n"
-               "INT2FLOAT %s@%llu$tmp$int %s@%s\n"
+               "INT2FLOAT %s@$tmp%llu$int %s@%s\n"
                "LABEL $%s$%llu$int\n",
                frame,
                print2,
@@ -1330,7 +1414,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
         if (switched)
         {
-            printf("%s %s@%s %s@%s%llu$tmp %s@%llu$tmp$int\n", operator(op->name, 0),
+            printf("%s %s@%s %s@%s%llu$tmp %s@$tmp%llu$int\n", operator(op->name, 0),
                    frame,
                    des->info.ptr->var.key,
                    frame,
@@ -1343,7 +1427,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         }
         else
         {
-            printf("%s %s@%s %s@%llu$tmp$int %s@%s%llu$tmp \n", operator(op->name, 0),
+            printf("%s %s@%s %s@$tmp%llu$int %s@%s%llu$tmp \n", operator(op->name, 0),
                    frame,
                    des->info.ptr->var.key,
                    frame,
@@ -1358,7 +1442,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
             printf("DEFVAR %s@%s$eq\n"
                    "DEFVAR %s@%s$or\n"
                    "MOVE %s@%s$or %s@%s\n"
-                   "EQ %s@%s$eq %s@%s%llu$tmp %s@%llu$tmp$int\n"
+                   "EQ %s@%s$eq %s@%s%llu$tmp %s@$tmp%llu$int\n"
                    "OR %s@%s %s@%s$eq %s@%s$or\n",
                    frame,
                    des->info.ptr->var.key,//
@@ -1949,7 +2033,7 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         printf("DEFVAR %s@%s%llu$type\n"
                "TYPE %s@%s%llu$type %s@%s\n"
                "JUMPIFEQ $%s$%llu$string %s@%s%llu$type string@string\n"
-               "EXIT int4\n"
+               "EXIT int@4\n"
                "LABEL $%s$%llu$string\n",
                frame,
                print2,
@@ -2088,15 +2172,15 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     {
         printf("DEFVAR %s@%s%llu$type1\n"
                "DEFVAR %s@%s%llu$tmp1\n"
-               "DEFVAR %s@%llu$tmp$int1\n"
+               "DEFVAR %s@$tmp%llu$int1\n"
                "TYPE %s@%s%llu$type1 %s@%s\n"
                "MOVE %s@%s%llu$tmp1 %s@%s\n"
-               "MOVE %s@%llu$tmp$int1 %s@%s\n"
+               "MOVE %s@$tmp%llu$int1 %s@%s\n"
                "JUMPIFEQ $%s$%llu$int1 %s@%s%llu$type1 string@int\n"
                "JUMPIFEQ $%s$%llu$int1 %s@%s%llu$type1 string@string\n"
-               "INT2FLOAT %s@%llu$tmp$int1 %s@%s\n"
+               "INT2FLOAT %s@$tmp%llu$int1 %s@%s\n"
                "LABEL $%s$%llu$int1\n"
-               "%s %s@%s %s@%s%llu$tmp1 %s@%llu$tmp$int1\n",
+               "%s %s@%s %s@%s%llu$tmp1 %s@$tmp%llu$int1\n",
                frame,
                print2,
                label_n,//
@@ -2168,15 +2252,15 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     {
         printf("DEFVAR %s@%s%llu$type1\n"
                "DEFVAR %s@%s%llu$tmp1\n"
-               "DEFVAR %s@%llu$tmp$int1\n"
+               "DEFVAR %s@$tmp%llu$int1\n"
                "TYPE %s@%s%llu$type1 %s@%s\n"
                "MOVE %s@%s%llu$tmp1 %s@%s\n"
-               "MOVE %s@%llu$tmp$int1 %s@%s\n"
+               "MOVE %s@$tmp%llu$int1 %s@%s\n"
                "JUMPIFEQ $%s$%llu$int1 %s@%s%llu$type1 string@int\n"
                "JUMPIFEQ $%s$%llu$float1 %s@%s%llu$type1 string@float\n"
                "EXIT int@4\n"
                "LABEL $%s$%llu$float1\n"
-               "INT2FLOAT %s@%llu$tmp$int1 %s@%s\n"
+               "INT2FLOAT %s@$tmp%llu$int1 %s@%s\n"
                "LABEL $%s$%llu$int1\n",
                frame,
                print2,
@@ -2222,7 +2306,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
         if (switched)
         {
-            printf("%s %s@%s %s@%s%llu$tmp1 %s@%llu$tmp$int1\n", operator(op->name, 0),
+            printf("%s %s@%s %s@%s%llu$tmp1 %s@$tmp%llu$int1\n", operator(op->name, 0),
                    frame,
                    des->info.ptr->var.key,
                    frame,
@@ -2235,7 +2319,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
         else
         {
-            printf("%s %s@%s %s@%llu$tmp$int1 %s@%s%llu$tmp1 \n", operator(op->name, 0),
+            printf("%s %s@%s %s@$tmp%llu$int1 %s@%s%llu$tmp1 \n", operator(op->name, 0),
                    frame,
                    des->info.ptr->var.key,
                    frame,
@@ -2250,7 +2334,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
             printf("DEFVAR %s@%s$eq1\n"
                    "DEFVAR %s@%s$or1\n"
                    "MOVE %s@%s$or1 %s@%s\n"
-                   "EQ %s@%s$eq1 %s@%s%llu$tmp1 %s@%llu$tmp$int1\n"
+                   "EQ %s@%s$eq1 %s@%s%llu$tmp1 %s@$tmp%llu$int1\n"
                    "OR %s@%s %s@%s$eq1 %s@%s$or\n",
                    frame,
                    des->info.ptr->var.key,//
@@ -2505,7 +2589,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         printf("DEFVAR %s@%s%llu$type3\n"
                "TYPE %s@%s%llu$type3 %s@%s\n"
                "JUMPIFEQ $%s$%llu$string3 %s@%s%llu$type3 string@string\n"
-               "EXIT int4\n"
+               "EXIT int@4\n"
                "LABEL $%s$%llu$string3\n",
                frame,
                print2,
@@ -2622,6 +2706,12 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
         /*case NULL_NULL:
             return null_null(param1, symtab);
             break;*/
+        case ID_NIL:
+            return nil(op, param2, param1, symtab);
+            break;
+        case NIL_ID:
+            return nil(op, param1, param2, symtab);
+            break;
 
         default: break;
     }

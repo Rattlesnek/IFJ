@@ -29,7 +29,7 @@
 #include <ctype.h>
 
 #include "token.h"
-#include "dynamicStr.h"
+#include "dynamic_str.h"
 #include "error.h"
 #include "queue.h"
 #include "symtable.h"

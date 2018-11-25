@@ -70,8 +70,11 @@ typedef enum index_switch {
   ID_INT,
   ID_DBL,
   ID_STR,
-  ID_ID
+  ID_ID,
+  NIL_ID,
+  ID_NIL
 } index_switch_t;
+
 
 /**
  * @brief      Determines if int.
@@ -149,6 +152,17 @@ char *operator(char *op, bool alternative);
  * @return     { description_of_the_return_value }
  */
 int type(token_t *param1, token_t *param2);
+/**
+ * @brief      { function_description }
+ *
+ * @param      op      The operation
+ * @param      par1    The par 1
+ * @param      par2    The par 2
+ * @param      symtab  The symtab
+ *
+ * @return     { description_of_the_return_value }
+ */
+token_t *nil(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
 /**
  * @brief      { function_description }
  *

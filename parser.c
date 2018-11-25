@@ -29,10 +29,10 @@
 #include "scanner.h"
 #include "sa_prec.h"
 
-#include "dynamicArrParam.h"
-#include "dynamicStr.h"
-#include "stackStr.h"
-#include "stackTkn.h"
+#include "dynamic_arr_param.h"
+#include "dynamic_str.h"
+#include "stack_str.h"
+#include "stack_tkn.h"
 #include "queue.h"
 
 #include "token.h"
@@ -196,7 +196,7 @@ int LLtableFind(char *nonterm, char *term)
     return ll_table[nonterm_idx][term_idx];
 }
 
-
+#ifdef PARSER_PRINT
 bool print_fun(elem_t *element)
 {
     PARSER_DBG_PRINT("%s, ", element->func.key);
@@ -212,12 +212,13 @@ bool print_fun_info(elem_t *element)
     return true;
 }
 
-
 bool print_var(elem_t *element)
 {
     PARSER_DBG_PRINT("%s, ", element->var.key);
     return true;
 }
+#endif
+
 
 bool check_fun(elem_t *element)
 {
@@ -295,7 +296,7 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
     destroyToken(sa_prec_ret);
 }
 
-#ifdef PARSER_DEBUG
+#ifdef DEBUG_PARSER
 int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
 {
     token_t *act = scanner_get(sc_str, que);
@@ -435,7 +436,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ///////////////////
                     //  GENERATE IF  //
                     ///////////////////
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -463,7 +464,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     //////////////////////
                     generate_LABEL_while();
 
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -493,7 +494,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     /////////////////////////
                     //  GENERATE VARIABLE  //
                     /////////////////////////
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -537,10 +538,11 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     char *generated_code = stcStr_top(stack_str);
                     if (strcmp(generated_code, "\nPOPFRAME\nRETURN\n\n") == 0)
                     {  
+#ifdef PARSER_PRINT
                         PARSER_DBG_PRINT("LOCAL TABLE: ");
                         symtab_foreach(lc_var_tab, print_var);
                         PARSER_DBG_PRINT("\n\n");
-                        
+#endif
                         // return value TODO 
                         //printf("MOVE LF@%%retval LF@%s\n", "something");
                         
@@ -686,7 +688,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
 
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                 ret_val = prec_tmp(sc_str, que);
 #else
                 ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -718,7 +720,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
             
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                 ret_val = prec_tmp(sc_str, que);
 #else
                 ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -778,11 +780,13 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
     if (! symtab_foreach(fun_tab, check_fun))
         goto err_sem_undef;
 
+#ifdef PARSER_PRINT
     PARSER_DBG_PRINT("\nGLOBAL TABLE:\n");
     symtab_foreach(gl_var_tab, print_var);
     PARSER_DBG_PRINT("\n\nFUNC TABLE:\n");
     symtab_foreach(fun_tab, print_fun);   
     PARSER_DBG_PRINT("\n\n");
+#endif
 
     // free all alocated elements
     freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token, id_token_tmp, sa_prec_ret);
@@ -834,7 +838,7 @@ err_sem_undef:
 err_sem_type:
     freeAll(stack_tkn, stack_str, gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token, id_token_tmp, sa_prec_ret);
     error_msg("semantic - type\n");
-    return ERR_SEM_UNDEF;
+    return ERR_SEM_TYPE;
 
 
 err_sem_func:
