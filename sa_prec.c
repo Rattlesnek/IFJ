@@ -656,7 +656,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                 /* E -> E / E */
                 case _div_:
-
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
                     {
@@ -826,15 +825,18 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     }
                     else if(term == _E_)
                     {
-                        stcTkn_push(tok_stack, ptr_tok[0]);
+                        //##stcTkn_push(tok_stack, ptr_tok[0]);
                         term = stc_popTop(stack);
                         if(term == _lbrc_)
                         {
                             //term = stc_popTop(stack);
                             ptr_tok[0] = stc_tokPopTop(stack, &term);
-                            stcTkn_push(tok_stack, ptr_tok[0]);
+                            //###stcTkn_push(tok_stack, ptr_tok[0]);
                             if(term == _func_)
                             {
+                                stcTkn_push(tok_stack, expr_in_brc);  // Odkomentuj ### a dva radky smaz
+                                stcTkn_push(tok_stack, ptr_tok[0]);
+                                stcTkn_print(tok_stack);
                                 //stcTkn_push(tok_stack, ptr_tok[0]);
 
                                 term = stc_popTop(stack);
@@ -849,12 +851,15 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             }
                             else if(term == _sml_)
                             {
+                                destroyToken(ptr_tok[0]);
                                 stc_push(stack, _E_, expr_in_brc);
                                 break;
                             }
                         }
                         else if(term == _coma_)
                         {
+                            stcTkn_push(tok_stack, expr_in_brc);  // Odkomentuj ### a dva radky smaz
+                            //stcTkn_push(tok_stack, ptr_tok[0]);
                             while(42)
                             {
                                 //term = stc_popTop(stack);
@@ -928,6 +933,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 {
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
+                    stc_print(stack);
                     /*
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
                     strcpy(*ret_code, result->info.ptr->var.key);
@@ -951,6 +957,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
                 }
+                stc_print(stack);
+                //stcTkn_print(tok_stack);
                 if(!builtin_func)
                     stcTkn_destroy(tok_stack);
                 stc_destroy(stack);
