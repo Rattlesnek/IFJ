@@ -244,8 +244,10 @@ bool stc_pushAfter(stack_sa_t *stack, table_elem_t term, table_elem_t rule)
     if(new == NULL)
         return false;
 
+    token_info_t info;
+    token_t *new_tok = createToken("<", info);
     new->term = rule;
-    new->token = NULL;
+    new->token = new_tok;
     if(tmp->rptr != NULL)
     {
         new->rptr = tmp->rptr;
