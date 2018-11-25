@@ -27,10 +27,10 @@
 #include "builtin_gen.h"
 
 #include "symtable.h"
-#include "dynamicArrParam.h"
-#include "stackStr.h"
+#include "dynamic_arr_param.h"
+#include "stack_str.h"
 #include "token.h"
-#include "stackTkn.h"
+#include "stack_tkn.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///

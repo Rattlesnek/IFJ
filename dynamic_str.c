@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dynamicStr.h"
+#include "dynamic_str.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///

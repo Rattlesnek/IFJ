@@ -24,7 +24,7 @@
 #ifndef SA_PREC_H
 #define SA_PREC_H
 
-#include "dynamicStr.h"
+#include "dynamic_str.h"
 #include "queue.h"
 #include "symtable.h"
 ////////////////////////////////////////////////////////////////////////

@@ -26,7 +26,7 @@
 
 #include "symtable.h"
 #include "queue.h"
-#include "dynamicStr.h"
+#include "dynamic_str.h"
 #include "token.h"
 
 ////////////////////////////////////////////////////////////////////////
