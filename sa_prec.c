@@ -224,6 +224,8 @@ char sa_getTokenIndex(token_t *token)
         return _coma_;
     else if(strcmp(token->name, "BUILTIN") == 0)
         return _func_;
+    else if(strcmp(token->name, "FUNC") == 0)
+        return _id_;
     else if(sa_isEndToken(token))
         return _empt_;
 
@@ -486,7 +488,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             builtin_func = sa_builtinType(token);
         }
 
-        if(token_term == _id_ && (strcmp(token->name, "ID") == 0))
+        if((token_term == _id_ && (strcmp(token->name, "ID") == 0)) || (strcmp(token->name, "FUNC")) == 0)
         {
             loc_elem = symtab_find(loc_symtab, sc_str->str);
             if(!detect_func)
