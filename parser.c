@@ -686,8 +686,9 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 token = NULL;
                 
                 scanner_unget(que, act, sc_str->str);
+                PARSER_DBG_PRINT("Unget Token: %s\n", act->name);
+                PARSER_DBG_PRINT("Unget sc_str: %s\n", sc_str->str);
                 act = NULL;
-
 #ifdef DEBUG_PARSER              
                 ret_val = prec_tmp(sc_str, que);
 #else
