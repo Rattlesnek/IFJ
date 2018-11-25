@@ -1360,7 +1360,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     {
         printf("DEFVAR %s@%s%llu$type\n"
                "DEFVAR %s@%s%llu$tmp\n"
-               "DEFVAR %s$tmp%llu$int\n"
+               "DEFVAR %s@$tmp%llu$int\n"
                "TYPE %s@%s%llu$type %s@%s\n"
                "MOVE %s@%s%llu$tmp %s@%s\n"
                "MOVE %s@$tmp%llu$int %s@%s\n"

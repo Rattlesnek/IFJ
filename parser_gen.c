@@ -8,7 +8,7 @@
 
   Synopsis    []
 
-  Author      [Jindrich Sestak]
+  Author      [Adam Pankuch, Jindrich Sestak]
 
   Affiliation []
 
@@ -133,10 +133,12 @@ int generate_while_false(symtable_t *var_tab, token_t *cond)
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr)
 {
     printf( "\n"
+            "JUMP $end$function$%s\n"
             "LABEL %s\n"
             "PUSHFRAME\n"
             "DEFVAR LF@%%retval\n"
             "MOVE LF@%%retval nil@nil\n",
+            fun->func.key,
             fun->func.key
           );
 
@@ -151,7 +153,10 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
     }
     printf("\n");
 
-    if (! stcStr_push(stack_str, "\nPOPFRAME\nRETURN\n\n"))
+    char str[100]; // TODO
+    sprintf(str, "\nPOPFRAME\nRETURN\nLABEL $end$function$%s\n\n", fun->func.key);
+
+    if (! stcStr_push(stack_str, str))
         return false;
 
     return true;

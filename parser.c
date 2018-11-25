@@ -536,7 +536,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     //  STACK POP GENERATED CODE  //
                     ////////////////////////////////
                     char *generated_code = stcStr_top(stack_str);
-                    if (strcmp(generated_code, "\nPOPFRAME\nRETURN\n\n") == 0)
+                    if (strncmp(generated_code, "\nPOPFRAME\nRETURN\n", strlen("\nPOPFRAME\nRETURN\n")) == 0)
                     {  
 #ifdef PARSER_PRINT
                         PARSER_DBG_PRINT("LOCAL TABLE: ");
