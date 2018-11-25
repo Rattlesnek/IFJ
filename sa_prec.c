@@ -306,6 +306,18 @@ char *strToUpper(char str[])
     return str;
 }
 
+char *sa_retType(char *type)
+{
+    if(strcmp(type, "INT") == 0)
+        return "int";
+    else if(strcmp(type, "DBL") == 0)
+        return "float";
+    else if(strcmp(type, "STR") == 0)
+        return "string";
+
+    return NULL;
+}
+
 token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
 {
     DEBUG_PRINT("=>sa_callFunc: %d\n", is_builtin);
@@ -322,16 +334,21 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
         {
             val = sa_isExprVar(param) ? param->info.string : 
                                         param->info.ptr->var.key;
-                                        
-            printf("DEFVAR TF@%%%d\n"
-                   "MOVE TF@%%%d %s@%s\n",
+            
+            char *gl_lf = strcmp(symtable->name, "$GT") == 0 ? 
+                          "GT" :
+                          "LF";
+
+            printf("DEFVAR %s@%%%d\n"
+                   "MOVE %s@%%%d %s@%s\n",
+                    gl_lf,
                     i,
+                    gl_lf,
                     i,
-                    strToLower(param->name),
+                    sa_retType(param->name),
                     val
                   );
 
-            strToUpper(param->name);
             i++;
             destroyToken(param);
         }
@@ -360,6 +377,11 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
                 break;
             case _length_: array[0] = stcTkn_pop(stack); 
                            result = length(symtable, array[0]);
+                           if(strcmp(result->name, "ERR_SEM") == 0)
+                           {
+                                destroyToken(result);
+                                return NULL;
+                           }
                 break;
             case _chr_   : array[0] = stcTkn_pop(stack);
                            result = chr(symtable, array[0]);
@@ -970,6 +992,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 stc_destroy(stack);
                 scanner_unget(que, token, sc_str->str);
                 //stc_print(stack);
+
                 return SUCCESS;
             }
             else
