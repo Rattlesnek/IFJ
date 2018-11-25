@@ -29,10 +29,10 @@
 #include "scanner.h"
 #include "sa_prec.h"
 
-#include "dynamicArrParam.h"
-#include "dynamicStr.h"
-#include "stackStr.h"
-#include "stackTkn.h"
+#include "dynamic_arr_param.h"
+#include "dynamic_str.h"
+#include "stack_str.h"
+#include "stack_tkn.h"
 #include "queue.h"
 
 #include "token.h"
@@ -296,7 +296,7 @@ void freeAll(stack_tkn_t *stack_tkn, stack_str_t *stack_str,
     destroyToken(sa_prec_ret);
 }
 
-#ifdef PARSER_DEBUG
+#ifdef DEBUG_PARSER
 int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
 {
     token_t *act = scanner_get(sc_str, que);
@@ -436,7 +436,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     ///////////////////
                     //  GENERATE IF  //
                     ///////////////////
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -464,7 +464,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     //////////////////////
                     generate_LABEL_while();
 
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -494,7 +494,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                     /////////////////////////
                     //  GENERATE VARIABLE  //
                     /////////////////////////
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -688,7 +688,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
 
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                 ret_val = prec_tmp(sc_str, que);
 #else
                 ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
@@ -720,7 +720,7 @@ int parser(dynamicStr_t *sc_str, queue_t *que)
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
             
-#ifdef PARSER_DEBUG              
+#ifdef DEBUG_PARSER              
                 ret_val = prec_tmp(sc_str, que);
 #else
                 ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);

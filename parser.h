@@ -27,7 +27,7 @@
 #include <stdlib.h>
 
 #include "queue.h"
-#include "dynamicStr.h"
+#include "dynamic_str.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///

@@ -29,8 +29,8 @@
 #include "sa_prec.h"
 #include "stack_sa_prec.h"
 #include "error.h"
-#include "stackTkn.h"
-#include "codeGen.h"
+#include "stack_tkn.h"
+#include "code_gen.h"
 #include "builtin_gen.h"
 #include <string.h>
 #include <stdbool.h>

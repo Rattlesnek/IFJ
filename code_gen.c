@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include "token.h"
 #include "symtable.h"
-#include "codeGen.h"
+#include "code_gen.h"
 
 
 

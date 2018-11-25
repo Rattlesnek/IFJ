@@ -8,10 +8,10 @@
 #include "scanner.h"
 #include "sa_prec.h"
 
-#include "dynamicArrParam.h"
-#include "dynamicStr.h"
-#include "stackStr.h"
-#include "stackTkn.h"
+#include "dynamic_arr_param.h"
+#include "dynamic_str.h"
+#include "stack_str.h"
+#include "stack_tkn.h"
 #include "queue.h"
 
 #include "token.h"

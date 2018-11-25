@@ -22,7 +22,7 @@
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "dynamicStr.h"
+#include "dynamic_str.h"
 #include "queue.h"
 #include "parser.h"
 #include "error.h"
