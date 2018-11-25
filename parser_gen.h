@@ -8,7 +8,7 @@
 
   Synopsis    []
 
-  Author      [Jindrich Sestak]
+  Author      [Adam Pankuch, Jindrich Sestak]
 
   Affiliation []
 
