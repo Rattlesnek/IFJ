@@ -959,10 +959,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 {
 
                     token_t *tmp = stc_tokPopTop(stack, &term);
-<<<<<<< HEAD
-=======
-                    //printf("tmp->name: %s\n", tmp->name);
->>>>>>> 18359ed083b329e8ece340d94f8696eac406ba0e
                     *ret_token = tmp;
                     stc_print(stack);
                     /*
