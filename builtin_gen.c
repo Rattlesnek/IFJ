@@ -95,7 +95,7 @@ token_t *length(symtable_t *symtab, token_t *par)
 	else {
 		label_n++;
 		destroyToken(par);
-		free(des);
+		destroyToken(des);  // ???? 
 		token_info_t info1;
 		token_t *error = createToken("ERR_SEM", info1);
 		return error;
@@ -169,7 +169,7 @@ token_t *chr(symtable_t *symtab, token_t *par)
 		printf("EXIT int@4\n");
 		label_n++;
 		destroyToken(par);
-		free(des);
+		destroyToken(des); // ??
 		token_info_t info1;
 		token_t *error = createToken("ERR_SEM", info1);
 		return error;
@@ -216,7 +216,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
 			label_n++;
 			destroyToken(par1);
 			destroyToken(par2);
-			free(des);
+			destroyToken(des);
 			token_info_t info1;
 			token_t *error = createToken("ERR_SEM", info1);
 			return error;
@@ -245,7 +245,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
 		label_n++;
 		destroyToken(par1);
 		destroyToken(par2);
-		free(des);
+		destroyToken(des);
 		token_info_t info1;
 		token_t *error = createToken("ERR_SEM", info1);
 		return error;
@@ -260,7 +260,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
 			label_n++;
 			destroyToken(par1);
 			destroyToken(par2);
-			free(des);
+			destroyToken(des);
 			token_info_t info1;
 			token_t *error = createToken("ERR_SEM", info1);
 			return error;
@@ -289,7 +289,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
 		label_n++;
 		destroyToken(par1);
 		destroyToken(par2);
-		free(des);
+		destroyToken(des);
 		token_info_t info1;
 		token_t *error = createToken("ERR_SEM", info1);
 		return error;
