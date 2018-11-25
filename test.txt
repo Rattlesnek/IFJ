@@ -1,9 +1,0 @@
-
-ord("HELLO", 3)
-ord("IFJ mastr race", 1)
-
-chr(185)
-chr(48)
-
-substr("TORTUGA",0,6)
-substr("IFJ je zabijak", 8,10)

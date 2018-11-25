@@ -893,6 +893,13 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         
                         state = State_FLOAT;
                     }
+                    else if (tolower(c) == 'e')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_EXP;
+                    }
                     else
                     {
                         state = State_S;
