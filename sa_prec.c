@@ -141,7 +141,7 @@ static inline int destroyTokenArr(token_t *token_arr [], int state)
 
 int Check_err(token_t *token, token_t *token_arr[], int state, table_elem_t term, 
                table_elem_t correct_term) {
-    printf("=>Check_err: %s\n", token->name);
+    //printf("=>Check_err: %s\n", token->name);
     if(strcmp(token->name, "ERR_SEM") == 0)
     {
         destroyTokenArr(token_arr, state);
@@ -959,7 +959,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 {
 
                     token_t *tmp = stc_tokPopTop(stack, &term);
-                    printf("tmp->name: %s\n", tmp->name);
+                    //printf("tmp->name: %s\n", tmp->name);
                     *ret_token = tmp;
                     stc_print(stack);
                     /*
