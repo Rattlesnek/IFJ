@@ -341,11 +341,9 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
                           "GF" :
                           "LF";
 
-            printf("DEFVAR %s@%%%d\n"
-                   "MOVE %s@%%%d %s@%s\n",
-                    gl_lf,
+            printf("DEFVAR TF@%%%d\n"
+                   "MOVE TF@%%%d %s@%s\n",
                     i,
-                    gl_lf,
                     i,
                     sa_retType(param->name, gl_lf),
                     val
