@@ -141,7 +141,7 @@ static inline int destroyTokenArr(token_t *token_arr [], int state)
 
 int Check_err(token_t *token, token_t *token_arr[], int state, table_elem_t term, 
                table_elem_t correct_term) {
-    DEBUG_PRINT("=>Check_err: %s\n", token->name);
+    printf("=>Check_err: %s\n", token->name);
     if(strcmp(token->name, "ERR_SEM") == 0)
     {
         destroyTokenArr(token_arr, state);
@@ -195,6 +195,8 @@ char sa_getTokenIndex(token_t *token)
     else if(strcmp(token->name, "INT") == 0)
         return _id_;
     else if(strcmp(token->name, "DBL") == 0)
+        return _id_;
+    else if(strcmp(token->name, "nil") == 0)
         return _id_;
     else if(strcmp(token->name, "(") == 0)
         return _lbrc_;
@@ -266,6 +268,7 @@ static inline bool sa_isNonTerm(table_elem_t term)
 
 static inline bool sa_detectSucEnd(stack_sa_t *stack, table_elem_t token)
 {
+
     return (sa_isNonTerm(stack->top->term) 
             && stack->top->lptr->term == _empt_ 
             && token == _empt_);
@@ -346,7 +349,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
         token_t *result = NULL;
         token_t *func_name = stcTkn_pop(stack);
         token_t *array[3];
-        free(func_name);
+        destroyToken(func_name);
         switch(is_builtin)
         {
             case _inputs_: result = input(symtable, 2);
@@ -836,7 +839,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             {
                                 stcTkn_push(tok_stack, expr_in_brc);  // Odkomentuj ### a dva radky smaz
                                 stcTkn_push(tok_stack, ptr_tok[0]);
-                                stcTkn_print(tok_stack);
+                                //stcTkn_print(tok_stack);
                                 //stcTkn_push(tok_stack, ptr_tok[0]);
 
                                 term = stc_popTop(stack);
@@ -912,6 +915,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
                         
                         *ret_token = stc_tokPopTop(stack, &term); 
+
                     }
                     else
                     {
@@ -931,7 +935,9 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 }
                 else if(result != NULL)
                 {
+
                     token_t *tmp = stc_tokPopTop(stack, &term);
+                    printf("tmp->name: %s\n", tmp->name);
                     *ret_token = tmp;
                     stc_print(stack);
                     /*
@@ -957,12 +963,13 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
                 }
-                stc_print(stack);
+                //stc_print(stack);
                 //stcTkn_print(tok_stack);
-                if(!builtin_func)
-                    stcTkn_destroy(tok_stack);
+                //if(!builtin_func)
+                stcTkn_destroy(tok_stack);
                 stc_destroy(stack);
                 scanner_unget(que, token, sc_str->str);
+                //stc_print(stack);
                 return SUCCESS;
             }
             else
@@ -1029,7 +1036,7 @@ fail_end:
     return ERR_SYN;
 
 sem_fail:
-    if(!builtin_func)
+    //if(!builtin_func)
         stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
