@@ -836,7 +836,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             {
                                 stcTkn_push(tok_stack, expr_in_brc);  // Odkomentuj ### a dva radky smaz
                                 stcTkn_push(tok_stack, ptr_tok[0]);
-                                stcTkn_print(tok_stack);
+                                //stcTkn_print(tok_stack);
                                 //stcTkn_push(tok_stack, ptr_tok[0]);
 
                                 term = stc_popTop(stack);

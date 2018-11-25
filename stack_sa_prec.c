@@ -37,7 +37,6 @@
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-#define STACK_PRINT 1
 #ifdef STACK_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
