@@ -670,6 +670,7 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
 		}
 
 		printf("WRITE %s@%s\n", param, print);
+		destroyToken(tmp); // ????
 	}
 
 	label_n++;
