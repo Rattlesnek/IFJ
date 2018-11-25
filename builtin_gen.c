@@ -25,7 +25,6 @@
 #include <stdbool.h>
 
 #include "builtin_gen.h"
-
 #include "symtable.h"
 #include "dynamic_arr_param.h"
 #include "stack_str.h"
@@ -46,9 +45,8 @@ token_t *length(symtable_t *symtab, token_t *par)
 	if (strcmp(par->name, "nil") == 0)
 	{
 		token_info_t info1;
-		info1.string = "0";
-		token_t *nil = createToken("INT", info1);
-		return nil;
+		token_t *err = createToken("ERR_SEM", info1);
+		return err;
 	}
 
 	static unsigned long long label_n = 0;
