@@ -105,6 +105,15 @@ bool isSTR_ID(token_t *token)
     return false;
 }
 
+bool isNIL(token_t *token)
+{
+    if (strcmp(token->name, "nil") == 0)
+    {
+        return true;
+    }
+    return false;
+}
+
 
 
 int matrix[4][4] = {
@@ -173,10 +182,7 @@ char *operator(char *op, bool alternative)
 int type(token_t *param1, token_t *param2)
 {
     int index_param1, index_param2;
-    /*if (param2 == NULL)
-    {
-        return NULL_NULL;
-    }*/
+
     if (strncmp(param1->name, "INT", 3) == 0)
     {
         index_param1 = INT_index;
@@ -192,6 +198,10 @@ int type(token_t *param1, token_t *param2)
     else if (strcmp(param1->name, "ID") == 0)
     {
         index_param1 = ID_index;
+    }
+    else if (strcmp(param1->name, "nil") == 0 )
+    {
+        return NIL_ID;
     }
 
     if (strncmp(param2->name, "INT", 3) == 0)
@@ -209,6 +219,10 @@ int type(token_t *param1, token_t *param2)
     else if (strcmp(param2->name, "ID") == 0)
     {
         index_param2 = ID_index;
+    }
+    else if (strcmp(param2->name, "nil") == 0 )
+    {
+        return ID_NIL;
     }
 
     return matrix[index_param1][index_param2];
@@ -285,6 +299,83 @@ int type(token_t *param1, token_t *param2)
     return des;
 }
 */
+
+token_t *nil(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
+{
+
+    if (strcmp(op->name, "==") != 0 && strcmp(op->name, "!=") != 0)
+    {
+        token_info_t info1;
+        token_t *error = createToken("ERR_SEM", info1);
+        return error;
+    }
+
+    static unsigned long long label_n = 0;
+
+    char frame[3];
+    char name[20];
+    token_info_t info;
+    sprintf(name, "nil%llu", label_n);
+    info.ptr = symtab_elem_add(symtab, name);
+    token_t *des = createToken("BOOL_ID", info);
+
+
+    if (strcmp(symtab->name, "$GT" ) == 0)
+    {
+        strcpy(frame, "GF");
+    }
+    else
+    {
+        strcpy(frame, "LF");
+    }
+
+
+    /*char st1[] = "this is a string";
+    char st2[] = "is";
+    if (strstr(st1, st2) == NULL)
+        printf("%s not in %s", st2, st1);
+    else
+        printf("%s", strstr(st1, st2));*/
+
+    if (strcmp(par2->name, "nil") == 0)
+    {
+        if (strcmp(op->name, "==") == 0)
+        {
+            printf("DEFVAR %s@%s\n"
+                   "MOVE %s@%s bool@true\n",
+                   frame, name, frame, name);
+        }
+        else
+        {
+            printf("DEFVAR %s@%s\n"
+                   "MOVE %s@%s bool@false\n",
+                   frame, name, frame, name);
+        }
+    }
+    else
+    {
+        if (strcmp(op->name, "==") == 0)
+        {
+            printf("DEFVAR %s@%s\n"
+                   "MOVE %s@%s bool@false\n",
+                   frame, name, frame, name);
+        }
+        else
+        {
+            printf("DEFVAR %s@%s\n"
+                   "MOVE %s@%s bool@true\n",
+                   frame, name, frame, name);
+        }
+    }
+
+    label_n++;
+    destroyToken(par1);
+    destroyToken(par2);
+    destroyToken(op);
+    return des;
+
+}
+
 token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 {
     if (operator(op->name, 0) == NULL)
@@ -2622,6 +2713,12 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
         /*case NULL_NULL:
             return null_null(param1, symtab);
             break;*/
+        case ID_NIL:
+            return nil(op, param2, param1, symtab);
+            break;
+        case NIL_ID:
+            return nil(op, param1, param2, symtab);
+            break;
 
         default: break;
     }
