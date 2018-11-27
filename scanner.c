@@ -558,6 +558,20 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if(!dynamicStr_add(sc_str, '2'))
                             goto err_internal;
                     }
+                    else if (c == '"')
+                    {
+                        if(!dynamicStr_add(sc_str, '\\'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '0'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '2'))
+                            goto err_internal;
+
+                        if(!dynamicStr_add(sc_str, '2'))
+                            goto err_internal;
+                    }
                     else if (c == 'x')
                     {
                         if(!dynamicStr_add(sc_str, '\\')) //First I add '\\'
