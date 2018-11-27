@@ -5,7 +5,7 @@ end
 fun_1 1
 
 def fun_2 (a)
-    print b
+    print a
 end
 
 fun_2 (1)
