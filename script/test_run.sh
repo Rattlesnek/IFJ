@@ -17,7 +17,7 @@ ERR_INTERNAL=99
 
 run_with_valgrind()
 {
-    valgrind --leak-check=yes --error-exitcode=20 --log-file="$3" ../parser <$1 >$2 2>$2
+    valgrind --leak-check=yes --error-exitcode=20 --log-file="$3" ../parser <$1 >$2
     if [[ "$?" == "20" ]]
     then
         printf "${RED}(X)${NC}: "
