@@ -8,8 +8,7 @@
 
   Synopsis    []
 
-  Author      [Lukas Valek, Adam Pankuch, Jindrich Sestak, 
-               Lukas Piwowarski]
+  Author      [Lukas Piwowarski, Lukas Valek]
 
   Affiliation []
 
@@ -18,28 +17,21 @@
   Revision    []
 
 ***********************************************************************/
-#ifndef SA_PREC_H
-#define SA_PREC_H
 
 ////////////////////////////////////////////////////////////////////////
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
+#ifndef SA_PREC_H
+#define SA_PREC_H
+
 #include "dynamic_str.h"
 #include "queue.h"
 #include "symtable.h"
-
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
-
-/* Constants assigned to:
- *    - Terminals (also indexes to precedence-table)
- *    - Operators from precedence-table
- *    - Nonterminal (E)
- */
 typedef enum {
-/*** Terminal ***/
-    _plus_,     // +
+    _plus_,     /* Terminal     */
     _mult_,     // *
     _lbrc_,     // (
     _rbrc_,     // )
@@ -51,17 +43,19 @@ typedef enum {
     _func_,     // f-ce() 
     _coma_,     // , 
     _empt_,     // $
+    
+    _E_,        /* Non-Terminal */
+    _L_,
+    _S_,
+    _F_,
 
-/*** Rules ***/
-    _sml_,      // <
-    _big_,      // >
-    _eql_,      // =
+                /* Rules        */
+   _sml_,       // <
+   _big_,       // >
+   _eql_        // =
 
-/*** Nonterminal ***/
-    _E_,        
 } table_elem_t;
 
-/* Number of parameters of built-in functions */
 typedef enum {
   _inputs_ = 1,       // 0 param
   _inputi_,           // 0 param
@@ -71,33 +65,34 @@ typedef enum {
   _ord_,              // 2 params
   _substr_,           // 3 params
   _print_,            // X params
-} func_params_t;
-
+} test;
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
+#define PREC_TABLE_ROWS 17   /* Max number of rows in prec_table */
+#define PREC_TABLE_COLS 17   /* Max number of cols in prec_table */
 
-#define PREC_TABLE_ROWS 17   /* Max number of rows in prec_table     */
-#define PREC_TABLE_COLS 17   /* Max number of columns in prec_table */
+////////////////////////////////////////////////////////////////////////
+///                       GLOBAL VARIABLES                           ///
+////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
 /* 
- * @brief Operator-precedence parser. 
+ * @brief Operator-precedence parser
  *
- * @params  sc_str         Param for scanner
- *          que            Param for scanner
- *          symtable       Param for scanner
- *          loc_symtable   List of declared variables (either global or local)
- *          func_symtable  List of declared functions
- *           
- * @return  true         If analysed expression is correct  
- *          false        If analysed expression is incorrect  
- */ 
+ * @params  sc_str    Param for scanner
+ *          que       Param for scanner
+ *          symtable  Param for scanner
+ * @return  true      If analysed expression is correct  
+ *          false     If analysed expression is incorrect 
+ */   
 int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtable, 
-            symtable_t *func_symtable);
+             symtable_t *func_symtable, token_t **ret_token);
+
+
 
 #endif
 ////////////////////////////////////////////////////////////////////////
