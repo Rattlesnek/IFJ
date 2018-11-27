@@ -566,10 +566,10 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if(!dynamicStr_add(sc_str, '0'))
                             goto err_internal;
 
-                        if(!dynamicStr_add(sc_str, '2'))
+                        if(!dynamicStr_add(sc_str, '3'))
                             goto err_internal;
 
-                        if(!dynamicStr_add(sc_str, '2'))
+                        if(!dynamicStr_add(sc_str, '4'))
                             goto err_internal;
                     }
                     else if (c == 'x')
