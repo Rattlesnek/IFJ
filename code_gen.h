@@ -173,7 +173,7 @@ token_t *nil(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
  *
  * @return     { description_of_the_return_value }
  */
-token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
+token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool variant);
 /**
  * @brief      { function_description }
  *
