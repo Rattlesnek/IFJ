@@ -1,0 +1,41 @@
+.IFJcode18
+
+JUMP $end$function$fun
+LABEL fun
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@a
+MOVE LF@a LF@%1
+
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 LF@a
+CALL f
+DEFVAR LF@c
+MOVE LF@c TF@%retval
+WRITE LF@c
+
+POPFRAME
+RETURN
+LABEL $end$function$fun
+
+
+JUMP $end$function$f
+LABEL f
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@a
+MOVE LF@a LF@%1
+
+WRITE LF@a
+
+POPFRAME
+RETURN
+LABEL $end$function$f
+
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 int@25
+CALL fun
