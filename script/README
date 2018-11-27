@@ -1,0 +1,25 @@
+
+Ako spravit popici test:
+
+1.  vytvor zlozku v /script/tests/ s nejakym vystiznym menom testu
+
+2.  vytvor v tej zlozke 2 subory (musia sa volat presne takto):
+        test_input.rb 
+        user_input.txt
+
+3.  ak chces testovat nejaku chybu napis do prveho riadku suboru test_input.rb toto:
+        "# ERROR typ_erroru" ... bez uvodzoviek
+
+    typ_erroru moze byt:
+        ERR_LEX
+        ERR_SYN
+        ERR_SEM_UNDEF
+        ERR_SEM_TYPE
+        ERR_SEM_FUNC
+        ERR_SEM_OTHER
+        ERR_ZERO_DIV
+        ERR_INTERNAL
+
+    napriklad:
+        "# ERROR ERR_SYN" ... bez uvodzoviek
+        "# ERROR ERR_SEM_UNDEF"
