@@ -1,0 +1,4 @@
+.IFJcode18
+DEFVAR GF@x
+MOVE GF@x string@ok\032super\010
+WRITE GF@x

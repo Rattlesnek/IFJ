@@ -1,0 +1,7 @@
+.IFJcode18
+DEFVAR GF@a
+MOVE GF@a string@Ahoj\010Sve'te\032\092\034
+WRITE GF@a
+MOVE GF@a string@
+WRITE GF@a
+WRITE string@test_input

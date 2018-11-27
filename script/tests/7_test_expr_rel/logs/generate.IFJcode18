@@ -1,0 +1,3 @@
+.IFJcode18
+DEFVAR GF@INT0INT
+EQ GF@INT0INT int@1 int@1
