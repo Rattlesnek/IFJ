@@ -45,6 +45,8 @@
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+void print_prolog();
+
 /**
  * @brief Function to generate IF-ELSE
  *

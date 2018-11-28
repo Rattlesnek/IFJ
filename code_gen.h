@@ -162,7 +162,7 @@ int type(token_t *param1, token_t *param2);
  *
  * @return     { description_of_the_return_value }
  */
-token_t *nil(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
+token_t *nil(token_t *op, token_t *par1, token_t *par2);
 /**
  * @brief      { function_description }
  *
@@ -207,7 +207,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
  *
  * @return     { description_of_the_return_value }
  */
-token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
+token_t *int_str(token_t *op, token_t *par1, token_t *par2);
 /**
  * @brief      { function_description }
  *
