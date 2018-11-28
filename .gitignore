@@ -5,4 +5,13 @@
 !*.*
 
 # Unignore all dirs
-!Pomocne*/
+!*/
+
+# Unignore Makefile
+!Makefile
+
+# Unignore script things
+!script/*
+
+# Ignore tests
+script/tests/*/logs/
