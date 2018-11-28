@@ -36,43 +36,54 @@
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-char *sprintf_alloc(const char *fmt, ...)
+
+bool print_or_add(list_t *list, bool add, const char *fmt, ...)
 {
     va_list arg;
-
     va_start(arg, fmt);
-    size_t needed = vsnprintf(NULL, 0, fmt, arg) + 1;
-    char *buffer = malloc(needed * sizeof(char));
-    if (buffer == NULL)
+
+    if (add == true)
     {
+        size_t needed = vsnprintf(NULL, 0, fmt, arg) + 1;
+        char *buffer = malloc(needed * sizeof(char));
+        if (buffer == NULL)
+        {
+            va_end(arg);
+            return false;
+        }
         va_end(arg);
-        return NULL;
+
+        va_start(arg, fmt);
+        vsprintf(buffer, fmt, arg); 
+
+        if (! list_append(list, buffer))
+            return false;
     }
-    va_end(arg);
+    else
+    {
+        vprintf(fmt, arg);
+    }
 
-    va_start(arg, fmt);
-    vsprintf(buffer, fmt, arg); 
     va_end(arg);
-
-    return buffer;
+    return true;
 }
 
 
 list_t *list_create()
 {
-    list_t *L = malloc(sizeof(list_t));
-    if (L == NULL)
+    list_t *list = malloc(sizeof(list_t));
+    if (list == NULL)
         return NULL;
     
-    L->act = NULL;
-    L->first = NULL;
-    return L;
+    list->last = NULL;
+    list->first = NULL;
+    return list;
 }
 
 
-void list_clean(list_t *L) 
+void list_clean(list_t *list) 
 {
-    list_elem_t *tmp = L->first;
+    list_elem_t *tmp = list->first;
     list_elem_t *tmp_del;
     while (tmp != NULL)
     {
@@ -82,19 +93,19 @@ void list_clean(list_t *L)
         free(tmp_del); 
     }
 
-    L->act = NULL;
-    L->first = NULL;
+    list->last = NULL;
+    list->first = NULL;
 }
 
 
-void list_destroy(list_t *L)
+void list_destroy(list_t *list)
 {
-    list_clean(L);
-    free(L);
+    list_clean(list);
+    free(list);
 }
 
 
-bool list_insertFirst (list_t *L, char *buffer)
+bool list_append(list_t *list, char *buffer)
 {
     if (buffer == NULL)
         return false;
@@ -102,99 +113,52 @@ bool list_insertFirst (list_t *L, char *buffer)
     list_elem_t *new_elem = malloc(sizeof(list_elem_t));
     if (new_elem == NULL)
         return false;
-
-    // initialize new element
     new_elem->string = buffer;
-    // insert first
-    new_elem->next = L->first;
-    L->first = new_elem; 
+    new_elem->next = NULL;
+
+    if (list->last != NULL)
+        list->last->next = new_elem;
+
+    if (list->first == NULL)
+        list->first = new_elem; 
+
+    list->last = new_elem;
     return true;
 }
 
 
-void list_actFirst(list_t *L)
+void list_print_clean(list_t *list)
 {
-/*
-** Nastaví aktivitu seznamu L na jeho první prvek.
-** Funkci implementujte jako jediný příkaz, aniž byste testovali,
-** zda je seznam L prázdný.
-**/
-	L->act = L->first;
-}
-
-
-bool list_insertPost (list_t *L, char *buffer) {
-/*
-** Vloží prvek s hodnotou val za aktivní prvek seznamu L.
-** Pokud nebyl seznam L aktivní, nic se neděje!
-** V případě, že není dostatek paměti pro nový prvek při operaci malloc,
-** zavolá funkci Error().
-**/    
-    if (L->act == NULL || buffer == NULL)
-        return false;
-    
-    list_elem_t *new_elem = malloc(sizeof(list_elem_t));
-    if (new_elem == NULL)
-        return false;
-
-    // initialize new element
-    new_elem->string = buffer;
-    
-    // post insert
-    new_elem->next = L->act->next;
-    L->act->next = new_elem;
-    return true;
-}
-
-
-void list_actSucc (list_t *L)
-{
-	if (L->act == NULL)
-        return;
-    
-    L->act = L->act->next;
-}
-
-
-int list_isActive(list_t *L)
-{
-	return (L->act != NULL);
-}
-
-
-void print_from_last(list_elem_t *element)
-{
-    if (element != NULL)
+    list_elem_t *tmp = list->first;
+    list_elem_t *tmp_del;
+    while (tmp != NULL)
     {
-        print_from_last(element->next);
-    
-        printf("%s", element->string);
+        printf("%s", tmp->string);
+
+        tmp_del = tmp;
+        tmp = tmp->next;
+        free(tmp_del->string);
+        free(tmp_del); 
     }
-    //free(element->string);
-    //free(element);
+
+    list->last = NULL;
+    list->first = NULL;
 }
-
-
 
 #if 0
 int main()
 {
     list_t *list = list_create();
-    char *buffer;
 
     for (int i = 0; i < 10; i++)
     {
-        buffer = sprintf_alloc("%s %d\n", "ahoj retard", i);
-        if (buffer == NULL)
-            return 1;
-        
-        if (! list_insertFirst(list, buffer))
-            return 1;
+        print_or_add(list, true, "ok ta ty si frajer %s %d\n", "fkc", i);
     }
-    list_destroy(list);
-    list = list_create();
-    print_from_last(list->first);
 
+    list_print_clean(list);
+    print_or_add(list, true, "ok ta ty si frajer %s %d\n", "fkc", 99);
+    list_print_clean(list);
+    list_print_clean(list);
     list_destroy(list);
     return 0;
 }
