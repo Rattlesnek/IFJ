@@ -53,7 +53,7 @@ typedef struct {
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-bool print_or_add(list_t *list, bool add, const char *fmt, ...);
+bool print_or_append(list_t *list, bool append, const char *fmt, ...);
 
 
 list_t *list_create();
