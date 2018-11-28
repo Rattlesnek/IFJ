@@ -145,12 +145,12 @@ bool generate_while_ending(stack_str_t *stack)
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr)
 {
     printf( "\n"
-            "JUMP $end$function$%s\n"
+            "JUMP $end$function$%llu\n"
             "LABEL %s\n"
             "PUSHFRAME\n"
             "DEFVAR LF@%%retval\n"
             "MOVE LF@%%retval nil@nil\n",
-            fun->func.key,
+            func_cnt,
             fun->func.key
           );
 
