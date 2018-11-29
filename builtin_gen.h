@@ -31,6 +31,7 @@
 #include "stack_str.h"
 #include "token.h"
 #include "stack_tkn.h"
+#include "list.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
@@ -63,7 +64,7 @@ token_t *input(symtable_t *symtab, int type);
  * @param par2 Position of char in string
  * @return token_t* 
  */
-token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2);
+token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par1, token_t *par2);
 
 /**
  * @brief Return char (in ASCII) which is represented by number par
@@ -72,7 +73,7 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2);
  * @param par number which is converted to char in ASCII
  * @return token_t* 
  */
-token_t *chr(symtable_t *symtab, token_t *par);
+token_t *chr(list_t *code_buffer, bool in_stat,symtable_t *symtab, token_t *par);
 
 /**
  * @brief Returns length of string in par
