@@ -102,7 +102,7 @@ do {                                                            \
                 break;                                          \
             case _print_ : if(num_params == 0) goto sem_fail;   \
         }                                                       \
-        result = sa_callFunc(tok_stack, is_builtin, loc_symtab);\
+        result = sa_callFunc(tok_stack, is_builtin, loc_symtab, code_buffer, in_stat);\
     }                                                           \
     else                                                        \
     {                                                           \
@@ -111,7 +111,7 @@ do {                                                            \
         else if(func_elem->func.n_params != num_params)         \
             goto sem_fail;                                      \
                                                                 \
-        sa_callFunc(tok_stack, false, loc_symtab);              \
+        sa_callFunc(tok_stack, false, loc_symtab, code_buffer, in_stat); \
     }                                                           \
                                                                 \
     func_read = 1;                                              \
@@ -323,7 +323,8 @@ char *sa_retType(char *type, char *gl_lf)
     return NULL;
 }
 
-token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable) {
+token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, list_t *code_buffer, bool in_stat)
+{
     DEBUG_PRINT("=>sa_callFunc: %d\n", is_builtin);
     if(!is_builtin)
     {
@@ -412,7 +413,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable) 
                                 return NULL;
                            }
                 break;
-            case _print_ : result = print(symtable, stack);
+            case _print_ : result = print(symtable, stack, code_buffer, in_stat);
                            if(strcmp(result->name, "ERR_SEM") == 0)
                            {
                                 destroyToken(result);
