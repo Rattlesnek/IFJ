@@ -87,6 +87,8 @@ typedef enum
 	State_END_COMMEN,
 	State_END_COMMEND,
 	State_LCOMM, 		//One line comment
+
+	State_ERR,
 } State;
 
 ////////////////////////////////////////////////////////////////////////

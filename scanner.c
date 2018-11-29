@@ -270,7 +270,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             goto err_internal;
                     }
                         
-                    else if (isalpha(c) || c == '_')
+                    else if ( (c >= 'a' && c <= 'z') || c == '_')
                     {
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
@@ -282,6 +282,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         state = State_EOL;
                     else if ( c == '#')
                         state = State_LCOMM;
+                    else
+                        state = State_ERR;
                     break;
 
                 case State_EOL:
@@ -490,7 +492,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if(!dynamicStr_add(sc_str, '2'))
                             goto err_internal;
                     }
-
                     else 
                     {
                         if(!dynamicStr_add(sc_str, c))
@@ -580,12 +581,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         state = State_HEX;
                     }
                     else
-                        goto err_lexical;
+                        state = State_ERR;
                         
                     break;
 
                 case State_HEX:
-                    if ((c >= 'A' && c <= 'F') || isdigit(c))
+                    if ((c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f') || isdigit(c))
                     {
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
@@ -593,12 +594,12 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         state = State_HEX_NUM;
                     }
                     else  
-                        goto err_lexical;
+                        state = State_ERR;
                     
                     break;
 
                 case State_HEX_NUM:
-                    if ((c == 'A' && c <= 'F') || isdigit(c))
+                    if ((c == 'A' && c <= 'F') || (c >= 'a' && c <= 'f') || isdigit(c))
                     {
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
@@ -668,8 +669,9 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     {
                         state = State_IDEXL;
                     }
-
-                    else 
+                            //( ,) ,* ,+ , , , -              /             <,=,>
+                    else if ((c >= '(' && c <= '-') || c == '/' || (c >= '<' && c <= '>') || isspace(c))
+                        // (c >= '(' && c <= '/') || (c >= '<' && c <= '>') || isspace(c))
                     {
                         state = State_S;
                         sc_unget(c);
@@ -677,6 +679,14 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if (strcmp(inKeyword(sc_str->str, keywords),"ID") != 0 )            //Token: "IF", atribut:NULL
                         {
                             name = inKeyword(sc_str->str, keywords);
+                            if (strcmp(name, "do") == 0 || strcmp(name, "else")==0 ||strcmp(name, "end")==0 || strcmp(name, "then")==0)
+                            {
+                                if ( !isspace(c))  //after "do", "else" ....must be \n
+                                {
+                                    state = State_ERR;
+                                    break;
+                                }
+                            }
                             sc_info.ptr = NULL;
                             sc_token= createToken(name, sc_info);
                             if (sc_token == NULL)
@@ -709,6 +719,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         }
                     
                     }
+                    else 
+                        state = State_ERR;
                     break;
 
                 case State_IDEXL:
@@ -732,7 +744,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         SCANNER_DBG_PRINT("Token-name: %s \n", sc_token->name);
                         return sc_token;  
                     }
-
                     else if ( c == '=')
                     {
                         token_info_t sc_info2;
@@ -752,8 +763,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                         return sc_token;  
                     }
-
-                    else
+                    else if ( c == '(' || c == ' ')
                     {
                         if(!dynamicStr_add(sc_str, '!'))
                             goto err_internal;
@@ -761,18 +771,33 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         sc_unget(c);
                         state = State_FUNC;
                     }
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
                     break;
 
                 case State_FUNC:
-                    state = State_S;
-                    sc_unget(c);
-                    sc_info.ptr = NULL;
-                    sc_token= createToken("FUNC", sc_info);
-                    if (sc_token == NULL)
-                        goto err_internal;
+                    if ( c == '(' || c == ' ')
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.ptr = NULL;
+                        sc_token= createToken("FUNC", sc_info);
+                        if (sc_token == NULL)
+                            goto err_internal;
 
-                    SCANNER_DBG_PRINT("Token-name: %s \n", sc_token->name);
-                    return sc_token;  
+                        SCANNER_DBG_PRINT("Token-name: %s \n", sc_token->name);
+                        return sc_token;
+                    }
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
+                    break;
+                     
 
 
                 case State_INT:
@@ -782,16 +807,14 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             goto err_internal;
                         
                         state = State_INT;
-                    }
-                        
+                    }   
                     else if (tolower(c) == 'e')
                     {
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
                         
                         state = State_EXP;
-                    }
-                        
+                    }  
                     else if (c == '.')
                     {
                         if(!dynamicStr_add(sc_str, c))
@@ -799,8 +822,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         
                         state = State_DOT;
                     }
-
-                    else
+                                //(,),*,+, , ,-         /             <,=,>
+                    else if ( (c >= '(' && c <= '-') || c == '/' || (c >= '<' && c <= '>') || isspace(c))    //another characters like: +,-,*,/
                     {
                         state = State_S;
                         sc_unget(c);
@@ -815,6 +838,11 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
                         return sc_token;   
                     }
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
                     break;
 
                 case State_INT0:
@@ -824,8 +852,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             goto err_internal;
                         
                         state = State_DOT;
-                    }
-                        
+                    }     
                     else if (tolower(c) == 'e')
                     {
                         if(!dynamicStr_add(sc_str, c))
@@ -833,8 +860,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         
                         state = State_EXP;
                     }
-
-                    else if ( (isspace(c)) || c == ',' || c == ')')
+                                //(,),*,+, , ,-             /             <,=,>
+                    else if ( (c >= '(' && c <= '-') || c == '/' || (c >= '<' && c <= '>') || isspace(c))
                     {
                         state = State_S;
                         sc_unget(c);
@@ -850,7 +877,10 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         return sc_token;  
                     }
                     else
-                        goto err_lexical;
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
                     break;
 
                 case State_DOT:
@@ -862,8 +892,10 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         state = State_FLOAT;
                     }
                     else
-                        goto err_lexical;
-
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
                     break;
 
                 case State_EXP:
@@ -882,8 +914,10 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         state = State_EXPS;
                     }
                     else
-                        goto err_lexical;
-
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
                     break;
 
                 case State_EXPS:
@@ -894,9 +928,11 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         
                         state = State_FLOAT;
                     }
-                    else 
-                        goto err_lexical;
-
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
                     break;
 
                 case State_FLOAT:
@@ -914,7 +950,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         
                         state = State_EXP;
                     }
-                    else
+                                //(,),*,+, , ,-         /             <,=,>
+                    else if ( (c >= '(' && c <= '-') || c == '/' || (c >= '<' && c <= '>') || isspace(c))
                     {
                         state = State_S;
                         sc_unget(c);
@@ -928,6 +965,11 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                         SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
                         return sc_token;   
+                    }
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
                     }
                     break;
 
@@ -1125,6 +1167,16 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                     SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
+                    break;
+
+                case State_ERR:
+                    if ( c != '\n')         //while not a new line stays in this state
+                        state = State_ERR;
+                    else                    //new line ==> generate ERR_token - lexical
+                    {
+                        state = State_S;
+                        goto err_lexical;  
+                    }
                     break;
             }
         }
@@ -1463,13 +1515,15 @@ err_lexical:
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_LEX", sc_info);
     SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
-    return sc_token;
+    exit(1);
+    //return sc_token;
 
 err_internal:
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_INTERNAL", sc_info);
     SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
-    return sc_token;
+    exit(99);
+    //return sc_token;
 }
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
