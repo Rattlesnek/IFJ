@@ -79,24 +79,23 @@ bool HextoStr(dynamicStr_t *sc_str,unsigned int position)
     if(*endptr)
         return false;
 
-    sprintf(hex, "%li", ret);  
+    sprintf(hex, "%li", ret); 
+
+    sc_str->length = position;
     if (strlen(hex) < 2)
     {   
-        sc_str->length = sc_str->length - 1;
-
         if(!dynamicStr_add(sc_str, '0'))
             return false;
 
         if(!dynamicStr_add(sc_str, '0'))
             return false;
-
     }
     else if (strlen(hex) < 3)
     {
-        sc_str->length = position;
         if(!dynamicStr_add(sc_str, '0'))
             return false;
-    }
+    }   
+
     for (unsigned int i = 0; i < strlen(hex); i++)
     {
         if(!dynamicStr_add(sc_str, hex[count]))
@@ -599,7 +598,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     break;
 
                 case State_HEX_NUM:
-                    if ((c == 'A' && c <= 'F') || (c >= 'a' && c <= 'f') || isdigit(c))
+                    if ((c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f') || isdigit(c))
                     {
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
@@ -681,7 +680,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             name = inKeyword(sc_str->str, keywords);
                             if (strcmp(name, "do") == 0 || strcmp(name, "else")==0 ||strcmp(name, "end")==0 || strcmp(name, "then")==0)
                             {
-                                if ( !isspace(c))  //after "do", "else" ....must be \n
+                                if ( !isspace(c) || c == '#')  //after "do", "else" ....must be \n or comment
                                 {
                                     state = State_ERR;
                                     break;
@@ -1515,15 +1514,15 @@ err_lexical:
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_LEX", sc_info);
     SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
-    exit(1);
-    //return sc_token;
+    //exit(1);
+    return sc_token;
 
 err_internal:
     sc_info.ptr = NULL;
     sc_token = createToken("ERR_INTERNAL", sc_info);
     SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
-    exit(99);
-    //return sc_token;
+    //exit(99);
+    return sc_token;
 }
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///

@@ -22,7 +22,7 @@
 #include "error.h"
 int main()
 {
-    printf(".IFJcode18\n");
+    //printf(".IFJcode18\n");
     dynamicStr_t str;
     dynamicStr_t *sc_str = &str;
 
@@ -40,7 +40,7 @@ int main()
             destroyToken(token);
 
         token = scanner_get(sc_str, que);
-        if (strcmp(token->name, "BUILTIN") == 0)
+       /* if (strcmp(token->name, "BUILTIN") == 0)
         {
            // printf("builtin namen : %s\n", token->info.string);
             token_t *bra = scanner_get(sc_str, que);
@@ -98,7 +98,7 @@ int main()
                     destroyToken(ret);
                 }
             }
-        }
+        }*/
 
     } while (strcmp(token->name, "EOF") != 0);
 
