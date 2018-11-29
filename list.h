@@ -70,7 +70,7 @@ typedef struct {
  * @return true     if success
  * @return false    if internal error
  */
-bool print_or_append(list_t *list, bool append, const char *fmt, ...);
+bool print_or_append(list_t *code_buffer, bool in_stat, const char *fmt, ...);
 
 
 /**
