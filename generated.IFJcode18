@@ -1,0 +1,9 @@
+.IFJcode18
+DEFVAR GF@LEN0STR
+MOVE GF@LEN0STR nil@nil
+DEFVAR GF@$length$tmp0
+MOVE GF@$length$tmp0 string@est
+ STRLEN GF@LEN0STR GF@$length$tmp0
+DEFVAR GF@d
+MOVE GF@d GF@LEN0STR
+WRITE GF@d
