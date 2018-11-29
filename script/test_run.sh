@@ -1,4 +1,17 @@
 #!/usr/bin/env bash
+
+#######################################################
+#
+#  FileName    [test_run.sh]
+#
+#  SystemName  [Test -- IFJ compiler]
+#
+#  Author      [Adam Pankuch]
+#
+#  Date        [26/11/2018]
+#
+########################################################
+
 RED='\033[0;31m'
 NC='\033[0m' 
 GREEN='\e[32m'

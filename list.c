@@ -8,11 +8,11 @@
 
   Synopsis    []
 
-  Author      []
+  Author      [Adam Pankuch]
 
   Affiliation []
 
-  Date        [--/--/2018]
+  Date        [28/11/2018]
 
   Revision    []
 
@@ -37,7 +37,6 @@
 ////////////////////////////////////////////////////////////////////////
 
 
-
 bool print_or_append(list_t *list, bool append, const char *fmt, ...)
 {
     va_list arg;
@@ -58,7 +57,10 @@ bool print_or_append(list_t *list, bool append, const char *fmt, ...)
         vsprintf(buffer, fmt, arg); 
 
         if (! list_append(list, buffer))
+        {
+            va_end(arg);
             return false;
+        }
     }
     else
     {   

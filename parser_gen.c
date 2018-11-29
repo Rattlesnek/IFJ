@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    [if_while.c]
+  FileName    [parser_gen.c]
 
   SystemName  [IFJ - PROJECT]
 
@@ -37,15 +37,15 @@
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
 
-static unsigned long long if_cnt = 0;
-static unsigned long long while_cnt = 0;
-static unsigned long long func_cnt = 0;
+static unsigned long long if_cnt = 0;       // counter for if labels
+static unsigned long long while_cnt = 0;    // counter for while lables
+static unsigned long long func_cnt = 0;     // counter for function encapsulate labels
+
+// unsigned long long takes up as string 20 bytes
 
 ////////////////////////////////////////////////////////////////////////
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
-
-// unsigned long long takes as string 20 bytes
 
 void print_prolog()
 {
@@ -58,6 +58,7 @@ void print_prolog()
             );
 }
 
+
 void expected_LABEL_if(bool in_stat, char label_stat[])
 {
     if (! in_stat)  
@@ -69,32 +70,30 @@ bool generate_if(list_t *code_buffer, bool in_stat,  stack_str_t *stack, token_t
 {
     ////////////////////////////////////////////////////////////////////////////////////////// TODO
 
-    /*********Jump to ELSE if cond == false*********/
+    // jump to ELSE if cond == false
     if (! print_or_append(code_buffer, in_stat, "\nJUMPIFEQ $else$%llu GF@$des bool@false\n\n", if_cnt))
         return false;
-    /********* DOING IF statement *************/
 
-    //Must go from bottom to top (LABEL endif -> JMP endif) viz. assembler
-    //"LABEL $endif$%llu" has max length 34 bits
-    char b[40];
-    sprintf(b, "\nLABEL $endif$%llu\n\n", if_cnt);
-    if (! stcStr_push(stack, b))
+    // must go from bottom to top (LABEL endif -> JMP endif) see. assembler
+    
+    
+    char buffer[80];
+    // endif has max length 37 bytes
+    sprintf(buffer, "\nLABEL $endif$%llu\n\n", if_cnt);
+    if (! stcStr_push(stack, buffer))
         return false;
 
-    /*********END IF, ELSE branch **************/
-    //"LABEL $else$%llu\nJMP $endif$%llu" has max length 66 bits
-    char c[70];
-    sprintf(c,  "\nJUMP $endif$%llu\n"
-                "LABEL $else$%llu\n\n",
-                if_cnt, if_cnt
+    // else has max length 69 bytes
+    sprintf(buffer, "\nJUMP $endif$%llu\n"
+                    "LABEL $else$%llu\n\n",
+                    if_cnt, if_cnt
     );
-    if (! stcStr_push(stack, c))
+    if (! stcStr_push(stack, buffer))
         return false;
 
     if_cnt++;
     return true;
 }
-
 
 
 void expected_LABEL_while(bool in_stat, char label_stat[])
@@ -126,9 +125,9 @@ bool generate_while_false(list_t *code_buffer, bool in_stat, token_t *cond)
 
 bool generate_while_ending(stack_str_t *stack)
 {
-    /******** END of While***********/
-    //"LABEL $end_while$%llu\nJUMP $while$%llu\n" has max length 72 bytes
-    char b[75];
+    // end of while
+    // endwhile has max length 74 bytes
+    char b[80];
     sprintf(b,  "\nJUMP $while$%llu\n"
                 "LABEL $end_while$%llu\n\n",
                 while_cnt, while_cnt
@@ -165,7 +164,8 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
     }
     printf("\n");
 
-    char str[100]; // TODO
+    char str[70];
+    // end function has max length 60 bytes
     sprintf(str, "\nPOPFRAME\nRETURN\nLABEL $end$function$%llu\n\n", func_cnt);
 
     if (! stcStr_push(stack_str, str))

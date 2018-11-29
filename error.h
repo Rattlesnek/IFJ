@@ -8,11 +8,11 @@
 
   Synopsis    [Return values]
 
-  Author      []
+  Author      [Adam Pankuch, Lukas Piwowarski]
 
   Affiliation []
 
-  Date        [--/--/2018]
+  Date        [29/10/2018]
 
   Revision    []
 
@@ -34,6 +34,7 @@
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
+
 #define SUCCESS 0
 #define ERR_LEX 1
 #define ERR_SYN 2
@@ -48,9 +49,23 @@
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Print error message to stderr and fflush
+ * 
+ * @param fmt format string
+ * @param ... arguments
+ */
 void error_msg(const char *fmt, ...);
 
+
+/**
+ * @brief Print to stdout and fflush
+ * 
+ * @param fmt format string
+ * @param ... aruments
+ */
 void print_flush(const char *fmt, ...);
+
 
 #endif
 ////////////////////////////////////////////////////////////////////////
