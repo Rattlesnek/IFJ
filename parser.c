@@ -109,13 +109,6 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-/**
- * @brief Find index of corresponding rule in ll_table
- *
- * @param nonterm name of nonterminal
- * @param term name of terminal
- * @return int index of rule
- */
 int LLtableFind(char *nonterm, char *term)
 {
     int nonterm_idx = 0;
@@ -196,37 +189,8 @@ int LLtableFind(char *nonterm, char *term)
     return ll_table[nonterm_idx][term_idx];
 }
 
-#ifdef PARSER_PRINT
-bool print_fun(elem_t *element)
-{
-    PARSER_DBG_PRINT("%s, ", element->func.key);
-    return true;
-}
 
-bool print_fun_info(elem_t *element)
-{
-    PARSER_DBG_PRINT("key %s\n", element->func.key);
-    PARSER_DBG_PRINT("defined %d\n", element->func.is_defined);
-    PARSER_DBG_PRINT("n_params %d\n", element->func.n_params);
-
-    return true;
-}
-
-bool print_var(elem_t *element)
-{
-    PARSER_DBG_PRINT("%s, ", element->var.key);
-    return true;
-}
-#endif
-
-
-bool check_fun(elem_t *element)
-{
-    return element->func.is_defined;
-}
-
-
-bool createTempKey(char **key_tmp, char *name)
+bool tempKey_create(char **key_tmp, char *name)
 {
     *key_tmp = malloc( (strlen(name) + 1) * sizeof(char) );
     if (*key_tmp == NULL)
@@ -237,7 +201,7 @@ bool createTempKey(char **key_tmp, char *name)
 }
 
 
-void destroyTempKey(char **key_tmp)
+void tempKey_destroy(char **key_tmp)
 {
     if (*key_tmp != NULL)
     {
@@ -270,7 +234,6 @@ bool pushRevertedRules(stack_tkn_t *stack_tkn, int rule)
 }
 
 
-
 void freeAll(symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab,
              dynamicArrParam_t *param_arr,
              char **id_key_tmp, char **func_key_tmp,
@@ -283,14 +246,40 @@ void freeAll(symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab
 
     dynamicArrParams_free(param_arr);
 
-    destroyTempKey(id_key_tmp);
-    destroyTempKey(func_key_tmp);
+    tempKey_destroy(id_key_tmp);
+    tempKey_destroy(func_key_tmp);
 
     destroyToken(act);
     destroyToken(token);
     destroyToken(id_token_tmp);
     destroyToken(sa_prec_ret);
 }
+
+
+
+#ifdef PARSER_PRINT
+bool print_fun(elem_t *element)
+{
+    PARSER_DBG_PRINT("%s, ", element->func.key);
+    return true;
+}
+
+bool print_fun_info(elem_t *element)
+{
+    PARSER_DBG_PRINT("key %s\n", element->func.key);
+    PARSER_DBG_PRINT("defined %d\n", element->func.is_defined);
+    PARSER_DBG_PRINT("n_params %d\n", element->func.n_params);
+
+    return true;
+}
+
+bool print_var(elem_t *element)
+{
+    PARSER_DBG_PRINT("%s, ", element->var.key);
+    return true;
+}
+#endif
+
 
 #ifdef DEBUG_PARSER
 int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
@@ -311,11 +300,10 @@ int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
 }
 #endif
 
-/**
- * @brief Parser - Syntactic analysis
- *
- * @return int return value
- */
+
+////////////////////////////////////////////////////////////////////////
+///                             PARSER                               ///
+////////////////////////////////////////////////////////////////////////
 int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, list_t *defvar_buffer, dynamicStr_t *sc_str, queue_t *que)
 {
     PARSER_DBG_PRINT("Parser started\n");
@@ -509,7 +497,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     if (symtab_elem_add(var_tab, id_key_tmp) == NULL)
                         goto err_internal_main;
 
-                    destroyTempKey(&id_key_tmp);
+                    tempKey_destroy(&id_key_tmp);
                     destroyToken(sa_prec_ret);
                     sa_prec_ret = NULL;
 
@@ -604,7 +592,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                             goto err_sem_undef;
 
 
-                        destroyTempKey(&func_key_tmp);
+                        tempKey_destroy(&func_key_tmp);
 
                         // GENERATE FUNCTION PROLOG
                         if (! generate_function(stack_str, fun, param_arr))
@@ -637,7 +625,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
             rule = LLtableFind(top->name, act->name);
             if (rule == COMMAND_10) // [command] -> ID [func-assign-expr] ????????????
             {
-                if ( ! createTempKey(&id_key_tmp, sc_str->str))
+                if ( ! tempKey_create(&id_key_tmp, sc_str->str))
                     goto err_internal_main;
 
                 if (strcmp(act->name, "BUILTIN") == 0)
@@ -657,7 +645,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                 if (symtab_find(gl_var_tab, sc_str->str) != NULL)
                     goto err_sem_undef;
 
-                if ( ! createTempKey(&func_key_tmp, sc_str->str))
+                if ( ! tempKey_create(&func_key_tmp, sc_str->str))
                     goto err_internal_main;
 
                 // HACK :D
@@ -716,7 +704,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 
                 scanner_unget(que, id_token_tmp, id_key_tmp);
                 id_token_tmp = NULL;
-                destroyTempKey(&id_key_tmp);
+                tempKey_destroy(&id_key_tmp);
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
 
@@ -771,7 +759,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
     }
 
     //symtab_foreach(fun_tab, print_fun_info);
-    if (! symtab_foreach(fun_tab, check_fun))
+    if (! symtab_foreach(fun_tab, checkFun))
         goto err_sem_undef;
 
 #ifdef PARSER_PRINT
@@ -786,9 +774,9 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
     freeAll(gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token, id_token_tmp, sa_prec_ret);
     return SUCCESS;
 
-///////////////////////////////////////
-///         ERROR HANDLING          ///
-///////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+///                       ERROR HANDLING                             ///
+////////////////////////////////////////////////////////////////////////
 err_internal_1:
     symtab_free(gl_var_tab);
     error_msg("internal\n");

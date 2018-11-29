@@ -8,11 +8,11 @@
 
   Synopsis    []
 
-  Author      []
+  Author      [Adam Pankuch]
 
   Affiliation []
 
-  Date        [--/--/2018]
+  Date        [29/10/2018]
 
   Revision    []
 
@@ -38,27 +38,28 @@
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+
 void print_flush(const char *fmt, ...)
 {
-  va_list arg;
+    va_list arg;
 
-  va_start(arg, fmt);
-  vfprintf(stdout, fmt, arg);
-  va_end(arg);
+    va_start(arg, fmt);
+    vfprintf(stdout, fmt, arg);
+    va_end(arg);
 
-  fflush(stdout);
+    fflush(stdout);
 }
 
 
 void error_msg(const char *fmt, ...)
 {
-  va_list arg;
+    va_list arg;
 
-  fprintf(stderr, "ERROR: ");
+    fprintf(stderr, "ERROR: ");
 
-  va_start(arg, fmt);
-  vfprintf(stderr, fmt, arg);
-  va_end(arg);
+    va_start(arg, fmt);
+    vfprintf(stderr, fmt, arg);
+    va_end(arg);
 
 }
 

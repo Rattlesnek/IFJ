@@ -34,16 +34,17 @@
 ////////////////////////////////////////////////////////////////////////
 
 /**
- * @brief token info union
+ * @brief Token info union
  * 
  */
 typedef union token_info {
     elem_t *ptr;    // either ptr to info-element in hash table
-    char *string;   // or string (use only when token name is "STR" or "INT" or "DBL")
+    char *string;   // or string
 } token_info_t;
 
+
 /**
- * @brief token structure
+ * @brief Token structure
  * 
  */
 typedef struct token {
