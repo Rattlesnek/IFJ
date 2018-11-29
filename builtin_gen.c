@@ -421,7 +421,6 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 	*/
 	if (! print_or_append(code_buffer, in_stat,
 			"STRLEN GF@$des GF@$jump\n"							//GF@$des = len(Str)
-
 			"LT GF@$type GF@$not int@0\n"                     	//I < 0
 			"JUMPIFEQ $substr$nil%llu GF@$type bool@true\n"
 			"GT GF@$type GF@$not GF@$des\n"     				//I > lens(STR)
@@ -431,7 +430,6 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 
 			"LT GF@$type GF@$tmp int@0\n"                       //N < 0
 			"JUMPIFEQ $substr$nil%llu GF@$type bool@true\n"
-			
 			"ADD GF@$tmp GF@$not GF@$tmp\n"                	//GF@$tmp = begin + end == the last index
 			"LT GF@$type GF@$des GF@$tmp\n"      			// LEN(STR) < IDX-max ==> do till end of STR
 			"JUMPIFEQ $substr$wholestr%llu GF@$type bool@true\n"
