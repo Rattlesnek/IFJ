@@ -93,11 +93,9 @@ token_t *length(symtable_t *symtab, token_t *par);
  * @param end Length of substring
  * @return token_t* 
  */
-token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *end);
+token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *string, token_t *begin, token_t *end);
 
 token_t *print(symtable_t *symtab, stack_tkn_t *stack);
-
-token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *end);
 
 #endif
 ////////////////////////////////////////////////////////////////////////
