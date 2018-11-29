@@ -410,7 +410,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
             else
             {
                 PARSER_DBG_PRINT("EOF reached on stack but not from scanner\n");
-                goto err_syntactic;
+                goto err_syntactic_predictive;
             }
         }
         else if (isTerminal(top->name))
@@ -434,7 +434,6 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     if (ret_val != SUCCESS)
                         break;
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-                    PARSER_DBG_PRINT("Returned Token val: %s\n", sa_prec_ret->info.ptr->var.key);
 #endif
                     if (! generate_if(code_buffer, in_stat, stack_str, sa_prec_ret))
                         goto err_internal_main;
@@ -463,7 +462,6 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     if (ret_val != SUCCESS)
                         break;
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-                    PARSER_DBG_PRINT("Returned Token val: %s\n", sa_prec_ret->info.ptr->var.key);
 #endif
 
                     if (! generate_while_false(code_buffer, in_stat, sa_prec_ret))
@@ -630,7 +628,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
             else
             {
                 PARSER_DBG_PRINT("top != name ... top: %s\tact: %s\n", top->name, act->name);
-                goto err_syntactic;
+                goto err_syntactic_predictive;
             }
 
         }
@@ -751,7 +749,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
             else
             {
                 PARSER_DBG_PRINT("no corresponding rule ... top: %s\tact: %s\n", top->name, act->name);
-                goto err_syntactic;
+                goto err_syntactic_predictive;
             }
         }
 
@@ -763,7 +761,8 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
     switch (ret_val)
     {
         case ERR_INTERNAL:  goto err_internal_main;
-        case ERR_SYN:       goto err_syntactic;
+        case ERR_LEX:       goto err_lexical;
+        case ERR_SYN:       goto err_syntactic_precedenc;
         case ERR_SEM_UNDEF: goto err_sem_undef;
         case ERR_SEM_TYPE:  goto err_sem_type;
         case ERR_SEM_FUNC:  goto err_sem_func;
@@ -811,9 +810,14 @@ err_lexical:
     error_msg("lexical\n");
     return ERR_LEX;
 
-err_syntactic:
+err_syntactic_predictive:
     freeAll(gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token, id_token_tmp, sa_prec_ret);
-    error_msg("syntactic\n");
+    error_msg("syntactic - predictive analysis\n");
+    return ERR_SYN;
+
+err_syntactic_precedenc:
+    freeAll(gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token, id_token_tmp, sa_prec_ret);
+    error_msg("syntactic - precendec analysis\n");
     return ERR_SYN;
 
 err_sem_undef:
