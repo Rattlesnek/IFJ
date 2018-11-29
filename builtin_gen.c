@@ -154,7 +154,8 @@ token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
 	else
 		goto err_sem_type;
 
-	if (! print_or_append(code_buffer, in_stat, "INT2CHAR GF@$des GF@$tmp\n"))        //INT2CHAR takes value <0,255>
+	if (! print_or_append(code_buffer, in_stat, 
+		"INT2CHAR GF@$des GF@$tmp\n"))        //INT2CHAR takes value <0,255>
 		goto err_internal;
 
 	destroyToken(par);
@@ -205,7 +206,7 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
 
 	/*
 	GF@$tmp = par1
-	GF@$not = par2
+	GF@$eq = par2
 	GF@$des = return
 	*/
 //////////////////////**FIRST PARAMETR**////////////////////////////////
@@ -240,11 +241,11 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
 			goto err_sem;	//undefined ID
 
 		if (! print_or_append(code_buffer, in_stat,
-				"MOVE GF@$not %s@%s\n"
+				"MOVE GF@$eq %s@%s\n"
 				"TYPE GF@$type %s@%s\n"
 				"JUMPIFEQ $ord$position%llu$int$true GF@$type string@int\n"
 				"EXIT int@4\n"
-				"LABEL $ord$string%llu$string$true\n",
+				"LABEL $ord$position%llu$int$true\n",
 				frame, par2->info.ptr->var.key,
 				frame, par2->info.ptr->var.key,
 				label_n,
@@ -254,7 +255,7 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
 	else if (strcmp(par2->name, "INT") == 0)
 	{
 		if (! print_or_append(code_buffer, in_stat, 
-				"MOVE GF@$not int@%s\n", par2->info.string))
+				"MOVE GF@$eq int@%s\n", par2->info.string))
 			goto err_internal;
 	}
 	else
@@ -262,12 +263,12 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
 
 	if (! print_or_append(code_buffer, in_stat,
 			"STRLEN GF@$des GF@$tmp\n"
-			"LT GF@$type GF@$not GF@$des\n"      //position < strlen(string)
+			"LT GF@$type GF@$eq GF@$des\n"      //position < strlen(string)
 			"JUMPIFEQ $ord%llu GF@$type bool@true\n"
 			"MOVE GF@$des nil@nil\n"
 			"JUMP $ord$end%llu\n"
 			"LABEL $ord%llu\n"
-			"STRI2INT GF@$des GF@$tmp GF@$not\n"
+			"STRI2INT GF@$des GF@$tmp GF@$eq\n"
 			"LABEL $ord$end%llu\n",
 			label_n,
 			label_n,
@@ -328,7 +329,7 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 
 	/*
 	GF@$jump = string
-	GF@$not = begin
+	GF@$eq = begin
 	GF@$tmp = end
 	*/
 
@@ -366,7 +367,7 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 			goto err_sem; 		//Undefined ID
 
 		if (! print_or_append(code_buffer, in_stat, 
-				"MOVE GF@$not %s@%s\n"
+				"MOVE GF@$eq %s@%s\n"
 				"TYPE GF@$type %s@%s\n"
 				"JUMPIFEQ $substr$begin%llu$int$true GF@$type string@int\n"
 				"EXIT int@4\n"
@@ -379,7 +380,7 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 	}
 	else if (strcmp(begin->name, "INT") == 0)
 	{
-		printf("MOVE GF@$not int@%s\n",
+		printf("MOVE GF@$eq int@%s\n",
 		       begin->info.string);
 	}
 	else
@@ -416,21 +417,21 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 
 	/*
 	GF@$jump = string
-	GF@$not = begin
+	GF@$eq = begin
 	GF@$tmp = end
 	*/
 	if (! print_or_append(code_buffer, in_stat,
 			"STRLEN GF@$des GF@$jump\n"							//GF@$des = len(Str)
-			"LT GF@$type GF@$not int@0\n"                     	//I < 0
+			"LT GF@$type GF@$eq int@0\n"                     	//I < 0
 			"JUMPIFEQ $substr$nil%llu GF@$type bool@true\n"
-			"GT GF@$type GF@$not GF@$des\n"     				//I > lens(STR)
+			"GT GF@$type GF@$eq GF@$des\n"     				//I > lens(STR)
 			"JUMPIFEQ $substr$nil%llu GF@$type bool@true\n"
-			"EQ GF@$type GF@$not GF@$des\n" 				    //I = lens(STR)
+			"EQ GF@$type GF@$eq GF@$des\n" 				    //I = lens(STR)
 			"JUMPIFEQ $substr$nil%llu GF@$type bool@true\n"
 
 			"LT GF@$type GF@$tmp int@0\n"                       //N < 0
 			"JUMPIFEQ $substr$nil%llu GF@$type bool@true\n"
-			"ADD GF@$tmp GF@$not GF@$tmp\n"                	//GF@$tmp = begin + end == the last index
+			"ADD GF@$tmp GF@$eq GF@$tmp\n"                	//GF@$tmp = begin + end == the last index
 			"LT GF@$type GF@$des GF@$tmp\n"      			// LEN(STR) < IDX-max ==> do till end of STR
 			"JUMPIFEQ $substr$wholestr%llu GF@$type bool@true\n"
 
@@ -438,32 +439,32 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 /////////////////////////**ONLY REQUIRED SIZE**////////////////////////////////
 			"MOVE GF@$des string@\n"									//GF@$des = retval
 			"LABEL $substr$reqsize%llu\n"
-			"LT GF@$type GF@$not GF@$tmp\n"       						//BEGIN < IDX-max ==> again
+			"LT GF@$type GF@$eq GF@$tmp\n"       						//BEGIN < IDX-max ==> again
 			"JUMPIFEQ $substr$nextchar%llu GF@$type bool@true\n"
 			//    "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$end%llu\n"    //BEGIN == IDX-max ==> once more
 			//   "JUMPIFEQ $substr$nextchar%llu %s@$substr$cmp%llu bool@true\n"
 			"JUMP $substr$end%llu\n"
 
 			"LABEL $substr$nextchar%llu\n"
-			"GETCHAR GF@$type GF@$jump GF@$not\n"
+			"GETCHAR GF@$type GF@$jump GF@$eq\n"
 			"CONCAT GF@$des GF@$des GF@$type\n"
-			"ADD %GF@$not GF@$not int@1\n"
+			"ADD %GF@$eq GF@$eq int@1\n"
 			"JUMP $substr$reqsize%llu\n"
 
 /////////////////////////**TILL THE END OF STRING**////////////////////////////////
 			"MOVE GF@$tmp GF@$des\n"				//GF@$tmp = len(str)
 			"MOVE GF@$des string@\n"
 			"LABEL $substr$wholestr%llu\n"
-			"LT GF@$type GF@$not GF@$tmp\n"    //BEGIN < LEN(STR) ==> again
+			"LT GF@$type GF@$eq GF@$tmp\n"    //BEGIN < LEN(STR) ==> again
 			"JUMPIFEQ $substr$nextcharwhole%llu GF@$type bool@true\n"
 			//    "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$lenstr%llu\n"    //BEGIN == LEN(STR) ==> once more
 			//    "JUMPIFEQ $substr$nextcharwhole%llu %s@$substr$cmp%llu bool@true\n"
 			"JUMP $substr$end%llu\n"
 
 			"LABEL $substr$nextcharwhole%llu\n"
-			"GETCHAR GF@$type GF@$jump GF@$not\n"
+			"GETCHAR GF@$type GF@$jump GF@$eq\n"
 			"CONCAT GF@$des GF@$des GF@$type\n"
-			"ADD GF@$not GF@$not int@1\n"
+			"ADD GF@$eq GF@$eq int@1\n"
 			"JUMP $substr$wholestr%llu\n"
 
 			"LABEL $substr$nil%llu\n"
@@ -633,10 +634,20 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack, list_t *code_buffer, bool
 			}
 		}
 
-		print_or_append(code_buffer, in_stat, "WRITE %s@%s\n", param, print);
+		if (! print_or_append(code_buffer, in_stat, "WRITE %s@%s\n", param, print))
+			goto err_internal;
 		destroyToken(tmp); // ????
 	}
 
+	label_n++;
+	free(print);
+	return des;
+
+err_internal:
+	destroyToken(tmp);
+	destroyToken(des);
+	info.ptr = NULL;
+	des =  createToken("ERR_INT", info);
 	label_n++;
 	free(print);
 	return des;
