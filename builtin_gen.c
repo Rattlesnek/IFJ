@@ -110,7 +110,7 @@ token_t *length(symtable_t *symtab, token_t *par)
 }
 
 //RETURN ascii char of value par<0,255> "chr(42)"
-token_t *chr(symtable_t *symtab, token_t *par)
+token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par)
 {
 	static unsigned long long label_n = 0;
 	char name[24];
@@ -124,68 +124,69 @@ token_t *chr(symtable_t *symtab, token_t *par)
 	if (strcmp(symtab->name, "$GT" ) == 0)
 		strcpy(frame, "GF");
 
-	//"LABEL CHR\n"
-	//"PUSHFRAME\n"
-	//
-	printf("DEFVAR %s@%s\n"
-	       "MOVE %s@%s string@\n"
-	       "DEFVAR %s@$chr$tmp%llu\n",
-	       frame, name,
-	       frame, name,
-	       frame, label_n);
+	if (! print_or_append(code_buffer, in_stat, "MOVE GF@$des string@\n"))
+		goto err_internal;
 
 	if (strcmp(par->name, "ID") == 0)
 	{
-		if (symtab_find(symtab, par->info.ptr->var.key) == NULL)
-		{
-			//Variable doesn't exist
-			printf("EXIT int@4\n");
-			label_n++;
-			destroyToken(par);
-			free(des);
-			token_info_t info1;
-			token_t *error = createToken("ERR_SEM", info1);
-			return error;
-		}
-
-		printf("MOVE %s@$chr$tmp%llu %s@%s\n"
-		       "DEFVAR %s@$chr$tmp%llu$type\n"
-		       "TYPE %s@$chr$tmp%llu$type %s@%s\n"
-		       "JUMPIFEQ $chr$tmp%llu$int$true %s@$chr$tmp%llu$type string@int\n"
-		       "EXIT int@4\n"
-		       "LABEL $chr$tmp%llu$int$true\n",
-		       frame, label_n, frame, par->info.ptr->var.key,
-		       frame, label_n,
-		       frame, label_n, frame, par->info.ptr->var.key,
-		       label_n, frame, label_n,
-		       label_n);
+		if (symtab_find(symtab, par->info.ptr->var.key) == NULL)	//ID has not been declareted
+			goto err_sem;
+			
+		if (! print_or_append(code_buffer, in_stat, 
+				"MOVE GF@$tmp %s@%s\n"
+				"TYPE GF@$type %s@%s\n"
+				"JUMPIFEQ $chr$tmp%llu$int$true GF@$type string@int\n"
+				"EXIT int@4\n"
+				"LABEL $chr$tmp%llu$int$true\n",
+				frame, par->info.ptr->var.key,
+				frame, par->info.ptr->var.key,
+				label_n,
+				label_n))
+			goto err_internal;
 	}
 	else if (strcmp(par->name, "INT") == 0)
 	{
-		printf("MOVE %s@$chr$tmp%llu int@%s\n",
-		       frame, label_n, par->info.string);
+		if (! print_or_append(code_buffer, in_stat,
+				"MOVE GF@$tmp int@%s\n",
+		      	par->info.string))
+			goto err_internal;
 	}
 	else
-	{
-		printf("EXIT int@4\n");
-		label_n++;
-		destroyToken(par);
-		destroyToken(des); // ??
-		token_info_t info1;
-		token_t *error = createToken("ERR_SEM", info1);
-		return error;
-	}
-	printf("INT2CHAR %s@%s %s@$chr$tmp%llu\n",        //INT2CHAR takes value <0,255>
-	       frame, name, frame, label_n);
-	//"POPFRAME\n"
-	//"RETURN\n"
+		goto err_sem_type;
+
+	if (! print_or_append(code_buffer, in_stat, "INT2CHAR GF@$des GF@$tmp\n"))        //INT2CHAR takes value <0,255>
+		goto err_internal;
 
 	destroyToken(par);
 	label_n++;
 	return des;
+
+err_internal:
+	label_n++;
+	destroyToken(par);
+	destroyToken(des);
+	info.ptr = NULL;
+	des = createToken("ERR_INTERNAL", info);
+	return des;
+
+err_sem:
+	label_n++;
+	destroyToken(par);
+	destroyToken(des);
+	info.ptr = NULL;
+	des = createToken("ERR_SEM_UNDEF", info);
+	return des;
+
+err_sem_type:
+	label_n++;
+	destroyToken(par);
+	destroyToken(des);
+	info.ptr = NULL;
+	des = createToken("ERR_SEM_TYPE", info);
+	return des;
 }
 
-token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == string, par2 == position(INT)
+token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == string, par2 == position(INT)
 {
 	static unsigned long long label_n = 0;
 	char name[24];
@@ -199,130 +200,112 @@ token_t *ord(symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == st
 	if (strcmp(symtab->name, "$GT" ) == 0)
 		strcpy(frame, "GF");
 
-	printf("DEFVAR %s@%s\n"
-	       "MOVE %s@%s int@0\n"
-	       "DEFVAR %s@$ord$string%llu\n"
-	       "DEFVAR %s@$ord$position%llu\n",
-	       frame, name,
-	       frame, name,
-	       frame, label_n,
-	       frame, label_n);
-
+	if (! print_or_append(code_buffer, in_stat, "MOVE GF@$des int@0\n"))
+		goto err_internal;
+		
+	/*
+	GF@$tmp = par1
+	GF@$not = par2
+	GF@$des = return
+	*/
 //////////////////////**FIRST PARAMETR**////////////////////////////////
 	if (strcmp(par1->name, "ID") == 0)
 	{
 		if (symtab_find(symtab, par1->info.ptr->var.key) == NULL)
-		{
-			//Variable doesn't exist
-			printf("EXIT int@4\n");
-			label_n++;
-			destroyToken(par1);
-			destroyToken(par2);
-			destroyToken(des);
-			token_info_t info1;
-			token_t *error = createToken("ERR_SEM", info1);
-			return error;
-		}
+			goto err_sem;
 
-		printf("MOVE %s@$ord$string%llu %s@%s\n"
-		       "DEFVAR %s@$ord$string%llu$type\n"
-		       "TYPE %s@$ord$string%llu$type %s@%s\n"
-		       "JUMPIFEQ $ord$string%llu$string$true %s@$ord$string%llu$type string@string\n"
-		       "EXIT int@4\n"
-		       "LABEL $ord$string%llu$string$true\n",
-		       frame, label_n, frame, par1->info.ptr->var.key,
-		       frame, label_n,
-		       frame, label_n, frame, par1->info.ptr->var.key,
-		       label_n, frame, label_n,
-		       label_n);
+		if (! print_or_append(code_buffer, in_stat, 
+				"MOVE GF@$tmp %s@%s\n"
+				"TYPE GF@$type %s@%s\n"
+				"JUMPIFEQ $ord$string%llu$string$true GF@$type string@string\n"
+				"EXIT int@4\n"
+				"LABEL $ord$string%llu$string$true\n",
+				frame, par1->info.ptr->var.key,
+				frame, par1->info.ptr->var.key,
+				label_n,
+				label_n))
+			goto err_internal;
 	}
 	else if (strcmp(par1->name, "STR") == 0)
 	{
-		printf("MOVE %s@$ord$string%llu string@%s\n",
-		       frame, label_n, par1->info.string);
+		if (! print_or_append(code_buffer, in_stat, "MOVE GF@$tmp string@%s\n", par1->info.string))
+			goto err_internal;
 	}
 	else
-	{
-		printf("EXIT int@4\n");
-		label_n++;
-		destroyToken(par1);
-		destroyToken(par2);
-		destroyToken(des);
-		token_info_t info1;
-		token_t *error = createToken("ERR_SEM", info1);
-		return error;
-	}
+		goto err_sem_type;
 //////////////////////**SECOND PARAMETR**////////////////////////////////
 	if (strcmp(par2->name, "ID") == 0)
 	{
 		if (symtab_find(symtab, par2->info.ptr->var.key) == NULL)
-		{
-			//Variable doesn't exist
-			printf("EXIT int@4\n");
-			label_n++;
-			destroyToken(par1);
-			destroyToken(par2);
-			destroyToken(des);
-			token_info_t info1;
-			token_t *error = createToken("ERR_SEM", info1);
-			return error;
-		}
+			goto err_sem;
 
-		printf("MOVE %s@$ord$position%llu %s@%s\n"
-		       "DEFVAR %s@$ord$positiong%llu$type\n"
-		       "TYPE %s@$ord$position%llu$type %s@%s\n"
-		       "JUMPIFEQ $ord$position%llu$int$true %s@$ord$position%llu$type string@int\n"
-		       "EXIT int@4\n"
-		       "LABEL $ord$string%llu$string$true\n",
-		       frame, label_n, frame, par2->info.ptr->var.key,
-		       frame, label_n,
-		       frame, label_n, frame, par2->info.ptr->var.key,
-		       label_n, frame, label_n,
-		       label_n);
+		if (! print_or_append(code_buffer, in_stat,
+				"MOVE GF@$not %s@%s\n"
+				"TYPE GF@$type %s@%s\n"
+				"JUMPIFEQ $ord$position%llu$int$true GF@$type string@int\n"
+				"EXIT int@4\n"
+				"LABEL $ord$string%llu$string$true\n",
+				frame, par2->info.ptr->var.key,
+				frame, par2->info.ptr->var.key,
+				label_n,
+				label_n))
+			goto err_internal;
 	}
 	else if (strcmp(par2->name, "INT") == 0)
 	{
-		printf("MOVE %s@$ord$position%llu int@%s\n",
-		       frame, label_n, par2->info.string);
+		if (! print_or_append(code_buffer, in_stat, 
+				"MOVE GF@$not int@%s\n", par2->info.string))
+			goto err_internal;
 	}
 	else
-	{
-		printf("EXIT int@4\n");
-		label_n++;
-		destroyToken(par1);
-		destroyToken(par2);
-		destroyToken(des);
-		token_info_t info1;
-		token_t *error = createToken("ERR_SEM", info1);
-		return error;
-	}
+		goto err_sem_type;
 
-	printf("DEFVAR %s@$ord$tmp%llu\n"
-	       "STRLEN %s@$ord$tmp%llu %s@$ord$string%llu\n"
-	       "DEFVAR %s@$ord$cmp%llu\n"
-	       "LT %s@$ord$cmp%llu %s@$ord$position%llu %s@$ord$tmp%llu\n"      //position < strlen(string)
-	       "JUMPIFEQ $ord%llu %s@$ord$cmp%llu bool@true\n"
-	       "MOVE %s@%s nil@nil\n"
-	       "JUMP $ord$end%llu\n"
-	       "LABEL $ord%llu\n"
-	       "STRI2INT %s@%s %s@$ord$string%llu %s@$ord$position%llu\n"
-	       "LABEL $ord$end%llu\n",
-	       frame, label_n,
-	       frame, label_n, frame, label_n,
-	       frame, label_n,
-	       frame, label_n, frame, label_n, frame, label_n,
-	       label_n, frame, label_n,
-	       frame, name,
-	       label_n,
-	       label_n,
-	       frame, name, frame, label_n, frame, label_n,
-	       label_n);
+	if (! print_or_append(code_buffer, in_stat,
+			"STRLEN GF@$des GF@$tmp\n"
+			"LT GF@$type GF@$not GF@$des\n"      //position < strlen(string)
+			"JUMPIFEQ $ord%llu GF@$type bool@true\n"
+			"MOVE GF@$des nil@nil\n"
+			"JUMP $ord$end%llu\n"
+			"LABEL $ord%llu\n"
+			"STRI2INT GF@$des GF@$tmp GF@$not\n"
+			"LABEL $ord$end%llu\n",
+			label_n,
+			label_n,
+			label_n,
+			label_n))
+		goto err_internal;
 
 	destroyToken(par1);
 	destroyToken(par2);
 	label_n++;
 	return des;
 
+err_internal:
+	label_n++;
+	destroyToken(par1);
+	destroyToken(par2);
+	destroyToken(des);
+	info.ptr = NULL;
+	des = createToken("ERR_INTERNAL", info);
+	return des;
+
+err_sem:
+	label_n++;
+	destroyToken(par1);
+	destroyToken(par2);
+	destroyToken(des);
+	info.ptr = NULL;
+	des = createToken("ERR_SEM", info);
+	return des;
+
+err_sem_type:
+	label_n++;
+	destroyToken(par1);
+	destroyToken(par2);
+	destroyToken(des);
+	info.ptr = NULL;
+	des = createToken("ERR_SEM_TYPE", info);
+	return des;
 }
 
 token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *end)
