@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include "token.h"
 #include "symtable.h"
+#include "list.h"
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -162,7 +163,7 @@ int type(token_t *param1, token_t *param2);
  *
  * @return     { description_of_the_return_value }
  */
-token_t *nil(token_t *op, token_t *par1, token_t *par2);
+token_t *nil(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -173,7 +174,7 @@ token_t *nil(token_t *op, token_t *par1, token_t *par2);
  *
  * @return     { description_of_the_return_value }
  */
-token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool variant);
+token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool variant, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -184,7 +185,7 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
  *
  * @return     { description_of_the_return_value }
  */
-token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
+token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -196,7 +197,7 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
  *
  * @return     { description_of_the_return_value }
  */
-token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched);
+token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -207,7 +208,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
  *
  * @return     { description_of_the_return_value }
  */
-token_t *int_str(token_t *op, token_t *par1, token_t *par2);
+token_t *int_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -218,7 +219,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2);
  *
  * @return     { description_of_the_return_value }
  */
-token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
+token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -230,7 +231,7 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
  *
  * @return     { description_of_the_return_value }
  */
-token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched);
+token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -242,7 +243,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
  *
  * @return     { description_of_the_return_value }
  */
-token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched);
+token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -253,7 +254,7 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
  *
  * @return     { description_of_the_return_value }
  */
-token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
+token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -265,7 +266,7 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab);
  *
  * @return     { description_of_the_return_value }
  */
-token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched);
+token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -277,7 +278,7 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
  *
  * @return     { description_of_the_return_value }
  */
-token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched);
+token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
@@ -288,7 +289,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
  *
  * @return     { description_of_the_return_value }
  */
-token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *symtab);
+token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *symtab, list_t *code_buffer, bool in_stat);
 
 
 #endif
