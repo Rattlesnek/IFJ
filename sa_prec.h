@@ -27,6 +27,7 @@
 #include "dynamic_str.h"
 #include "queue.h"
 #include "symtable.h"
+#include "list.h"
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
 ////////////////////////////////////////////////////////////////////////
@@ -79,7 +80,8 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
-///
+
+
 /* 
  * @brief Operator-precedence parser
  *
@@ -90,7 +92,8 @@ typedef enum {
  *          false     If analysed expression is incorrect 
  */   
 int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtable, 
-             symtable_t *func_symtable, token_t **ret_token);
+             symtable_t *func_symtable, token_t **ret_token, list_t *code_buffer,
+             bool in_stat);
 
 
 

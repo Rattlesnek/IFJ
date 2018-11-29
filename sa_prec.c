@@ -32,6 +32,7 @@
 #include "stack_tkn.h"
 #include "code_gen.h"
 #include "builtin_gen.h"
+#include "list.h"
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
@@ -322,8 +323,7 @@ char *sa_retType(char *type, char *gl_lf)
     return NULL;
 }
 
-token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable)
-{
+token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable) {
     DEBUG_PRINT("=>sa_callFunc: %d\n", is_builtin);
     if(!is_builtin)
     {
@@ -452,8 +452,8 @@ bool sa_isOperator(table_elem_t term)
  * @return  true      If analysed expression is correct  
  *          false     If analysed expression is incorrect 
  */   
-int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, token_t **ret_token)
-{
+int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, token_t **ret_token, 
+            list_t *code_buffer, bool in_stat) {
     stack_sa_t *stack = stc_init();
     token_info_t info;
     token_t *empty_token = createToken("$", info);
@@ -606,7 +606,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
 
-                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab);
+                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
                     if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
                         handleError(err);
@@ -639,7 +639,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
 
-                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab);
+                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
                     if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
                         handleError(err);
@@ -672,7 +672,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
 
-                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab);
+                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
                     if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
                         handleError(err); 
@@ -705,7 +705,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
 
-                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab);
+                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
                     if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
                         handleError(err); 
@@ -740,7 +740,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if(term != _sml_)
                         goto fail_end;
                      
-                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab);
+                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
                     if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
                         handleError(err); 
@@ -1002,7 +1002,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         stc_print(stack);
 
 /* Tohle prijde pravdepodobne vymazat. */
-#if 1
+#if 0
         if(sa_detectSucEnd(stack, token_term))
         {
             if(detect_func)
