@@ -6,3 +6,18 @@
 
 # Unignore all dirs
 !*/
+
+# Unignore Makefile
+!Makefile
+
+# Unignore script things
+!script/*
+
+# Ignore tests
+script/tests/*/logs/
+
+# Ignore hidden 
+.*
+
+# Unignore .gitignore
+!.gitignore

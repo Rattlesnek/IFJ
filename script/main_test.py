@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
 import subprocess
@@ -38,14 +38,14 @@ def prepare_filenames(folder):
     return test_input, user_input, generate, inter_out, ruby_out, valgrind
 
 
-def return_call(names):
+def return_call(names, run_valgrind):
     with open(names[0], "r") as fr:
         first_line = fr.readline().strip()
 
-    add = ' false 0'
+    add = ' false 0 ' + run_valgrind
     if first_line.startswith('# ERROR'):
         err_name = first_line.replace('# ERROR', '').strip()
-        add = ' true ' + str(errors[err_name])
+        add = ' true ' + str(errors[err_name] + ' ' + run_valgrind)
 
     call = './test_run.sh'
     for name in names:
@@ -55,23 +55,29 @@ def return_call(names):
     return call
 
 
-def run_test(folder):
+def run_test(folder, run_valgrind):
     names = prepare_filenames(folder)
     if not (os.path.isfile(names[0]) and os.path.isfile(names[1])):
         raise TestFilesNotFound(folder)
     
-    call = return_call(names)
+    call = return_call(names, run_valgrind)
     
-    print(folder[6:], end=" ... ", flush=True)
+    print("{0:.<20}".format(folder[6:]), end=" ", flush=True)
     subprocess.call(call, shell=True)
 
 
 try:
+    if len(sys.argv) == 1:
+        run_valgrind = 'false'
+    else:
+        if sys.argv[1] == "-v":
+            run_valgrind = 'true'
+
     check_all_needed_files()
     for folder in sorted(os.listdir('tests')):
         folder = 'tests/' + folder
         if os.path.isdir(folder):
-            run_test(folder)
+            run_test(folder, run_valgrind)
 except BinariesNotFound:
     print('One of files: ../parser ./ic18int ./ifj18.rb is missing')
     sys.exit(1)

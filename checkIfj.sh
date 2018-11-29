@@ -52,10 +52,10 @@ test_function() {
 
 # BUILTIN FUNKCE
 
-if [[ "${1}" == "-builtin" ]]
+if [[ "${1}" == "-builtin" ]] || [[ "$1" == "-a" ]]
 then
 
-    if [[ "${2}" == "-success" ]]
+    if [[ "${2}" == "-success" ]] || [[ "$1" == "-a" ]]
     then
         echo "--------------return SUCCESS--------------"
         test_function "a = inputs" $SUCCESS $3
@@ -73,7 +73,7 @@ then
         test_function "print \"tortuga\",1" $SUCCESS $3
     fi
 
-    if [[ "${2}" == "-err_sem_func" ]]
+    if [[ "${2}" == "-err_sem_func" ]] || [[ "$1" == "-a" ]]
     then
         echo "--------------return ERR_SEM_FUNC--------------"
         test_function "a = inputs 1" $ERR_SEM_FUNC $3
@@ -90,7 +90,7 @@ then
         test_function "a = ord(\"string\", 1, 2)" $ERR_SEM_FUNC $3
     fi
 
-    if [[ "${2}" == "-err_sem_type" ]]
+    if [[ "${2}" == "-err_sem_type" ]] || [[ "$1" == "-a" ]]
     then
         test_function "a = chr \"tortuga\"" $ERR_SEM_TYPE $3
         test_function "a = chr(\"tortuga\")" $ERR_SEM_TYPE $3
@@ -103,9 +103,9 @@ then
 fi
 
 # E
-if [[ "$1" == "-expr" ]]
+if [[ "$1" == "-expr" ]] || [[ "$1" == "-a" ]]
 then
-    if [[ "${2}" == "-success" ]]
+    if [[ "${2}" == "-success" ]] || [[ "$1" == "-a" ]]
     then
         test_function "a = 1+1" $SUCCESS $3
         test_function "a = 1-1" $SUCCESS $3
@@ -114,15 +114,17 @@ then
         test_function "a = (1+1)/2*3" $SUCCESS $3
     fi
 
-    if [[ "${2}" == "-err_syn" ]]
+    if [[ "${2}" == "-err_syn" ]] || [[ "$1" == "-a" ]]
     then
         test_function "a = 1++1" $ERR_SYN $3
         test_function "a = -1" $ERR_SYN $3
+        test_function "a = /1" $ERR_SYN $3
+        test_function "a = *1" $ERR_SYN $3
         test_function "a = 2.3 -- 2" $ERR_SYN $3
     fi
 fi
 
-if [[ "$1" == "--help" ]] || [[ $# -eq 0 ]]
+if [[ "$1" == "--help" ]] || [[ $# -eq 0 ]] 
 then
     printf "./test.sh [-type-of-test] [-type-of-error] [-valgrind]\n"
     printf "[-type-of-test ]: -builtin (to test builtin functions)\n"

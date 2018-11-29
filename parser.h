@@ -26,8 +26,11 @@
 
 #include <stdlib.h>
 
+#include "stack_tkn.h"
+#include "stack_str.h"
 #include "queue.h"
 #include "dynamic_str.h"
+#include "list.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
@@ -130,7 +133,8 @@ typedef enum {
 
 int ll_tableFind(char *nonterm, char *term);
 
-int parser(dynamicStr_t *sc_str, queue_t *que);
+
+int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, list_t *defvar_buffer, dynamicStr_t *sc_str, queue_t *que);
 
 
 static inline int isTerminal(char *name)

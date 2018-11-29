@@ -1,0 +1,11 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+
+WRITE string@test_comments_2\010
+WRITE string@test_comments_3\010
+WRITE string@test_comments_7\010
+WRITE string@test_comments

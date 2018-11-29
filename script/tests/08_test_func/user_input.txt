@@ -7,28 +7,26 @@ DEFVAR GF@$type
 
 
 JUMP $end$function$0
-LABEL fun
+LABEL fun_1
 PUSHFRAME
 DEFVAR LF@%retval
 MOVE LF@%retval nil@nil
 DEFVAR LF@a
 MOVE LF@a LF@%1
 
-CREATEFRAME
-DEFVAR TF@%1
-MOVE TF@%1 LF@a
-CALL f
-DEFVAR LF@c
-MOVE LF@c TF@%retval
-WRITE LF@c
+WRITE LF@a
 
 POPFRAME
 RETURN
 LABEL $end$function$0
 
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 int@1
+CALL fun_1
 
 JUMP $end$function$1
-LABEL f
+LABEL fun_2
 PUSHFRAME
 DEFVAR LF@%retval
 MOVE LF@%retval nil@nil
@@ -43,5 +41,5 @@ LABEL $end$function$1
 
 CREATEFRAME
 DEFVAR TF@%1
-MOVE TF@%1 int@25
-CALL fun
+MOVE TF@%1 int@1
+CALL fun_2

@@ -26,7 +26,7 @@ run_with_valgrind()
     fi
 }
 
-if [[ $# == 8 ]] && [[ -f $1 ]] && [[ -f $2 ]]
+if [[ $# == 9 ]] && [[ -f $1 ]] && [[ -f $2 ]]
 then
     testing=$1
     user_input=$2
@@ -36,8 +36,21 @@ then
     valgr=$6
     err_test=$7
     expected_err=$8
+    run_valgr=$9
 
-    run_with_valgrind $testing $generate $valgr
+    if [[ "$run_valgr" == "true" ]]
+    then
+        run_with_valgrind $testing $generate $valgr
+    else
+        ../parser <$testing >$generate
+        if [[ $? == $SUCCESS ]]
+        then
+            printf "${GREEN}compile ok ${NC}"
+        else
+            printf "${RED}compile fail (exit code: $?)\n${NC}" 
+            exit
+        fi
+    fi
 
     if [[ "$err_test" == "false" ]]
     then
@@ -53,8 +66,7 @@ then
             printf "${RED}FAIL${NC}\n"
         fi
 
-    elif [[ "$err_test" == "true" ]]
-    then
+    else
         ../parser <$testing >$generate 2>/dev/null
         return_code=$?
         

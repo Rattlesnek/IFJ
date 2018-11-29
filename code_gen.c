@@ -33,7 +33,13 @@
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
-
+/*
+GF@$des
+GF@$jump
+GF@$not
+GF@$tmp
+GT@$type
+*/
 
 ////////////////////////////////////////////////////////////////////////
 ///                     FUNCTION DEFINITIONS                         ///
@@ -306,7 +312,18 @@ int type(token_t *param1, token_t *param2)
 char *params(symtable_t *symtab, char* param, token_t *par)
 {
     char *print;
-    if (strcmp(par->name, "INT_ID") == 0 || strcmp(par->name, "DBL_ID") == 0 || strcmp(par->name, "STR_ID") == 0 || strcmp(par->name, "ID") == 0 || strcmp(par->name, "BOOL_ID") == 0)
+    if (strcmp(par->name, "INT_ID") == 0 || strcmp(par->name, "DBL_ID") == 0 || strcmp(par->name, "STR_ID") == 0 || strcmp(par->name, "BOOL_ID") == 0)
+    {
+        which_frame(symtab, param);
+
+        print = malloc(sizeof(char) * (strlen("$des") + 1));
+        if (print == NULL)
+        {
+            return "ERR_INT";
+        }
+        strcpy(print, "$des");
+    }
+    else if (strcmp(par->name, "ID") == 0)
     {
         which_frame(symtab, param);
 
@@ -345,7 +362,7 @@ char *params(symtable_t *symtab, char* param, token_t *par)
     }
     return print;
 }
-token_t *nil(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
+token_t *nil(token_t *op, token_t *par1, token_t *par2)
 {
 
     if (strcmp(op->name, "==") != 0 && strcmp(op->name, "!=") != 0)
@@ -357,44 +374,33 @@ token_t *nil(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
 
     static unsigned long long label_n = 0;
 
-    char frame[3];
-    char name[20];
-    token_info_t info;
-    sprintf(name, "nil%llu", label_n);
-    info.ptr = symtab_elem_add(symtab, name);
+
+    token_info_t info = {.ptr = NULL};
+
+
     token_t *des = createToken("BOOL_ID", info);
 
-
-    which_frame(symtab, frame);
 
     if (strcmp(par2->name, "nil") == 0)
     {
         if (strcmp(op->name, "==") == 0)
         {
-            printf("DEFVAR %s@%s\n"
-                   "MOVE %s@%s bool@true\n",
-                   frame, name, frame, name);
+            printf("MOVE GF@$des bool@true\n");
         }
         else
         {
-            printf("DEFVAR %s@%s\n"
-                   "MOVE %s@%s bool@false\n",
-                   frame, name, frame, name);
+            printf("MOVE GF@$des bool@false\n");
         }
     }
     else
     {
         if (strcmp(op->name, "==") == 0)
         {
-            printf("DEFVAR %s@%s\n"
-                   "MOVE %s@%s bool@false\n",
-                   frame, name, frame, name);
+            printf("MOVE GF@$des bool@false\n");
         }
         else
         {
-            printf("DEFVAR %s@%s\n"
-                   "MOVE %s@%s bool@true\n",
-                   frame, name, frame, name);
+            printf("MOVE GF@$des bool@true\n");
         }
     }
 
@@ -403,7 +409,6 @@ token_t *nil(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     destroyToken(par2);
     destroyToken(op);
     return des;
-
 }
 
 token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool variant)
@@ -416,23 +421,11 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
     char param1[10];
     char param2[10];
-    char frame[3];
-    char name[20];
+
     char div[2] = "";
-    token_info_t info;
-    if (variant == false)
-    {
-        sprintf(name, "INT%lluINT", label_n);
-    }
-    else
-    {
-        sprintf(name, "DBL%lluDBL", label_n);
-    }
+    token_info_t info = {.ptr = NULL};
 
-    info.ptr = symtab_elem_add(symtab, name);
     token_t *des = createToken("BOOL_ID", info);
-
-    which_frame(symtab, frame);
 
     char *print1 = params(symtab, param1, par1);
 
@@ -457,29 +450,16 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
         }
     }
 
-    printf("DEFVAR %s@%s\n", frame, name);
-    printf("%s%s %s@%s %s@%s %s@%s\n", div, operator(op->name, 0), frame, des->info.ptr->var.key,
-           param1, print1, param2, print2);
+    printf("%s%s GF@$des %s@%s %s@%s\n", div, operator(op->name, 0), param1, print1, param2, print2);
 
     if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
     {
-        printf("DEFVAR %s@%s$eq\n"
-               "EQ %s@%s$eq %s@%s %s@%s\n"
-               "OR %s@%s %s@%s$eq %s@%s\n",
-               frame,
-               des->info.ptr->var.key,//
-               frame,
-               des->info.ptr->var.key,
+        printf("EQ GF@$tmp %s@%s %s@%s\n"
+               "OR GF@$des GF@$tmp GF@$des\n",
                param2,
                print2,
                param1,
-               print1,//
-               frame,
-               des->info.ptr->var.key,
-               frame,
-               des->info.ptr->var.key,
-               frame,
-               des->info.ptr->var.key
+               print1
               );
     }
 
@@ -591,171 +571,37 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     static unsigned long long label_n = 0;
     char param1[10];
     char param2[10];
-    char frame[3];
-    char name[20];
-    token_info_t info;
-    sprintf(name, "INT%lluDBL", label_n);
-    info.ptr = symtab_elem_add(symtab, name);
+
+    token_info_t info = {.ptr = NULL};
+
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1;
-    char *print2;
-    which_frame(symtab, frame);
-    if (strcmp(par1->name, "INT_ID") == 0 || strcmp(par1->name, "DBL_ID") == 0)
-    {
-        if (strcmp(symtab->name, "$GT" ) == 0)
-        {
-            strcpy(param1, "GF");
-        }
-        else
-        {
-            strcpy(param1, "LF");
-        }
+    char *print1 = params(symtab, param1, par1);
 
-        print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
-        if (print1 == NULL)
-        {
-            free(des->name);
-            free(des);
-            token_info_t info1;
-            token_t *error = createToken("ERR_INT", info1);
-            return error;
-        }
-        strcpy(print1, par1->info.ptr->var.key);
-    }
-    else if (strcmp(par1->name, "INT" ) == 0 || strcmp(par1->name, "DBL") == 0)
-    {
-        if (strcmp(par1->name, "INT") == 0)
-        {
-            strcpy(param1, "int");
-        }
-        else if (strcmp(par1->name, "DBL") == 0)
-        {
-            strcpy(param1, "float");
-        }
+    char *print2 = params(symtab, param2, par2);
 
-        print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
-        if (print1 == NULL)
-        {
-            free(des->name);
-            free(des);
-            token_info_t info1;
-            token_t *error = createToken("ERR_INT", info1);
-            return error;
-        }
-        strcpy(print1, par1->info.string);
-    }
-    if (strcmp(par2->name, "INT_ID") == 0 || strcmp(par2->name, "DBL_ID") == 0)
-    {
-        if (strcmp(symtab->name, "$GT" ) == 0)
-        {
-            strcpy(param2, "GF");
-        }
-        else
-        {
-            strcpy(param2, "LF");
-        }
 
-        print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
-        if (print2 == NULL)
-        {
-            free(des->name);
-            free(des);
-            token_info_t info1;
-            token_t *error = createToken("ERR_INT", info1);
-            return error;
-        }
-        strcpy(print2, par2->info.ptr->var.key);
-
-    }
-    else if (strcmp(par2->name, "INT") == 0 || strcmp(par2->name, "DBL") == 0)
-    {
-        if (strcmp(par2->name, "INT") == 0)
-        {
-            strcpy(param2, "int");
-        }
-        else if (strcmp(par2->name, "DBL") == 0)
-        {
-            strcpy(param2, "float");
-        }
-
-        print2 = malloc(sizeof(char) * (strlen(par2->info.string) + 1));
-        if (print2 == NULL)
-        {
-            free(des->name);
-            free(des);
-            token_info_t info1;
-            token_t *error = createToken("ERR_INT", info1);
-            return error;
-        }
-        strcpy(print2, par2->info.string);
-    }
-
-    printf("DEFVAR %s@%s\n", frame, name);
-    printf("DEFVAR %s@$tmp%llu$1\n"
-           "INT2FLOAT %s@$tmp%llu$1 %s@%s\n",
-           frame,
-           label_n,//
-           frame,
-           label_n,
+    printf("INT2FLOAT GF@$tmp %s@%s\n",
            param1,
            print1//
           );
 
     if (switched)
     {
-        printf("%s %s@%s %s@%s %s@$tmp%llu$1\n", operator(op->name, 0),
-               frame,
-               des->info.ptr->var.key,
-               param2,
-               print2,
-               frame,
-               label_n//
-              );
+        printf("%s GF@$des %s@%s GF@$tmp\n", operator(op->name, 0), param2, print2);
 
     }
     else
     {
-        printf("%s %s@%s %s@$tmp%llu$1 %s@%s\n", operator(op->name, 0),
-               frame,
-               des->info.ptr->var.key,
-               frame,
-               label_n,
-               param2,
-               print2
-              );
+        printf("%s GF@$des GF@$tmp %s@%s\n", operator(op->name, 0), param2, print2);
     }
 
     if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
     {
         //udelat == do temp promenne, OR temp promenne a vysledku operace predtim
 
-        printf("DEFVAR %s@%s$eq\n"
-               "DEFVAR %s@%s$or\n"
-               "MOVE %s@%s$or %s@%s\n"
-               "EQ %s@%s$eq %s@%s %s@$tmp%llu$1\n"
-               "OR %s@%s %s@%s$eq %s@%s$or\n",
-               frame,
-               des->info.ptr->var.key,//
-               frame,
-               des->info.ptr->var.key,//
-               frame,
-               des->info.ptr->var.key,//
-               frame,
-               des->info.ptr->var.key,
-               frame,
-               des->info.ptr->var.key,
-               param2,
-               print2,
-               frame,
-               label_n,//
-               frame,
-               des->info.ptr->var.key,
-               frame,
-               des->info.ptr->var.key,
-               frame,
-               des->info.ptr->var.key
-              );
+        printf("EQ GF@$eq %s@%s GF@$tmp\n"
+               "OR GF@$des GF@$eq GF@$des\n", param2, print2);
     }
     if (strcmp(op->name, "+") == 0 || strcmp(op->name, "-") == 0 || strcmp(op->name, "*") == 0 ||
             strcmp(op->name, "/") == 0)
@@ -920,7 +766,7 @@ which_frame(symtab, frame);
 }
 */
 
-token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
+token_t *int_str(token_t *op, token_t *par1, token_t *par2)
 {
     if (operator(op->name, 0) == NULL)
     {
@@ -929,25 +775,16 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     static unsigned long long label_n = 0;
 
 
-    char frame[3];
-    char name[20];
-    token_info_t info;
-    sprintf(name, "INT%lluSTR", label_n);
-    info.ptr = symtab_elem_add(symtab, name);
+    token_info_t info = {.ptr = NULL};
     token_t *des = createToken("BOOL_ID", info);
-    which_frame(symtab, frame);
 
     if (strcmp(op->name, "!=") == 0)
     {
-        printf("DEFVAR %s@%s\n"
-               "MOVE %s@%s bool@true\n",
-               frame, name, frame, name);
+        printf("MOVE GF@$des bool@true\n");
     }
     else if (strcmp(op->name, "==") == 0)
     {
-        printf("DEFVAR %s@%s\n"
-               "MOVE %s@%s bool@false\n",
-               frame, name, frame, name);
+        printf("MOVE GF@$des bool@false\n");
     }
     else
     {
@@ -955,6 +792,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         destroyToken(par1);
         destroyToken(par2);
         destroyToken(op);
+        free(des->name);
         free(des);
         token_info_t info1;
         token_t *error = createToken("ERR_SEM", info1);
@@ -1122,26 +960,16 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
     }
     static unsigned long long label_n = 0;
 
-
-    char frame[3];
-    char name[20];
-    token_info_t info;
-    sprintf(name, "DBL%lluSTR", label_n);
-    info.ptr = symtab_elem_add(symtab, name);
+    token_info_t info = {.ptr = NULL};
     token_t *des = createToken("BOOL_ID", info);
-    which_frame(symtab, frame);
 
     if (strcmp(op->name, "!=") == 0)
     {
-        printf("DEFVAR %s@%s\n"
-               "MOVE %s@%s bool@true\n",
-               frame, name, frame, name);
+        printf("MOVE GF@$des bool@true\n");
     }
     else if (strcmp(op->name, "==") == 0)
     {
-        printf("DEFVAR %s@%s\n"
-               "MOVE %s@%s bool@false\n",
-               frame, name, frame, name);
+        printf("MOVE GF@$des bool@false\n");
     }
     else
     {
@@ -1149,8 +977,9 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab)
         destroyToken(par1);
         destroyToken(par2);
         destroyToken(op);
+        free(des->name);
         free(des);
-        token_info_t info1;
+        token_info_t info1 = {.ptr = NULL};
         token_t *error = createToken("ERR_SEM", info1);
         return error;
     }
@@ -1172,65 +1001,15 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char param1[10];
     char frame[3];
     char name[20];
-    token_info_t info;
-    sprintf(name, "INT%lluID", label_n);
-    info.ptr = symtab_elem_add(symtab, name);
+    token_info_t info = {.ptr = NULL};
+
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1;
-    char *print2;
+    char *print1 = params(symtab, param1, par1);
+
+    char *print2 = params(symtab, NULL, par2);
+
     which_frame(symtab, frame);
-    if (strcmp(par1->name, "INT_ID") == 0)
-    {
-        if (strcmp(symtab->name, "$GT" ) == 0)
-        {
-            strcpy(param1, "GF");
-        }
-        else
-        {
-            strcpy(param1, "LF");
-        }
-
-        print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
-
-        if (print1 == NULL)
-        {
-            free(des->name);
-            free(des);
-            token_info_t info1;
-            token_t *error = createToken("ERR_INT", info1);
-            return error;
-        }
-        strcpy(print1, par1->info.ptr->var.key);
-    }
-    else if (strcmp(par1->name, "INT" ) == 0)
-    {
-
-        strcpy(param1, "int");
-
-        print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
-        if (print1 == NULL)
-        {
-            free(des->name);
-            free(des);
-            token_info_t info1;
-            token_t *error = createToken("ERR_INT", info1);
-            return error;
-        }
-        strcpy(print1, par1->info.string);
-    }
-
-    print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
-    if (print2 == NULL)
-    {
-        free(des->name);
-        free(des);
-        printf("%d\n", 99);
-        token_info_t info1;
-        token_t *error = createToken("ERR_INT", info1);
-        return error;
-    }
-    strcpy(print2, par2->info.ptr->var.key);
 
     printf("DEFVAR %s@%s\n", frame, name);
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
@@ -1453,63 +1232,14 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char param1[10];
     char frame[3];
     char name[20];
-    token_info_t info;
-    sprintf(name, "DBL%lluID", label_n);
-    info.ptr = symtab_elem_add(symtab, name);
+
+    token_info_t info = {.ptr = NULL};
+
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1;
-    char *print2;
-    which_frame(symtab, frame);
-    if (strcmp(par1->name, "DBL_ID") == 0)
-    {
-        if (strcmp(symtab->name, "$GT" ) == 0)
-        {
-            strcpy(param1, "GF");
-        }
-        else
-        {
-            strcpy(param1, "LF");
-        }
+    char *print1 = params(symtab, param1, par1);
 
-        print1 = malloc(sizeof(char) * (strlen(par1->info.ptr->var.key) + 1));
-        if (print1 == NULL)
-        {
-            free(des->name);
-            free(des);
-            token_info_t info1;
-            token_t *error = createToken("ERR_INT", info1);
-            return error;
-        }
-        strcpy(print1, par1->info.ptr->var.key);
-    }
-    else if (strcmp(par1->name, "DBL" ) == 0)
-    {
-
-        strcpy(param1, "float");
-
-        print1 = malloc(sizeof(char) * (strlen(par1->info.string) + 1));
-        if (print1 == NULL)
-        {
-            free(des->name);
-            free(des);
-            token_info_t info1;
-            token_t *error = createToken("ERR_INT", info1);
-            return error;
-        }
-        strcpy(print1, par1->info.string);
-    }
-
-    print2 = malloc(sizeof(char) * (strlen(par2->info.ptr->var.key) + 1));
-    if (print2 == NULL)
-    {
-        free(des->name);
-        free(des);
-        token_info_t info1;
-        token_t *error = createToken("ERR_INT", info1);
-        return error;
-    }
-    strcpy(print2, par2->info.ptr->var.key);
+    char *print2 = params(symtab, NULL, par2);
 
     printf("DEFVAR %s@%s\n", frame, name);
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
@@ -2583,7 +2313,7 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
             return int_dbl(op, param1, param2, symtab, 0);
             break;
         case INT_STR:
-            return int_str(op, param1, param2, symtab);
+            return int_str(op, param1, param2);
             break;
         case INT_ID:
             return int_id(op, param1, param2, symtab, 0);
@@ -2601,7 +2331,7 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
             return dbl_id(op, param1, param2, symtab, 0);
             break;
         case STR_INT:
-            return int_str(op, param2, param1, symtab);
+            return int_str(op, param2, param1);
             break;
         case STR_DBL:
             return dbl_str(op, param2, param1, symtab);
@@ -2628,10 +2358,10 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
             return null_null(param1, symtab);
             break;*/
         case ID_NIL:
-            return nil(op, param2, param1, symtab);
+            return nil(op, param2, param1);
             break;
         case NIL_ID:
-            return nil(op, param1, param2, symtab);
+            return nil(op, param1, param2);
             break;
 
         default: break;
@@ -2647,6 +2377,7 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
 
 int main()
 {
+    printf("GF@$des\nGF@$eq\nGF@$jump\nGF@$tmp\nGF@$type\n");
     elem_t elem;
     elem.var.key = "jsemID1";
     token_info_t info;
@@ -2660,11 +2391,9 @@ int main()
     token_t *token5 = createToken("ID", info6);
 
 
-    elem_t elem1;
-    elem1.var.key = "jsem0INT_ID";
     token_info_t info2;
-    info2.ptr = &elem1;
-    token_t *token1 = createToken("INT_ID", info2);
+    info2.string = "2";
+    token_t *token1 = createToken("INT", info2);
 
     elem_t elem2;
     elem2.var.key = "jsem0STR_ID";

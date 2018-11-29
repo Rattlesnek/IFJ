@@ -39,7 +39,7 @@ typedef struct list_element {
 
 
 typedef struct {
-    list_elem_t *act;
+    list_elem_t *last;
     list_elem_t *first;
 } list_t;
 
@@ -53,34 +53,22 @@ typedef struct {
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
-char *sprintf_alloc(const char *fmt, ...);
+bool print_or_append(list_t *list, bool append, const char *fmt, ...);
+
 
 list_t *list_create();
 
-void print_from_last(list_elem_t *element);
+
+void list_clean(list_t *list);
 
 
-void list_clean(list_t *L);
+void list_destroy(list_t *list);
 
 
-void list_destroy(list_t *L);
+bool list_append(list_t *list, char *buffer);
 
 
-bool list_insertFirst (list_t *L, char *buffer);
-
-
-void list_actFirst(list_t *L);
-
-
-bool list_insertPost (list_t *L, char *buffer);
-
-
-void list_actSucc (list_t *L);
-
-
-int list_isActive(list_t *L);
-
-
+void list_print_clean(list_t *list);
 
 
 
