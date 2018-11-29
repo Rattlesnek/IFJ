@@ -37,12 +37,12 @@
 ////////////////////////////////////////////////////////////////////////
 
 
-bool print_or_append(list_t *list, bool append, const char *fmt, ...)
+bool print_or_append(list_t *code_buffer, bool in_stat, const char *fmt, ...)
 {
     va_list arg;
     va_start(arg, fmt);
 
-    if (append)
+    if (in_stat)
     {
         size_t needed = vsnprintf(NULL, 0, fmt, arg) + 1;
         char *buffer = malloc(needed * sizeof(char));
@@ -56,7 +56,7 @@ bool print_or_append(list_t *list, bool append, const char *fmt, ...)
         va_start(arg, fmt);
         vsprintf(buffer, fmt, arg); 
 
-        if (! list_append(list, buffer))
+        if (! list_append(code_buffer, buffer))
         {
             va_end(arg);
             return false;
