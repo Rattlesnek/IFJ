@@ -34,11 +34,11 @@
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
 /*
-GF@$des
-GF@$jump
-GF@$not
-GF@$tmp
-GT@$type
+GF@$des\n"
+GF@$eq\n"
+GF@$jump\n"
+GF@$tmp\n"
+GF@$type\n\n"
 */
 
 ////////////////////////////////////////////////////////////////////////
@@ -634,117 +634,101 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     }
     else
     {
-        print_or_append(code_buffer, in_stat, "TYPE GF@$type %s@%s\n"
-                        "JUMPIFNEQ $%s$%llu$string GF@$type string@string\n", param2, print2, symtab->name, label_n);
-        print_or_append(code_buffer, in_stat, "DEFVAR %s@%s%llu$type\n"
-                        "DEFVAR %s@%s%llu$tmp\n"
-                        "DEFVAR %s@$tmp%llu$int\n"
-                        "TYPE %s@%s%llu$type %s@%s\n"
-                        "MOVE %s@%s%llu$tmp %s@%s\n"
-                        "MOVE %s@$tmp%llu$int %s@%s\n"
-                        "JUMPIFEQ $%s$%llu$int %s@%s%llu$type string@int\n"
-                        "JUMPIFEQ $%s$%llu$float %s@%s%llu$type string@float\n"
-                        "EXIT int@4\n"
-                        "LABEL $%s$%llu$float\n"
-                        "INT2FLOAT %s@$tmp%llu$int %s@%s\n"
-                        "LABEL $%s$%llu$int\n",
-                        frame,
-                        print2,
-                        label_n,//
-                        frame,
-                        print2,
-                        label_n,//
-                        frame,
-                        label_n,//
-                        frame,
-                        print2,
-                        label_n,
-                        frame,
-                        print2,//
-                        frame,
-                        print2,
-                        label_n,
-                        frame,
-                        print2,//
-                        frame,
-                        label_n,
-                        param1,
-                        print1,//
-                        symtab->name,
-                        label_n,
-                        frame,
-                        print2,
-                        label_n,//
-                        symtab->name,
-                        label_n,
-                        frame,
-                        print2,
-                        label_n,//
-                        symtab->name,
-                        label_n,//
-                        frame,
-                        label_n,
-                        param1,
-                        print1,//
-                        symtab->name,
-                        label_n//
-                       );
+        printf(/*_or_append(code_buffer, in_stat,*/
+            "TYPE GF@$type %s@%s\n"
+            "JUMPIFNEQ $%s$%llu$string GF@$type string@string\n"
+            "EXIT int@4\n"
+            "LABEL $%s$%llu$string\n"
+            "MOVE GF@$des %s@%s\n"
+            "JUMPIFNEQ $%s$%llu$float GF@$type string@float\n"
+            "INT2FLOAT GF@$des %s@%s\n"
+            "LABEL $%s$%llu$float\n",  param2, print2, symtab->name, label_n, symtab->name, label_n, param1,
+            print1, symtab->name, label_n, param1, print1, symtab->name, label_n);
 
-        if (switched)
+
+
+
+
+        if (!switched)
         {
-            print_or_append(code_buffer, in_stat, "%s %s@%s %s@%s%llu$tmp %s@$tmp%llu$int\n", operator(op->name, 0),
-                            frame,
-                            des->info.ptr->var.key,
-                            frame,
-                            print2,
-                            label_n,
-                            frame,
-                            label_n
-                           );
+            if (strcmp(op->name, "/") == 0)
+            {
+                print_or_append(code_buffer, in_stat,
+                                "TYPE GF@$tmp %s@%s\n"
+                                "JUMPIFNEQ $%s$%llu$int1 GF@$tmp string@int\n"
+                                "JUMPIFNEQ $%s$%llu$notZero1 %s@%s int@0\n"
+                                "EXIT int@9\n"
+                                "LABEL $%s$%llu$notZero1\n"
+                                "JUMP $%s$%llu$notZero\n"
+                                "LABEL $%s$%llu$int1\n", param2, print2, symtab->name, label_n, symtab->name, label_n, param2, print2,
+                                symtab->name, label_n, symtab->name, label_n, symtab->name, label_n);
+
+                print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$notZero %s@%s float@0x0p+0\n"
+                                "EXIT int@9\n"
+                                "LABEL $%s$%llu$notZero\n", symtab->name, label_n, param2, print2, symtab->name, label_n);
+            }
+
+            print_or_append(code_buffer, in_stat,
+                            "MOVE GF@$eq GF@$des\n"
+                            "%s GF@$des GF@$des %s@%s\n", operator(op->name, 0), param2, print2);
+
+            if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
+            {
+                //udelat == do temp promenne, OR temp promenne a vysledku operace predtim
+
+                print_or_append(code_buffer, in_stat, "EQ GF@$eq %s@%s GF@$eq\n"
+                                "OR GF@$des GF@$eq GF@$des\n", param2, print2);
+            }
+
+            if (strcmp(op->name, "/") == 0)
+            {
+                print_or_append(code_buffer, in_stat,
+                                "JUMPIFNEQ $%s$%llu$int GF@$type string@int\n"
+                                "FLOAT2INT GF@$des GF@$des\n"
+                                "LABEL $%s$%llu$int\n", symtab->name, label_n, symtab->name, label_n);
+            }
 
         }
         else
         {
-            print_or_append(code_buffer, in_stat, "%s %s@%s %s@$tmp%llu$int %s@%s%llu$tmp \n", operator(op->name, 0),
-                            frame,
-                            des->info.ptr->var.key,
-                            frame,
-                            label_n,
-                            frame,
-                            print2,
-                            label_n
-                           );
+            if (strcmp(op->name, "/") == 0)
+            {
+                print_or_append(code_buffer, in_stat,
+                                "TYPE GF@$tmp %s@%s\n"
+                                "JUMPIFNEQ $%s$%llu$int1 GF@$tmp string@int\n"
+                                "JUMPIFNEQ $%s$%llu$notZero1 GF@$des int@0\n"
+                                "EXIT int@9\n"
+                                "LABEL $%s$%llu$notZero1\n"
+                                "JUMP $%s$%llu$notZero\n"
+                                "LABEL $%s$%llu$int1\n", param2, print2, symtab->name, label_n, symtab->name, label_n,
+                                symtab->name, label_n, symtab->name, label_n, symtab->name, label_n);
+
+                print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$notZero GF@$des float@0x0p+0\n"
+                                "EXIT int@9\n"
+                                "LABEL $%s$%llu$notZero\n", symtab->name, label_n, symtab->name, label_n);
+            }
+
+            print_or_append(code_buffer, in_stat,
+                            "MOVE GF@$eq GF@$des\n"
+                            "%s GF@$des %s@%s GF@$des\n", operator(op->name, 0), param2, print2);
+
+            if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
+            {
+                //udelat == do temp promenne, OR temp promenne a vysledku operace predtim
+
+                print_or_append(code_buffer, in_stat, "EQ GF@$eq %s@%s GF@$eq\n"
+                                "OR GF@$des GF@$eq GF@$des\n", param2, print2);
+            }
+            if (strcmp(op->name, "/") == 0)
+            {
+                print_or_append(code_buffer, in_stat,
+                                "JUMPIFNEQ $%s$%llu$int GF@$type string@int\n"
+                                "FLOAT2INT GF@$des GF@$des\n"
+                                "LABEL $%s$%llu$int\n", symtab->name, label_n, symtab->name, label_n);
+            }
+
         }
-        if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
-        {
-            print_or_append(code_buffer, in_stat, "DEFVAR %s@%s$eq\n"
-                            "DEFVAR %s@%s$or\n"
-                            "MOVE %s@%s$or %s@%s\n"
-                            "EQ %s@%s$eq %s@%s%llu$tmp %s@$tmp%llu$int\n"
-                            "OR %s@%s %s@%s$eq %s@%s$or\n",
-                            frame,
-                            des->info.ptr->var.key,//
-                            frame,
-                            des->info.ptr->var.key,//
-                            frame,
-                            des->info.ptr->var.key,//
-                            frame,
-                            des->info.ptr->var.key,
-                            frame,
-                            des->info.ptr->var.key,
-                            frame,
-                            print2,
-                            label_n,
-                            frame,
-                            label_n,//
-                            frame,
-                            des->info.ptr->var.key,
-                            frame,
-                            des->info.ptr->var.key,
-                            frame,
-                            des->info.ptr->var.key
-                           );
-        }
+
 
     }
 
