@@ -387,7 +387,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
                            }
                 break;
             case _chr_   : array[0] = stcTkn_pop(stack);
-                           result = chr(symtable, array[0]);
+                           result = chr(code_buffer, in_stat, symtable, array[0]);
                            if(strcmp(result->name, "ERR_SEM") == 0)
                            {
                                 destroyToken(result);
@@ -396,7 +396,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
                 break;
             case _ord_   : array[0] = stcTkn_pop(stack);
                            array[1] = stcTkn_pop(stack);
-                           result = ord(symtable, array[0], array[1]);
+                           result = ord(code_buffer, in_stat, symtable, array[0], array[1]);
                            if(strcmp(result->name, "ERR_SEM") == 0)
                            {
                                 destroyToken(result);
@@ -406,7 +406,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
             case _substr_: array[0] = stcTkn_pop(stack);
                            array[1] = stcTkn_pop(stack);
                            array[2] = stcTkn_pop(stack);
-                           result = substr(symtable, array[0], array[1], array[2]);
+                           result = substr(code_buffer, in_stat, symtable, array[0], array[1], array[2]);
                            if(strcmp(result->name, "ERR_SEM") == 0)
                            {
                                 destroyToken(result);
