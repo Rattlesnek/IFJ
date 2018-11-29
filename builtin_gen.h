@@ -54,7 +54,7 @@
  * @param type Which form of function input we want(inputs,inputi,inputf)
  * @return token_t* 
  */
-token_t *input(symtable_t *symtab, int type);
+token_t *input(list_t *code_buffer, bool in_stat, symtable_t *symtab, int type);
 
 /**
  * @brief Returns ASCII value of char in string par1 on position par2
@@ -82,7 +82,7 @@ token_t *chr(list_t *code_buffer, bool in_stat,symtable_t *symtab, token_t *par)
  * @param par String, which length should be measured
  * @return token_t* 
  */
-token_t *length(symtable_t *symtab, token_t *par);
+token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par);
 
 /**
  * @brief Retrns substring starting on position begin and long end chars

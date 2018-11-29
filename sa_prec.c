@@ -372,14 +372,14 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
         destroyToken(func_name);
         switch(is_builtin)
         {
-            case _inputs_: result = input(symtable, 2);
+            case _inputs_: result = input(code_buffer, in_stat, symtable, 2);
                 break;
-            case _inputi_: result = input(symtable, 0);
+            case _inputi_: result = input(code_buffer, in_stat, symtable, 0);
                 break;
-            case _inputf_: result = input(symtable, 1);
+            case _inputf_: result = input(code_buffer, in_stat, symtable, 1);
                 break;
             case _length_: array[0] = stcTkn_pop(stack); 
-                           result = length(symtable, array[0]);
+                           result = length(code_buffer, in_stat, symtable, array[0]);
                            if(strcmp(result->name, "ERR_SEM") == 0)
                            {
                                 destroyToken(result);
