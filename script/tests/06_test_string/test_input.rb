@@ -13,4 +13,6 @@ print b
 a = "\"\t\xdddatum\xa2" + "\nasd"
 print(a)
 
-print("as\xd \xe \x1 \x10 \n")
+print("as\xd \xe\x1 \x10 \s \n")
+
+print "92i34457a87xz76*((&*^!)@(#_)( `(@&!*~    ':\"|\"{}{?><><>"

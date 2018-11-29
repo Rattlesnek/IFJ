@@ -1,151 +1,151 @@
 
 
 a = 1
-print "ok"
+print "ok "
 
 if 1 == 1 then
-    print "a"
+    print "a "
 else
-    print "b"
+    print "b "
 end
 
 
 if 1 == 2  then
-    print "c"
+    print "c "
 else
-    print "d"
+    print "d "
 end
 
 if  1 == 1.25E25 then
-    print "e"
+    print "e "
 else
-    print "f"
+    print "f "
 end
 
 if nil == nil then
-    print "g"
+    print "g "
 else
-    print "h"
+    print "h "
 end
 
 if 1 == nil then
-    print "i"
+    print "i "
 else
-    print "j"
+    print "j "
 end
 
 if  1 != 2 then
-    print "k"
+    print "k "
 else
-    print "l"
+    print "l "
 end
 
 if  1 != 1   then
-    print "m"
+    print "m "
 else
-    print "n"
+    print "n "
 end
 
 if  1 != 1.25E25  then
-    print "o"
+    print "o "
 else
-    print "p"
+    print "p "
 end
 
 if nil != nil    then
-    print "q"
+    print "q "
 else
-    print "r"
+    print "r "
 end
 
 if 1 != nil then
-    print "s"
+    print "s "
 else
-    print "t"
+    print "t "
 end
 
 if 1<1    then
-    print "u"
+    print "u "
 else
-    print "v"
+    print "v "
 end
 
 if 1<2           then
-    print "w"
+    print "w "
 else
-    print "x"
+    print "x "
 end
 
 if 1<0.1 then
-    print "y"
+    print "y "
 else
-    print "z"
+    print "z "
 end
 
 if 1<=1 then
-    print "1"
+    print "1 "
 else
-    print "2"
+    print "2 "
 end
 
 if 1<=2 then
-    print "3"
+    print "3 "
 else
-    print "4"
+    print "4 "
 end
 
 if 1<=0 then
-    print "5"
+    print "5 "
 else
-    print "6"
+    print "6 "
 end
 
 if 1<=2.5 then
-    print "7"
+    print "7 "
 else
-    print "8"
+    print "8 "
 end
 
 if 1>1 then
-    print "9"
+    print "9 "
 else
-    print "10"
+    print "10 "
 end
 
 if 1>2 then
-    print "11"
+    print "11 "
 else
-    print "12"
+    print "12 "
 end
 
 if 1>0.1 then
-    print "13"
+    print "13 "
 else
-    print "14"
+    print "14 "
 end
 
 if  1>=1 then
-    print "15"
+    print "15 "
 else
-    print "16"
+    print "16 "
 end
 
 if 1>=2 then
-    print "17"
+    print "17 "
 else
-    print "18"
+    print "18 "
 end
 
 if 1>=0 then
-    print "19"
+    print "19 "
 else
-    print "20"
+    print "20 "
 end
 
 if 1>=2.5 then
-    print "21"
+    print "21 "
 else
-    print "22"
+    print "22 "
 end
 
 
