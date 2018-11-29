@@ -15,3 +15,9 @@
 
 # Ignore tests
 script/tests/*/logs/
+
+# Ignore hidden 
+.*
+
+# Unignore .gitignore
+!.gitignore
