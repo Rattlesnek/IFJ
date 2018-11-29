@@ -31,6 +31,7 @@
 #include "stack_str.h"
 #include "token.h"
 #include "stack_tkn.h"
+#include "list.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///
@@ -94,7 +95,7 @@ token_t *length(symtable_t *symtab, token_t *par);
  */
 token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *end);
 
-token_t *print(symtable_t *symtab, stack_tkn_t *stack);
+token_t *print(symtable_t *symtab, stack_tkn_t *stack, list_t *code_buffer, bool in_stat);
 
 token_t *substr(symtable_t *symtab, token_t *string, token_t *begin, token_t *end);
 

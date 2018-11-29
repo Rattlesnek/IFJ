@@ -30,6 +30,7 @@
 #include "stack_str.h"
 #include "token.h"
 #include "stack_tkn.h"
+#include "list.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -637,7 +638,7 @@ token_t *input(symtable_t *symtab, int type)
 	return des;
 }
 
-token_t *print(symtable_t *symtab, stack_tkn_t *stack)
+token_t *print(symtable_t *symtab, stack_tkn_t *stack, list_t *code_buffer, bool in_stat)
 {
 	static unsigned long long label_n = 0;
 	token_info_t info;
@@ -712,7 +713,7 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack)
 			}
 		}
 
-		printf("WRITE %s@%s\n", param, print);
+		print_or_append(code_buffer, in_stat, "WRITE %s@%s\n", param, print);
 		destroyToken(tmp); // ????
 	}
 
