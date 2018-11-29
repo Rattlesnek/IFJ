@@ -61,25 +61,6 @@ typedef enum {
     _E_,        
 } table_elem_t;
 
-/* Number of parameters of built-in functions */
-typedef enum {
-  _inputs_ = 1,       // 0 param
-  _inputi_,           // 0 param
-  _inputf_,           // 0 param
-  _length_,           // 1 param
-  _chr_,              // 1 param
-  _ord_,              // 2 params
-  _substr_,           // 3 params
-  _print_,            // X params
-} func_params_t;
-
-////////////////////////////////////////////////////////////////////////
-///                      MACRO DEFINITIONS                           ///
-////////////////////////////////////////////////////////////////////////
-
-#define PREC_TABLE_ROWS 17   /* Max number of rows in prec_table     */
-#define PREC_TABLE_COLS 17   /* Max number of columns in prec_table */
-
 ////////////////////////////////////////////////////////////////////////
 ///                    FUNCTION DECLARATIONS                         ///
 ////////////////////////////////////////////////////////////////////////
