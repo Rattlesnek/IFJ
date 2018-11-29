@@ -127,13 +127,13 @@ bool generate_while_ending(stack_str_t *stack)
 {
     // end of while
     // endwhile has max length 74 bytes
-    char b[80];
-    sprintf(b,  "\nJUMP $while$%llu\n"
+    char buffer[80];
+    sprintf(buffer,  "\nJUMP $while$%llu\n"
                 "LABEL $end_while$%llu\n\n",
                 while_cnt, while_cnt
     );
 
-    if (! stcStr_push(stack, b))
+    if (! stcStr_push(stack, buffer))
         return false;
 
     while_cnt++;
@@ -164,11 +164,11 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
     }
     printf("\n");
 
-    char str[70];
+    char buffer[70];
     // end function has max length 60 bytes
-    sprintf(str, "\nPOPFRAME\nRETURN\nLABEL $end$function$%llu\n\n", func_cnt);
+    sprintf(buffer, "\nPOPFRAME\nRETURN\nLABEL $end$function$%llu\n\n", func_cnt);
 
-    if (! stcStr_push(stack_str, str))
+    if (! stcStr_push(stack_str, buffer))
         return false;
 
     func_cnt++;

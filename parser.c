@@ -418,7 +418,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 #ifdef DEBUG_PARSER
                     ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                     if (ret_val != SUCCESS)
                         break;
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
@@ -446,7 +446,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 #ifdef DEBUG_PARSER
                     ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                     if (ret_val != SUCCESS)
                         break;
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
@@ -475,7 +475,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 #ifdef DEBUG_PARSER
                     ret_val = prec_tmp(sc_str, que);
 #else
-                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                     if (ret_val != SUCCESS)
                         break;
 
@@ -679,7 +679,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 #ifdef DEBUG_PARSER
                 ret_val = prec_tmp(sc_str, que);
 #else
-                ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                 if (ret_val != SUCCESS)
                     break;
                 PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
@@ -711,7 +711,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 #ifdef DEBUG_PARSER
                 ret_val = prec_tmp(sc_str, que);
 #else
-                ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret);
+                ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                 if (ret_val != SUCCESS)
                     break;
                 PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
