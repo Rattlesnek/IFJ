@@ -1,0 +1,368 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+
+DEFVAR GF@a
+MOVE GF@a int@1
+WRITE string@ok
+EQ GF@$des int@1 int@1
+ok
+WRITE string@a
+WRITE string@b
+
+JUMPIFEQ $else$0 GF@$des bool@false
+
+
+JUMP $endif$0
+LABEL $else$0
+
+
+LABEL $endif$0
+
+EQ GF@$des int@1 int@2
+ok
+WRITE string@c
+WRITE string@d
+
+JUMPIFEQ $else$1 GF@$des bool@false
+
+
+JUMP $endif$1
+LABEL $else$1
+
+
+LABEL $endif$1
+
+INT2FLOAT GF@$tmp int@1
+EQ GF@$des GF@$tmp float@0x1.4adf4b7320335p+83
+ok
+WRITE string@e
+WRITE string@f
+
+JUMPIFEQ $else$2 GF@$des bool@false
+
+
+JUMP $endif$2
+LABEL $else$2
+
+
+LABEL $endif$2
+
+MOVE GF@$des bool@true
+ok
+WRITE string@g
+WRITE string@h
+
+JUMPIFEQ $else$3 GF@$des bool@false
+
+
+JUMP $endif$3
+LABEL $else$3
+
+
+LABEL $endif$3
+
+MOVE GF@$des bool@false
+ok
+WRITE string@i
+WRITE string@j
+
+JUMPIFEQ $else$4 GF@$des bool@false
+
+
+JUMP $endif$4
+LABEL $else$4
+
+
+LABEL $endif$4
+
+EQ GF@$des int@1 int@2
+ok
+WRITE string@k
+WRITE string@l
+
+JUMPIFEQ $else$5 GF@$des bool@false
+
+
+JUMP $endif$5
+LABEL $else$5
+
+
+LABEL $endif$5
+
+EQ GF@$des int@1 int@1
+ok
+WRITE string@m
+WRITE string@n
+
+JUMPIFEQ $else$6 GF@$des bool@false
+
+
+JUMP $endif$6
+LABEL $else$6
+
+
+LABEL $endif$6
+
+INT2FLOAT GF@$tmp int@1
+EQ GF@$des GF@$tmp float@0x1.4adf4b7320335p+83
+ok
+WRITE string@o
+WRITE string@p
+
+JUMPIFEQ $else$7 GF@$des bool@false
+
+
+JUMP $endif$7
+LABEL $else$7
+
+
+LABEL $endif$7
+
+MOVE GF@$des bool@false
+ok
+WRITE string@q
+WRITE string@r
+
+JUMPIFEQ $else$8 GF@$des bool@false
+
+
+JUMP $endif$8
+LABEL $else$8
+
+
+LABEL $endif$8
+
+MOVE GF@$des bool@true
+ok
+WRITE string@s
+WRITE string@t
+
+JUMPIFEQ $else$9 GF@$des bool@false
+
+
+JUMP $endif$9
+LABEL $else$9
+
+
+LABEL $endif$9
+
+LT GF@$des int@1 int@1
+ok
+WRITE string@u
+WRITE string@v
+
+JUMPIFEQ $else$10 GF@$des bool@false
+
+
+JUMP $endif$10
+LABEL $else$10
+
+
+LABEL $endif$10
+
+LT GF@$des int@1 int@2
+ok
+WRITE string@w
+WRITE string@x
+
+JUMPIFEQ $else$11 GF@$des bool@false
+
+
+JUMP $endif$11
+LABEL $else$11
+
+
+LABEL $endif$11
+
+INT2FLOAT GF@$tmp int@1
+LT GF@$des GF@$tmp float@0x1.999999999999ap-4
+ok
+WRITE string@y
+WRITE string@z
+
+JUMPIFEQ $else$12 GF@$des bool@false
+
+
+JUMP $endif$12
+LABEL $else$12
+
+
+LABEL $endif$12
+
+LT GF@$des int@1 int@1
+EQ GF@$tmp int@1 int@1
+OR GF@$des GF@$tmp GF@$des
+ok
+WRITE string@1
+WRITE string@2
+
+JUMPIFEQ $else$13 GF@$des bool@false
+
+
+JUMP $endif$13
+LABEL $else$13
+
+
+LABEL $endif$13
+
+LT GF@$des int@1 int@2
+EQ GF@$tmp int@2 int@1
+OR GF@$des GF@$tmp GF@$des
+ok
+WRITE string@3
+WRITE string@4
+
+JUMPIFEQ $else$14 GF@$des bool@false
+
+
+JUMP $endif$14
+LABEL $else$14
+
+
+LABEL $endif$14
+
+LT GF@$des int@1 int@0
+EQ GF@$tmp int@0 int@1
+OR GF@$des GF@$tmp GF@$des
+ok
+WRITE string@5
+WRITE string@6
+
+JUMPIFEQ $else$15 GF@$des bool@false
+
+
+JUMP $endif$15
+LABEL $else$15
+
+
+LABEL $endif$15
+
+INT2FLOAT GF@$tmp int@1
+LT GF@$des GF@$tmp float@0x1.4p+1
+EQ GF@$eq float@0x1.4p+1 GF@$tmp
+OR GF@$des GF@$eq GF@$des
+ok
+WRITE string@7
+WRITE string@8
+
+JUMPIFEQ $else$16 GF@$des bool@false
+
+
+JUMP $endif$16
+LABEL $else$16
+
+
+LABEL $endif$16
+
+GT GF@$des int@1 int@1
+ok
+WRITE string@9
+WRITE string@10
+
+JUMPIFEQ $else$17 GF@$des bool@false
+
+
+JUMP $endif$17
+LABEL $else$17
+
+
+LABEL $endif$17
+
+GT GF@$des int@1 int@2
+ok
+WRITE string@11
+WRITE string@12
+
+JUMPIFEQ $else$18 GF@$des bool@false
+
+
+JUMP $endif$18
+LABEL $else$18
+
+
+LABEL $endif$18
+
+INT2FLOAT GF@$tmp int@1
+GT GF@$des GF@$tmp float@0x1.999999999999ap-4
+ok
+WRITE string@13
+WRITE string@14
+
+JUMPIFEQ $else$19 GF@$des bool@false
+
+
+JUMP $endif$19
+LABEL $else$19
+
+
+LABEL $endif$19
+
+GT GF@$des int@1 int@1
+EQ GF@$tmp int@1 int@1
+OR GF@$des GF@$tmp GF@$des
+ok
+WRITE string@15
+WRITE string@16
+
+JUMPIFEQ $else$20 GF@$des bool@false
+
+
+JUMP $endif$20
+LABEL $else$20
+
+
+LABEL $endif$20
+
+GT GF@$des int@1 int@2
+EQ GF@$tmp int@2 int@1
+OR GF@$des GF@$tmp GF@$des
+ok
+WRITE string@17
+WRITE string@18
+
+JUMPIFEQ $else$21 GF@$des bool@false
+
+
+JUMP $endif$21
+LABEL $else$21
+
+
+LABEL $endif$21
+
+GT GF@$des int@1 int@0
+EQ GF@$tmp int@0 int@1
+OR GF@$des GF@$tmp GF@$des
+ok
+WRITE string@19
+WRITE string@20
+
+JUMPIFEQ $else$22 GF@$des bool@false
+
+
+JUMP $endif$22
+LABEL $else$22
+
+
+LABEL $endif$22
+
+INT2FLOAT GF@$tmp int@1
+GT GF@$des GF@$tmp float@0x1.4p+1
+EQ GF@$eq float@0x1.4p+1 GF@$tmp
+OR GF@$des GF@$eq GF@$des
+ok
+WRITE string@21
+WRITE string@22
+
+JUMPIFEQ $else$23 GF@$des bool@false
+
+
+JUMP $endif$23
+LABEL $else$23
+
+
+LABEL $endif$23
+
