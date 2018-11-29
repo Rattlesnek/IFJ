@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+
+#######################################################
+#
+#  FileName    [main_test.py]
+#
+#  SystemName  [Main test -- IFJ compiler]
+#
+#  Author      [Adam Pankuch]
+#
+#  Date        [26/11/2018]
+#
+########################################################
+
 import os
 import sys
 import subprocess

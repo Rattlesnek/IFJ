@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 
+#######################################################
+#
+#  FileName    [run.sh]
+#
+#  SystemName  [Script for runnin IFJ compiler]
+#
+#  Author      [Adam Pankuch]
+#
+#  Date        [23/11/2018]
+#
+########################################################
+
+
 SUCCESS=0
 ERR_LEX=1
 ERR_SYN=2
@@ -28,30 +41,6 @@ if [[ -f $1 ]]
 then
     cat $1 | ../parser >generated.IFJcode18
     ./ic18int generated.IFJcode18
-    case $? in 
-        $SUCCESS)
-            printf "SUCCESS\n"
-            ;;
-        $ERR_LEX)
-            printf "ERR_LEX\n"
-            ;;
-        $ERR_SYN)
-            printf "SYN\n"
-            ;;
-        $ERR_SEM_UNDEF)
-            ;;
-        $ERR_SEM_TYPE)
-            printf "TYPE\n"
-            ;;
-        $ERR_SEM_FUNC)
-            ;;
-        $ERR_SEM_OTHER)
-            ;;
-        $ERR_ZERO_DIV)
-            ;;
-        $ERR_INTERNAL)
-            ;;
-    esac
 else
     echo "HELP: ./run.sh file_with_ruby_code"
 fi
