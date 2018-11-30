@@ -84,8 +84,6 @@ bool generate_elsif(list_t *code_buffer, bool in_stat, token_t *cond);
 bool generate_else(list_t *code_buffer, bool in_stat, stack_str_t *stack);
 
 
-void inc_endif();
-
 /**
  * @brief Prepare expected label of while
  * 
