@@ -33,7 +33,7 @@ if 1 == nil then
 else
     print "j "
 end
-
+=begin
 if  1 != 2 then
     print "k "
 else
@@ -51,7 +51,7 @@ if  1 != 1.25E25  then
 else
     print "p "
 end
-
+=end
 if nil != nil    then
     print "q "
 else
