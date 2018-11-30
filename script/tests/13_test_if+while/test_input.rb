@@ -25,6 +25,7 @@ else
                     else
                     end
 
+                    j = j + 1
                     print j
                     print "\n"
                 end

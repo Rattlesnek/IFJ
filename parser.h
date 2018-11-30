@@ -98,13 +98,10 @@ typedef enum {
     ID_FUNC_21,
     PARAMS_GEN_22,
     PARAMS_GEN_23,
-    PARAMS_GEN_24,
+    P_BRACKETS_24,
     P_BRACKETS_25,
-    P_BRACKETS_26,
     P_BRACKETS_CONT_27,
     P_BRACKETS_CONT_28,
-    P_WITHOUT_29,
-    P_WITHOUT_30
 } rules_t;
 
 
@@ -115,11 +112,11 @@ typedef enum {
 #define EXPR_INCLUDE -1
 #define EXPR_INCLUDE_TWO -2
 
-#define LL_ROWS 12
+#define LL_ROWS 11
 #define LL_COLS 15
 
-#define RULES_ROWS 31
-#define RULES_COLS 7
+#define RULES_ROWS 28
+#define RULES_COLS 6
 
 
 ////////////////////////////////////////////////////////////////////////

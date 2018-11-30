@@ -1,4 +1,4 @@
-def fun_1 a,b,c
+def fun_1 (a,b,c)
     print a,b,c
 end
 

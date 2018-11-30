@@ -64,10 +64,9 @@ int ll_table[LL_ROWS][LL_COLS] = {
     {   12, 0,  0,  14, 12, 0,  13, 0,  0,  12, 0,  0,  12, 12, 12, },  // [end-list]
     {   15, 18, 17, 19, 15, 0,  16, 0,  0,  15, 0,  0,  15, 15, 15, },  // [if-list]
     {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  20, 21, 0,  },  // [id-func]
-    {   0,  0,  0,  0,  0,  0,  24, 0,  0,  22, 0,  0,  23, 0,  0,  },  // [params-gen]
-    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  26, 0,  25, 0,  0,  },  // [p-brackets]
-    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  28, 27, 0,  0,  0,  },  // [p-brackets-cont]
-    {   0,  0,  0,  0,  0,  0,  30, 0,  0,  0,  0,  29, 0,  0,  0,  }   // [p-without]
+    {   0,  0,  0,  0,  0,  0,  23, 0,  0,  22, 0,  0,  0,  0,  0,  },  // [params-gen]
+    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  25, 0,  24, 0,  0,  },  // [p-brackets]
+    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  27, 26, 0,  0,  0,  }   // [p-brackets-cont]
 };
 
 
@@ -89,21 +88,39 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
     /*END_LIST_14*/         { "end", },
     /*IF_LIST_15*/          { "[if-list]", "EOL", "[command]", },
     /*IF_LIST_16*/          { "[if-list]", "EOL", },
-    /*IF_LIST_17*/          { "[if-list]", "EOL", "then", "elif", },
+    /*IF_LIST_17*/          { "[if-list]", "EOL", "then", "elsif", },
     /*IF_LIST_18*/          { "[end-list]", "EOL", "else", },
     /*IF_LIST_19*/          { "end", },
     /*ID_FUNC_20*/          { "ID", },
     /*ID_FUNC_21*/          { "FUNC", },
     /*PARAMS_GEN_22*/       { "[p-brackets]", "(", },
-    /*PARAMS_GEN_23*/       { "[p-without]", "ID", },
-    /*PARAMS_GEN_24*/       { "EOL", },
-    /*P_BRACKETS_25*/       { "[p-brackets-cont]", "ID", },
-    /*P_BRACKETS_26*/       { "EOL", ")", },
-    /*P_BRACKETS_CONT_27*/  { "[p-brackets-cont]", "ID", ",", },
-    /*P_BRACKETS_CONT_28*/  { "EOL", ")", },
-    /*P_WITHOUT_29*/        { "[p-without]", "ID", ",", },
-    /*P_WITHOUT_30*/        { "EOL", },
+    /*PARAMS_GEN_23*/       { "EOL", },
+    /*P_BRACKETS_24*/       { "[p-brackets-cont]", "ID", },
+    /*P_BRACKETS_25*/       { "EOL", ")", },
+    /*P_BRACKETS_CONT_26*/  { "[p-brackets-cont]", "ID", ",", },
+    /*P_BRACKETS_CONT_27*/  { "EOL", ")", }
 };
+
+////////////////////////////////////////////////////////////////////////
+///                      MACRO DEFINITIONS                           ///
+////////////////////////////////////////////////////////////////////////
+
+#define HANDLE_ERROR(ret_val) do {                                      \
+        switch (ret_val)                                                \
+        {                                                               \
+            case SUCCESS:       break;                                  \
+            case ERR_LEX:       goto err_lexical;                       \
+            case ERR_SYN:       goto err_syntactic_precedenc;           \
+            case ERR_SEM_UNDEF: goto err_sem_undef;                     \
+            case ERR_SEM_TYPE:  goto err_sem_type;                      \
+            case ERR_SEM_FUNC:  goto err_sem_func;                      \
+            case ERR_SEM_OTHER: goto err_sem_other;                     \
+            case ERR_ZERO_DIV:  goto err_zero_div;                      \
+            case ERR_INTERNAL:  goto err_internal_main;                 \
+            default:            break;                                  \
+        }                                                               \
+    } while(0)
+
 
 ////////////////////////////////////////////////////////////////////////
 ///                     FUNCTION DEFINITIONS                         ///
@@ -156,7 +173,7 @@ int LLtableFind(char *nonterm, char *term)
         term_idx = IF_term;
     else if (strcmp(term, "else") == 0)
         term_idx = ELSE_term;
-    else if (strcmp(term, "elif") == 0)
+    else if (strcmp(term, "elsif") == 0)
         term_idx = ELIF_term;
     else if (strcmp(term, "end") == 0)
         term_idx = END_term;
@@ -413,17 +430,40 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     //  GENERATE IF  //
                     ///////////////////
                     expected_LABEL_if(in_stat, label_stat);
-                    in_stat = true;
                     
 #ifdef DEBUG_PARSER
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
-                    if (ret_val != SUCCESS)
-                        break;
+                    HANDLE_ERROR(ret_val);
+
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
+                    in_stat = true;
                     if (! generate_if(code_buffer, in_stat, stack_str, sa_prec_ret))
+                        goto err_internal_main;
+
+                    destroyToken(sa_prec_ret);
+                    sa_prec_ret = NULL;
+
+                    PARSER_DBG_PRINT("********** END ***********\n");
+                }
+                else if (strcmp(top->name, "elsif") == 0)
+                {
+                    PARSER_DBG_PRINT("*********** ELIF ***********\n");
+                    
+                    if (! generate_LABEL_elsif(code_buffer, in_stat, stack_str))
+                        goto err_internal_main;
+
+#ifdef DEBUG_PARSER
+                    ret_val = prec_tmp(sc_str, que);
+#else
+                    ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
+                    HANDLE_ERROR(ret_val);
+
+                    PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
+#endif              
+                    if (! generate_elsif(code_buffer, in_stat, sa_prec_ret))
                         goto err_internal_main;
 
                     destroyToken(sa_prec_ret);
@@ -431,6 +471,15 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 
                     get_new_token = true;
                     PARSER_DBG_PRINT("********** END ***********\n");
+                }
+                else if (strcmp(top->name, "else") == 0)
+                {
+                    PARSER_DBG_PRINT("*********** ELSE ***********\n");
+                    
+                    if (! generate_else(code_buffer, in_stat, stack_str))
+                        goto err_internal_main;
+
+                    PARSER_DBG_PRINT("********** END ***********\n");   
                 }
                 else if (strcmp(top->name, "while") == 0)
                 {
@@ -447,8 +496,8 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
-                    if (ret_val != SUCCESS)
-                        break;
+                    HANDLE_ERROR(ret_val);
+
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
 
@@ -463,7 +512,6 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     sa_prec_ret = NULL;
                     
                     //printf("in_stat: %d\n", in_stat);
-                    get_new_token = true;
                     PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "=") == 0)
@@ -476,8 +524,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     ret_val = prec_tmp(sc_str, que);
 #else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
-                    if (ret_val != SUCCESS)
-                        break;
+                    HANDLE_ERROR(ret_val);
 
                     if (sa_prec_ret == NULL)
                         PARSER_DBG_PRINT("token is NULL\n");
@@ -488,8 +535,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 #endif
 
                     ret_val = generate_var(code_buffer, defvar_buffer, in_stat, var_tab, id_key_tmp, sa_prec_ret); // TODO
-                    if (ret_val != SUCCESS)
-                        break;
+                    HANDLE_ERROR(ret_val);
 
                     // check if same name isnt used for function
                     if (symtab_find(fun_tab, id_key_tmp) != NULL)
@@ -501,14 +547,9 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     destroyToken(sa_prec_ret);
                     sa_prec_ret = NULL;
 
-                    get_new_token = true;
                     PARSER_DBG_PRINT("********** END ***********\n");
                 }
-                /*  else if (strcmp(top->name, "elif") == 0)
-                    {
-
-                    } */
-                else if (strcmp(act->name, "end") == 0 || strcmp(act->name, "else") == 0)
+                else if (strcmp(act->name, "end") == 0)
                 {
                     ////////////////////////////////
                     //  STACK POP GENERATED CODE  //
@@ -517,7 +558,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     char *generated_code = stcStr_top(stack_str);
                     //printf("=== generated_code ===\n%s================\n", generated_code);
                     //printf("=== label_stat ===\n%s================\n", label_stat);
-                    if (strncmp(generated_code, "\nPOPFRAME\nRETURN\n", strlen("\nPOPFRAME\nRETURN\n")) == 0)
+                    if (isFunctionEnd(generated_code))
                     {
 #ifdef PARSER_PRINT
                         PARSER_DBG_PRINT("LOCAL TABLE: ");
@@ -531,7 +572,22 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                         lc_var_tab = NULL;
                         var_tab = gl_var_tab;
                     }
-                    else if (strlen(label_stat) != 0 && strncmp(generated_code, label_stat, strlen(label_stat)) == 0)
+                    else if (strncmp(generated_code, "\nJUMP $endif$", strlen("\nJUMP $endif$")) == 0)
+                    {
+                        //printf("%s", generated_code);
+                        print_or_append(code_buffer, in_stat, "%s", generated_code);
+                        stcStr_pop(stack_str);
+                        print_or_append(code_buffer, in_stat, "%s", stcStr_top(stack_str));
+                        stcStr_pop(stack_str);
+                        generated_code = stcStr_top(stack_str);
+                    }
+                    
+                    //if (strncmp(generated_code, "LABEL $endif$", strlen("LABEL $endif$")) == 0)
+                    //    inc_endif();
+                    //printf("%s", generated_code);
+                    //printf("%s", label_stat);
+
+                    if (strlen(label_stat) != 0 && strncmp(generated_code, label_stat, strlen(label_stat)) == 0)
                     {
                         list_print_clean(defvar_buffer);
                         list_print_clean(code_buffer);
@@ -680,8 +736,8 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                 ret_val = prec_tmp(sc_str, que);
 #else
                 ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
-                if (ret_val != SUCCESS)
-                    break;
+                HANDLE_ERROR(ret_val);
+
                 PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
 
@@ -712,8 +768,8 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                 ret_val = prec_tmp(sc_str, que);
 #else
                 ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
-                if (ret_val != SUCCESS)
-                    break;
+                HANDLE_ERROR(ret_val);
+
                 PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
 
@@ -745,18 +801,6 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
     /////////////////////////////////////////
     ///         END OF MAIN LOOP          ///
     /////////////////////////////////////////
-
-    switch (ret_val)
-    {
-        case ERR_INTERNAL:  goto err_internal_main;
-        case ERR_LEX:       goto err_lexical;
-        case ERR_SYN:       goto err_syntactic_precedenc;
-        case ERR_SEM_UNDEF: goto err_sem_undef;
-        case ERR_SEM_TYPE:  goto err_sem_type;
-        case ERR_SEM_FUNC:  goto err_sem_func;
-        case ERR_SEM_OTHER: goto err_sem_other;
-        default:            break;
-    }
 
     //symtab_foreach(fun_tab, print_fun_info);
     if (! symtab_foreach(fun_tab, checkFun))
@@ -827,6 +871,11 @@ err_sem_other:
     freeAll(gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token, id_token_tmp, sa_prec_ret);
     error_msg("semantic - other\n");
     return ERR_SEM_OTHER;
+
+err_zero_div:
+    freeAll(gl_var_tab, fun_tab, lc_var_tab, param_arr, &id_key_tmp, &func_key_tmp, act, token, id_token_tmp, sa_prec_ret);
+    error_msg("zero division\n");
+    return ERR_ZERO_DIV;
 }
 
 

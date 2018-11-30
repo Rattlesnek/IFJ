@@ -1,9 +1,9 @@
-def fun a 
+def fun(a) 
     c = f a
     print c
 end
 
-def f a  
+def f  (a)  
     print a
 end 
 
