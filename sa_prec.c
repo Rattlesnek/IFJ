@@ -940,6 +940,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
                         
                         *ret_token = stc_tokPopTop(stack, &term); 
+                        printf("PUSHS GF@$des\n");
 
                     }
                     else
@@ -951,6 +952,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
                         token_info_t info;
                         *ret_token = createToken("%retval", info);
+                        printf("PUSHS GF@$des\n");
                         /*
                         *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
                         strcpy(*ret_code, "%retval");
@@ -963,7 +965,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
-                    stc_print(stack);
+                    printf("PUSHS GF@$des\n");
+                    //stc_print(stack);
                     /*
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
                     strcpy(*ret_code, result->info.ptr->var.key);
@@ -986,6 +989,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     */
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
+                    printf("PUSHS GF@$des\n");
                 }
                 //stc_print(stack);
                 //stcTkn_print(tok_stack);
