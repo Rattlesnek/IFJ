@@ -443,6 +443,17 @@ bool sa_isOperator(table_elem_t term)
     return false;
 }
 
+void pushToStack(token_t *token)
+{
+    if(strcmp(token->name, "INT") &&
+       strcmp(token->name, "STR") &&
+       strcmp(token->name, "DBL"))
+       {
+            printf("PUSHS GF@$des\n");
+       }
+
+    return;
+}
 
 /* 
  * @brief Operator-precedence parser
@@ -940,7 +951,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
                         
                         *ret_token = stc_tokPopTop(stack, &term); 
-                        printf("PUSHS GF@$des\n");
+                        pushToStack(*ret_token);
 
                     }
                     else
@@ -952,12 +963,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
                         token_info_t info;
                         *ret_token = createToken("%%retval", info);
-                        printf("PUSHS GF@$des\n");
+                        pushToStack(*ret_token);
+
                         /*
                         *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
                         strcpy(*ret_code, "%retval");
                         DEBUG_PRINT("=> Expr: %s\n", *ret_code);
                         */
+
                     }
                 }
                 else if(result != NULL)
@@ -965,13 +978,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
-                    printf("PUSHS GF@$des\n");
+                    pushToStack(*ret_token);
                     //stc_print(stack);
                     /*
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
                     strcpy(*ret_code, result->info.ptr->var.key);
                     DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
                     */
+
                 }
                 else
                 {
@@ -989,7 +1003,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     */
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
-                    printf("PUSHS GF@$des\n");
+
+                    pushToStack(*ret_token);
                 }
                 //stc_print(stack);
                 //stcTkn_print(tok_stack);
