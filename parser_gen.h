@@ -75,6 +75,17 @@ void expected_LABEL_if(bool in_stat, char label_stat[]);
 bool generate_if(list_t *code_buffer, bool in_stat, stack_str_t *stack, token_t *cond);
 
 
+bool generate_LABEL_elsif(list_t *code_buffer, bool in_stat, stack_str_t *stack);
+
+
+bool generate_elsif(list_t *code_buffer, bool in_stat, token_t *cond);
+
+
+bool generate_else(list_t *code_buffer, bool in_stat, stack_str_t *stack);
+
+
+void inc_endif();
+
 /**
  * @brief Prepare expected label of while
  * 
@@ -117,6 +128,10 @@ bool generate_while_false(list_t *code_buffer, bool in_stat, token_t *cond);
 bool generate_while_ending(stack_str_t *stack);
 
 
+
+
+bool isFunctionEnd(char *generated_code);
+
 /**
  * @brief Generate function definition
  * 
@@ -128,18 +143,6 @@ bool generate_while_ending(stack_str_t *stack);
  */
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr);
 
-
-/**
- * @brief Return right strings -- used in generate_var
- * 
- * @param var_tab 
- * @param right_val 
- * @param frame 
- * @param frame_or_type 
- * @param var_or_const 
- * @return int 
- */
-int return_right_strings(symtable_t *var_tab, token_t *right_val, char frame[3], char frame_or_type[7], char **var_or_const);
 
 
 /**

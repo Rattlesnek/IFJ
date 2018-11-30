@@ -38,6 +38,8 @@
 ////////////////////////////////////////////////////////////////////////
 
 static unsigned long long if_cnt = 0;       // counter for if labels
+static unsigned long long endif_cnt = 0;        // counter for endif
+
 static unsigned long long while_cnt = 0;    // counter for while lables
 static unsigned long long func_cnt = 0;     // counter for function encapsulate labels
 
@@ -62,27 +64,37 @@ void print_prolog()
 void expected_LABEL_if(bool in_stat, char label_stat[])
 {
     if (! in_stat)  
-        sprintf(label_stat, "\nLABEL $endif$%llu\n\n", if_cnt);
+        sprintf(label_stat, "LABEL $endif$%llu\n\n", endif_cnt);
 }
 
 
-bool generate_if(list_t *code_buffer, bool in_stat,  stack_str_t *stack, token_t *cond)
+bool generate_if(list_t *code_buffer, bool in_stat, stack_str_t *stack, token_t *cond)
 {
     ////////////////////////////////////////////////////////////////////////////////////////// TODO
 
     // jump to ELSE if cond == false
-    if (! print_or_append(code_buffer, in_stat, "\nJUMPIFEQ $else$%llu GF@$des bool@false\n\n", if_cnt))
+    if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\n\n", if_cnt))
         return false;
 
-    // must go from bottom to top (LABEL endif -> JMP endif) see. assembler
-    
-    
+
     char buffer[80];
     // endif has max length 37 bytes
-    sprintf(buffer, "\nLABEL $endif$%llu\n\n", if_cnt);
+    sprintf(buffer, "LABEL $endif$%llu\n\n", endif_cnt); 
     if (! stcStr_push(stack, buffer))
         return false;
 
+    sprintf(buffer, "LABEL $if$%llu\n", if_cnt);
+    if (! stcStr_push(stack, buffer))
+        return false;
+
+    sprintf(buffer, "\nJUMP $endif$%llu\n", endif_cnt); 
+    if (! stcStr_push(stack, buffer))
+        return false;
+
+
+    endif_cnt++;
+    if_cnt++;
+/*
     // else has max length 69 bytes
     sprintf(buffer, "\nJUMP $endif$%llu\n"
                     "LABEL $else$%llu\n\n",
@@ -90,10 +102,63 @@ bool generate_if(list_t *code_buffer, bool in_stat,  stack_str_t *stack, token_t
     );
     if (! stcStr_push(stack, buffer))
         return false;
+*/
+    return true;
+}
+
+
+bool generate_LABEL_elsif(list_t *code_buffer, bool in_stat, stack_str_t *stack)
+{  
+    char *buffer1 = stcStr_top(stack);
+     if (! print_or_append(code_buffer, in_stat, "%s", buffer1))
+        return false;
+
+    char *buffer2 = malloc((strlen(buffer1) + 1) * sizeof(char));
+    if (buffer2 == NULL)
+        return false;
+    strcpy(buffer2, buffer1);
+    stcStr_pop(stack);
+
+    if (! print_or_append(code_buffer, in_stat, "%s", stcStr_top(stack)))
+        return false;
+    stcStr_pop(stack);
+
+    char buffer3[80];
+    // endif has max length 37 bytes
+    sprintf(buffer3, "LABEL $if$%llu\n", if_cnt); 
+    if (! stcStr_push(stack, buffer3))
+        return false;
+
+    if (! stcStr_push(stack, buffer2))
+        return false;
+    free(buffer2);
 
     if_cnt++;
     return true;
 }
+
+
+bool generate_elsif(list_t *code_buffer, bool in_stat, token_t *cond)
+{
+    if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\n\n", if_cnt))
+        return false;
+
+    return true;
+}
+
+
+bool generate_else(list_t *code_buffer, bool in_stat, stack_str_t *stack)
+{    
+    if (! print_or_append(code_buffer, in_stat, "%s", stcStr_top(stack)))
+        return false;
+    stcStr_pop(stack);
+
+    if (! print_or_append(code_buffer, in_stat, "%s\n", stcStr_top(stack)))
+        return false;
+    stcStr_pop(stack);
+    return true;
+}
+
 
 
 void expected_LABEL_while(bool in_stat, char label_stat[])
@@ -116,7 +181,7 @@ bool generate_while_false(list_t *code_buffer, bool in_stat, token_t *cond)
 {
     ////////////////////////////////////////////////////////////////////////////////////////// TODO
 
-    if (! print_or_append(code_buffer, in_stat, "JUMPIFEQ $end_while$%llu GF@$des bool@false\n\n", while_cnt))
+    if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\n JUMPIFEQS $end_while$%llu\n\n", while_cnt))
         return false;
     
     return true;
@@ -128,9 +193,10 @@ bool generate_while_ending(stack_str_t *stack)
     // end of while
     // endwhile has max length 74 bytes
     char buffer[80];
-    sprintf(buffer,  "\nJUMP $while$%llu\n"
-                "LABEL $end_while$%llu\n\n",
-                while_cnt, while_cnt
+    sprintf(buffer, "\nJUMP $while$%llu\n"
+                    "LABEL $end_while$%llu\n\n"
+                    "PUSHS nil@nil",
+                    while_cnt, while_cnt
     );
 
     if (! stcStr_push(stack, buffer))
@@ -140,15 +206,18 @@ bool generate_while_ending(stack_str_t *stack)
     return true;
 }
 
+bool isFunctionEnd(char *generated_code)
+{
+    return (strncmp(generated_code, "\nPOPFRAME\nRETURN\n", strlen("\nPOPFRAME\nRETURN\n")) == 0);
+}
+
 
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr)
 {
     printf( "\n"
             "JUMP $end$function$%llu\n"
             "LABEL %s\n"
-            "PUSHFRAME\n"
-            "DEFVAR LF@%%retval\n"
-            "MOVE LF@%%retval nil@nil\n",
+            "PUSHFRAME\n",
             func_cnt,
             fun->func.key
           );
@@ -176,6 +245,35 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
 }
 
 
+int generate_var(list_t *code_buffer, list_t *defvar_buffer, bool in_stat, symtable_t *var_tab, char *var_name, token_t *right_val)
+{
+    char frame[3] = "LF";
+    if (strcmp(var_tab->name, "$GT") == 0)
+        strcpy(frame, "GF");
+
+    if (strcmp(right_val->name, "BOOL_ID") == 0)
+        return ERR_SEM_TYPE;
+
+    if (symtab_find(var_tab, var_name) == NULL)
+    {
+        //printf("generate_var .. in_stat: %d\n", in_stat);
+        if (! print_or_append(defvar_buffer, in_stat, "DEFVAR %s@%s\n", frame, var_name))
+            return ERR_INTERNAL;
+    }
+
+    if (! print_or_append(code_buffer, in_stat, "POPS %s@%s\n", frame, var_name))
+        return ERR_INTERNAL;
+
+    if (strcmp(frame, "LF") == 0)
+    {
+        if (! print_or_append(code_buffer, in_stat, "PUSHS %s@%s\n", frame, var_name))
+            return ERR_INTERNAL;
+    }
+
+    return SUCCESS;
+}
+
+/*
 int return_right_strings(symtable_t *var_tab, token_t *right_val, char frame[3], char frame_or_type[7], char **var_or_const)
 {
     if (strcmp(var_tab->name, "$GT") == 0)
@@ -236,33 +334,7 @@ int return_right_strings(symtable_t *var_tab, token_t *right_val, char frame[3],
 
     return SUCCESS;
 }
-
-
-int generate_var(list_t *code_buffer, list_t *defvar_buffer, bool in_stat, symtable_t *var_tab, char *var_name, token_t *right_val)
-{
-    char frame[3];
-    char frame_or_type[7];
-    char *var_or_const;
-
-    int ret_val = return_right_strings(var_tab, right_val, frame, frame_or_type, &var_or_const);
-    if (ret_val != SUCCESS)
-        return ret_val;
-
-
-    if (symtab_find(var_tab, var_name) == NULL)
-    {
-        //printf("generate_var .. in_stat: %d\n", in_stat);
-        if (! print_or_append(defvar_buffer, in_stat, "DEFVAR %s@%s\n", frame, var_name))
-            return ERR_INTERNAL;
-    }
-
-    if (! print_or_append(code_buffer, in_stat, "MOVE %s@%s %s@%s\n", frame, var_name, frame_or_type, var_or_const))
-        return ERR_INTERNAL;
-
-    free(var_or_const); // it is dynamically allocated
-    return SUCCESS;
-}
-
+*/
 
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
