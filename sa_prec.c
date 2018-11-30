@@ -951,7 +951,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         *ret_code = func_retval;
                         */
                         token_info_t info;
-                        *ret_token = createToken("%retval", info);
+                        *ret_token = createToken("%%retval", info);
                         printf("PUSHS GF@$des\n");
                         /*
                         *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
