@@ -219,7 +219,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer,
  *
  * @return     { description_of_the_return_value }
  */
-token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, list_t *code_buffer, bool in_stat);
+token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat);
 /**
  * @brief      { function_description }
  *
