@@ -59,17 +59,16 @@
 
 # FUNCTION PARAMETERS
 22. <params-gen> -> ( <p-brackets> 
-23. <params-gen> -> ID <p-without>
-24. <params-gen> -> EOL
+23. <params-gen> -> EOL
 
-25. <p-brackets>   -> ID <p-brackets-cont> 
-26. <p-brackets>   -> ) EOL
+24. <p-brackets>   -> ID <p-brackets-cont> 
+25. <p-brackets>   -> ) EOL
 
-27. <p-brackets-cont> -> , ID <p-brackets-cont>
-28. <p-brackets-cont> -> ) EOL
+26. <p-brackets-cont> -> , ID <p-brackets-cont>
+27. <p-brackets-cont> -> ) EOL
 
-29. <p-without> -> , ID <p-without> 
-30. <p-without> -> EOL
+# 29. <p-without> -> , ID <p-without> 
+# 30. <p-without> -> EOL
 
-
+# 23. <params-gen> -> ID <p-without>
 

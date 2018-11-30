@@ -1,4 +1,4 @@
-def fun_1 a
+def fun_1(a)
     print a
 end
 
