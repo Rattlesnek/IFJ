@@ -58,7 +58,8 @@ void print_prolog()
             "DEFVAR GF@$eq\n"
             "DEFVAR GF@$jump\n"
             "DEFVAR GF@$tmp\n"
-            "DEFVAR GF@$type\n\n"
+            "DEFVAR GF@$type\n"
+            "MOVE GF@$des nil@nil\n\n"
           );
 }
 
@@ -146,7 +147,7 @@ bool generate_elsif(list_t *code_buffer, bool in_stat, token_t *cond)
 {
     if (! condition_adjust(code_buffer, in_stat, cond))
         return false;
-    
+
     if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\n\n", if_cnt))
         return false;
 
@@ -204,7 +205,7 @@ bool generate_while_ending(stack_str_t *stack)
     char buffer[80];
     sprintf(buffer, "\nJUMP $while$%llu\n"
             "LABEL $end_while$%llu\n\n"
-            "PUSHS nil@nil",
+            "PUSHS nil@nil\n",
             while_cnt, while_cnt
            );
 
@@ -224,7 +225,7 @@ bool condition_adjust(list_t *code_buffer, bool in_stat, token_t *cond)
             return false;
     }
     else if (strcmp(cond->name, "BOOL_ID") != 0)
-    {   
+    {
         if (! print_or_append(code_buffer, in_stat, "PUSHS bool@true\n"))
             return false;
     }
