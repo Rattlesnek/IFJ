@@ -1,10 +1,11 @@
-
+=begin
 if nil then
     print "nil "
 else
     print "fck "
 end
 
+=end
 if 1 then
     print "a "
 else
@@ -16,7 +17,7 @@ if 5.20 then
 else    
     print "d "
 end
-
+=begin
 if "ok" + "as" then
     print "e "
 else
@@ -82,3 +83,4 @@ end
 print x
 print a
 print y
+=end

@@ -12,7 +12,6 @@ i=15e0-51
 
 
 a + b - c
-=begin
 a - 4 / a
 a * i / 5
 
@@ -48,4 +47,3 @@ print a
 print str
 print idk
 
-=end
