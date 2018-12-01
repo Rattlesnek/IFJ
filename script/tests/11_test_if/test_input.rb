@@ -1,11 +1,10 @@
-=begin
+
 if nil then
     print "nil "
 else
     print "fck "
 end
 
-=end
 if 1 then
     print "a "
 else
@@ -17,7 +16,7 @@ if 5.20 then
 else    
     print "d "
 end
-=begin
+
 if "ok" + "as" then
     print "e "
 else
@@ -25,20 +24,25 @@ else
 end
 
 a = 50
+b = a
+
 if a then
     print "g "
 else
     print "h "
 end
 
-b = 12.5
-c = 50
-if a + b < 100 then
+
+b = 5.5
+c = 0.15
+
+if 1 + 1 then
     d = a + c
     print d
 else
     print "else"
 end
+
 
 if 10 + d < 1000.5 then
     print "k "
@@ -83,4 +87,3 @@ end
 print x
 print a
 print y
-=end
