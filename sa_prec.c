@@ -450,8 +450,17 @@ void pushToStack(token_t *token, list_t *code_buffer, bool in_stat)
        strcmp(token->name, "DBL") &&
        strcmp(token->name, "nil"))
        {
+         if(strcmp(token->name, "ID") == 0)
+         {
+            print_or_append(code_buffer, in_stat, "PUSHS GF@%s\n", 
+                            token->info.ptr->var.key);
+         }
+         else
+         {
             print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
+         }
        }
+
 
     return;
 }
