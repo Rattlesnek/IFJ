@@ -447,7 +447,8 @@ void pushToStack(token_t *token)
 {
     if(strcmp(token->name, "INT") &&
        strcmp(token->name, "STR") &&
-       strcmp(token->name, "DBL"))
+       strcmp(token->name, "DBL") &&
+       strcmp(token->name, "nil"))
        {
             printf("PUSHS GF@$des\n");
        }
