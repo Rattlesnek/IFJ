@@ -324,13 +324,13 @@ int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
 int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, list_t *defvar_buffer, dynamicStr_t *sc_str, queue_t *que)
 {
     PARSER_DBG_PRINT("Parser started\n");
-    
+
     // PRINT PROLOG OF GENERATED CODE
     print_prolog();
-    
+
     // DEFINE LOCAL VARIABLES
     token_t *top = NULL;    // token form the top of the stack
-    token_t *act = NULL;    // token from scanner    
+    token_t *act = NULL;    // token from scanner
 
     bool succ = false;      // parser success
 
@@ -339,7 +339,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 
     int rule;       // ll-grammar rule which is going to be used
     int ret_val;    // return value of precedenc analysis
-    
+
     token_t *sa_prec_ret = NULL; // TODO
 
     char *id_key_tmp = NULL;        // temporary key of an identifier
@@ -430,7 +430,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     //  GENERATE IF  //
                     ///////////////////
                     expected_LABEL_if(in_stat, label_stat);
-                    
+
 #ifdef DEBUG_PARSER
                     ret_val = prec_tmp(sc_str, que);
 #else
@@ -451,7 +451,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                 else if (strcmp(top->name, "elsif") == 0)
                 {
                     PARSER_DBG_PRINT("*********** ELIF ***********\n");
-                    
+
                     if (! generate_LABEL_elsif(code_buffer, in_stat, stack_str))
                         goto err_internal_main;
 
@@ -462,7 +462,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     HANDLE_ERROR(ret_val);
 
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-#endif              
+#endif
                     if (! generate_elsif(code_buffer, in_stat, sa_prec_ret))
                         goto err_internal_main;
 
@@ -475,11 +475,11 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                 else if (strcmp(top->name, "else") == 0)
                 {
                     PARSER_DBG_PRINT("*********** ELSE ***********\n");
-                    
+
                     if (! generate_else(code_buffer, in_stat, stack_str))
                         goto err_internal_main;
 
-                    PARSER_DBG_PRINT("********** END ***********\n");   
+                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "while") == 0)
                 {
@@ -510,7 +510,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 
                     destroyToken(sa_prec_ret);
                     sa_prec_ret = NULL;
-                    
+
                     //printf("in_stat: %d\n", in_stat);
                     PARSER_DBG_PRINT("********** END ***********\n");
                 }
@@ -554,7 +554,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     ////////////////////////////////
                     //  STACK POP GENERATED CODE  //
                     ////////////////////////////////
-                    
+
                     char *generated_code = stcStr_top(stack_str);
                     //printf("=== generated_code ===\n%s================\n", generated_code);
                     //printf("=== label_stat ===\n%s================\n", label_stat);
@@ -581,7 +581,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                         stcStr_pop(stack_str);
                         generated_code = stcStr_top(stack_str);
                     }
-                    
+
                     //if (strncmp(generated_code, "LABEL $endif$", strlen("LABEL $endif$")) == 0)
                     //    inc_endif();
                     //printf("%s", generated_code);
