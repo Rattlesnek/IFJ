@@ -245,7 +245,7 @@ int type(token_t *param1, token_t *param2)
 }
 
 
-char *params(symtable_t *symtab, char* param, token_t *par)
+char *params(symtable_t *symtab, char* param, token_t *par, bool id_variant)
 {
     char *print;
     if (strcmp(par->name, "INT_ID") == 0 || strcmp(par->name, "DBL_ID") == 0 || strcmp(par->name, "STR_ID") == 0 || strcmp(par->name, "BOOL_ID") == 0)
@@ -263,12 +263,33 @@ char *params(symtable_t *symtab, char* param, token_t *par)
     {
         which_frame(symtab, param);
 
-        print = malloc(sizeof(char) * (strlen(par->info.ptr->var.key) + 1));
-        if (print == NULL)
+        if (par->info.ptr == NULL)
         {
-            return "ERR_INT";
+            print = malloc(sizeof(char) * 6);
+            if (print == NULL)
+            {
+                return "ERR_INT";
+            }
+            if (id_variant)
+            {
+                strcpy(print, "$des1");
+            }
+            else
+            {
+                strcpy(print, "$des2");
+            }
+
         }
-        strcpy(print, par->info.ptr->var.key);
+        else
+        {
+            print = malloc(sizeof(char) * (strlen(par->info.ptr->var.key) + 1));
+            if (print == NULL)
+            {
+                return "ERR_INT";
+            }
+            strcpy(print, par->info.ptr->var.key);
+        }
+
     }
     else if (strcmp(par->name, "INT" ) == 0 || strcmp(par->name, "DBL") == 0 || strcmp(par->name, "STR") == 0 || strcmp(par->name, "BOOL") == 0)
     {
@@ -363,9 +384,9 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1);
+    char *print1 = params(symtab, param1, par1, 0);
 
-    char *print2 = params(symtab, param2, par2);
+    char *print2 = params(symtab, param2, par2, 0);
 
     if (strcmp(print1, "ERR_INT") == 0 || strcmp(print2, "ERR_INT") == 0)
     {
@@ -449,9 +470,9 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1);
+    char *print1 = params(symtab, param1, par1, 0);
 
-    char *print2 = params(symtab, param2, par2);
+    char *print2 = params(symtab, param2, par2, 0);
 
 
     print_or_append(code_buffer, in_stat, "INT2FLOAT GF@$tmp %s@%s\n", param1, print1);
@@ -596,10 +617,16 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1);
-
-    char *print2 = params(symtab, param2, par2);
-
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
+    }
+    char *print2 = params(symtab, param2, par2, 0);
+    if (strcmp(print1, "$des2") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "MOVE GF@$des2 GF@$des\n");
+    }
 
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
     {
@@ -756,9 +783,16 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1);
-
-    char *print2 = params(symtab, param2, par2);
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
+    }
+    char *print2 = params(symtab, param2, par2, 0);
+    if (strcmp(print1, "$des2") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "MOVE GF@$des2 GF@$des\n");
+    }
 
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
     {
@@ -879,9 +913,9 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1);
+    char *print1 = params(symtab, param1, par1, 0);
 
-    char *print2 = params(symtab, param2, par2);
+    char *print2 = params(symtab, param2, par2, 0);
 
 
     if (strcmp(op->name, "==") == 0)
@@ -960,9 +994,16 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1);
-
-    char *print2 = params(symtab, param2, par2);
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
+    }
+    char *print2 = params(symtab, param2, par2, 0);
+    if (strcmp(print1, "$des2") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "MOVE GF@$des2 GF@$des\n");
+    }
 
     which_frame(symtab, frame);
 
@@ -1036,7 +1077,9 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         return NULL;
     }
     static unsigned long long label_n = 0;
-
+    label_n++;
+    label_n++;
+    label_n++;
     char param1[10];
     char param2[10];
 
@@ -1044,9 +1087,16 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1);
-
-    char *print2 = params(symtab, param2, par2);
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
+    }
+    char *print2 = params(symtab, param2, par2, 0);
+    if (strcmp(print1, "$des2") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "MOVE GF@$des2 GF@$des\n");
+    }
 
 
 
