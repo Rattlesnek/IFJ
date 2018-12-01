@@ -126,6 +126,7 @@ bool generate_while_false(list_t *code_buffer, bool in_stat, token_t *cond);
 bool generate_while_ending(stack_str_t *stack);
 
 
+bool condition_adjust(list_t *code_buffer, bool in_stat, token_t *cond);
 
 
 bool isFunctionEnd(char *generated_code);

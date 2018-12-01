@@ -73,6 +73,8 @@ void expected_LABEL_if(bool in_stat, char label_stat[])
 bool generate_if(list_t *code_buffer, bool in_stat, stack_str_t *stack, token_t *cond)
 {
     ////////////////////////////////////////////////////////////////////////////////////////// TODO
+    if (! condition_adjust(code_buffer, in_stat, cond))
+        return false;
 
     // jump to ELSE if cond == false
     if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\n\n", if_cnt))
@@ -142,6 +144,9 @@ bool generate_LABEL_elsif(list_t *code_buffer, bool in_stat, stack_str_t *stack)
 
 bool generate_elsif(list_t *code_buffer, bool in_stat, token_t *cond)
 {
+    if (! condition_adjust(code_buffer, in_stat, cond))
+        return false;
+    
     if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\n\n", if_cnt))
         return false;
 
@@ -182,6 +187,8 @@ bool generate_LABEL_while(list_t *code_buffer, bool in_stat)
 bool generate_while_false(list_t *code_buffer, bool in_stat, token_t *cond)
 {
     ////////////////////////////////////////////////////////////////////////////////////////// TODO
+    if (! condition_adjust(code_buffer, in_stat, cond))
+        return false;
 
     if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\n JUMPIFEQS $end_while$%llu\n\n", while_cnt))
         return false;
@@ -207,6 +214,24 @@ bool generate_while_ending(stack_str_t *stack)
     while_cnt++;
     return true;
 }
+
+
+bool condition_adjust(list_t *code_buffer, bool in_stat, token_t *cond)
+{
+    if (strcmp(cond->name, "nil") == 0)
+    {
+        if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\n"))
+            return false;
+    }
+    else if (strcmp(cond->name, "BOOL_ID") != 0)
+    {   
+        if (! print_or_append(code_buffer, in_stat, "PUSHS bool@true\n"))
+            return false;
+    }
+
+    return true;
+}
+
 
 bool isFunctionEnd(char *generated_code)
 {
@@ -278,6 +303,11 @@ int generate_var(list_t *code_buffer, list_t *defvar_buffer, bool in_stat, symta
     else if (strcmp(right_val->name, "DBL") == 0)
     {
         if (! print_or_append(code_buffer, in_stat, "MOVE %s@%s float@%s\n", frame, var_name, right_val->info.string))
+            return ERR_INTERNAL;
+    }
+    else if (strcmp(right_val->name, "nil") == 0)
+    {
+        if (! print_or_append(code_buffer, in_stat, "MOVE %s@%s nil@nil\n", frame, var_name))
             return ERR_INTERNAL;
     }
     else
