@@ -455,7 +455,7 @@ void pushToStack(token_t *token)
 
     return;
 }
-
+/* Komentar */
 /* 
  * @brief Operator-precedence parser
  *
