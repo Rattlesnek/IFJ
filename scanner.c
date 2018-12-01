@@ -46,7 +46,7 @@
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
 int state = State_S;
-char *keywords[] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while", "elif"};
+char *keywords[] = {"def", "do", "else", "end", "if", "not", "nil", "then", "while", "elsif"};
 int KeywordLen = 10;
 
 char *builtin_func[] = {"inputs", "inputi", "inputf", "print", "length", "substr", "ord", "chr"};
