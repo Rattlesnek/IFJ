@@ -330,7 +330,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
     {
         token_t *func = stcTkn_pop(stack);
 
-        printf("CREATEFRAME\n");
+        print_or_append(code_buffer, in_stat, "CREATEFRAME\n");
         token_t *param;
         int i = 1;
         char *val = NULL;
@@ -344,7 +344,8 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
                           "GF" :
                           "LF";
 
-            printf("DEFVAR TF@%%%d\n"
+            print_or_append(code_buffer, in_stat,
+                   "DEFVAR TF@%%%d\n"
                    "MOVE TF@%%%d %s@%s\n",
                     i,
                     i,
@@ -357,9 +358,9 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
         }
 
         if(is_builtin)
-            printf("CALL $%s\n", func->info.string);
+            print_or_append(code_buffer, in_stat, "CALL $%s\n", func->info.string);
         else
-            printf("CALL %s\n", func->info.ptr->func.key);
+            print_or_append(code_buffer, in_stat, "CALL %s\n", func->info.ptr->func.key);
 
         destroyToken(func);
         return NULL;
@@ -443,14 +444,14 @@ bool sa_isOperator(table_elem_t term)
     return false;
 }
 
-void pushToStack(token_t *token)
+void pushToStack(token_t *token, list_t *code_buffer, bool in_stat)
 {
     if(strcmp(token->name, "INT") &&
        strcmp(token->name, "STR") &&
        strcmp(token->name, "DBL") &&
        strcmp(token->name, "nil"))
        {
-            printf("PUSHS GF@$des\n");
+            print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
        }
 
     return;
@@ -952,7 +953,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
                         
                         *ret_token = stc_tokPopTop(stack, &term); 
-                        pushToStack(*ret_token);
+                        pushToStack(*ret_token, code_buffer, in_stat);
 
                     }
                     else
@@ -964,7 +965,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
                         token_info_t info;
                         *ret_token = createToken("%%retval", info);
-                        pushToStack(*ret_token);
+                        pushToStack(*ret_token, code_buffer, in_stat);
 
                         /*
                         *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
@@ -979,7 +980,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
-                    pushToStack(*ret_token);
+                    pushToStack(*ret_token, code_buffer, in_stat);
                     //stc_print(stack);
                     /*
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
@@ -1005,7 +1006,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
 
-                    pushToStack(*ret_token);
+                    pushToStack(*ret_token, code_buffer, in_stat);
                 }
                 //stc_print(stack);
                 //stcTkn_print(tok_stack);
