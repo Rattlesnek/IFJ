@@ -17,9 +17,9 @@
   Revision    []
 
 ***********************************************************************/
-/* 
+/*
  * TODO:
- *  
+ *
  */
 ////////////////////////////////////////////////////////////////////////
 ///                          INCLUDES                                ///
@@ -51,19 +51,19 @@
 
 
 char sa_prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
-/*          +      *     (     )     i     -     /     rel    str    f    ,    $  */
-/*  +  */{ '>' , '<' , '<' , '>' , '<' , '>' , '<' ,  '>' , '<' , '<' , '>' , '>' }, 
-/*  *  */{ '>' , '>' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , '<' , '>' , '>' },
-/*  (  */{ '<' , '<' , '<' , '=' , '<' , '<' , '<' ,  '<' , 'X' , '<' , '=' , 'X' },
-/*  )  */{ '>' , '>' , 'X' , '>' , 'X' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
-/*  i  */{ '>' , '>' , 'X' , '>' , 'X' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
-/*  -  */{ '>' , '<' , '<' , '>' , '<' , '>' , '<' ,  '>' , 'X' , 'X' , '>' , '>' },
-/*  /  */{ '>' , '>' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
-/* rel */{ '<' , '<' , '<' , '>' , '<' , '<' , '<' ,  'X' , '<' , 'X' , '>' , '>' },
-/* str */{ '>' , 'X' , 'X' , 'X' , 'X' , 'X' , 'X' ,  '>' , 'X' , 'X' , 'X' , '>' },
-/*  f  */{ 'X' , 'X' , '=' , 'X' , '<' , 'X' , 'X' ,  'X' , 'X' , 'X' , '<' , '>' },
-/*  ,  */{ '<' , '<' , '<' , '=' , '<' , '<' , '<' ,  '<' , '<' , '<' , '=' , '>' },
-/*  $  */{ '<' , '<' , '<' , 'X' , '<' , '<' , '<' ,  '<' , '<' , '<' , 'X' , 'X' }
+    /*          +      *     (     )     i     -     /     rel    str    f    ,    $  */
+    /*  +  */{ '>' , '<' , '<' , '>' , '<' , '>' , '<' ,  '>' , '<' , '<' , '>' , '>' },
+    /*  *  */{ '>' , '>' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , '<' , '>' , '>' },
+    /*  (  */{ '<' , '<' , '<' , '=' , '<' , '<' , '<' ,  '<' , 'X' , '<' , '=' , 'X' },
+    /*  )  */{ '>' , '>' , 'X' , '>' , 'X' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
+    /*  i  */{ '>' , '>' , 'X' , '>' , 'X' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
+    /*  -  */{ '>' , '<' , '<' , '>' , '<' , '>' , '<' ,  '>' , 'X' , 'X' , '>' , '>' },
+    /*  /  */{ '>' , '>' , '<' , '>' , '<' , '>' , '>' ,  '>' , 'X' , 'X' , '>' , '>' },
+    /* rel */{ '<' , '<' , '<' , '>' , '<' , '<' , '<' ,  'X' , '<' , 'X' , '>' , '>' },
+    /* str */{ '>' , 'X' , 'X' , 'X' , 'X' , 'X' , 'X' ,  '>' , 'X' , 'X' , 'X' , '>' },
+    /*  f  */{ 'X' , 'X' , '=' , 'X' , '<' , 'X' , 'X' ,  'X' , 'X' , 'X' , '<' , '>' },
+    /*  ,  */{ '<' , '<' , '<' , '=' , '<' , '<' , '<' ,  '<' , '<' , '<' , '=' , '>' },
+    /*  $  */{ '<' , '<' , '<' , 'X' , '<' , '<' , '<' ,  '<' , '<' , '<' , 'X' , 'X' }
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -118,11 +118,11 @@ do {                                                            \
 
 static inline int destroyTokenArr(token_t *token_arr [], int state)
 {
-    switch(state)
-    {   
+    switch (state)
+    {
         case 0:
             break;
-        case 1: 
+        case 1:
             destroyToken(token_arr[0]);
             break;
         case 2:
@@ -139,26 +139,26 @@ static inline int destroyTokenArr(token_t *token_arr [], int state)
     return SUCCESS;
 }
 
-int Check_err(token_t *token, token_t *token_arr[], int state, table_elem_t term, 
-               table_elem_t correct_term) {
+int Check_err(token_t *token, token_t *token_arr[], int state, table_elem_t term,
+              table_elem_t correct_term) {
     DEBUG_PRINT("=>Check_err: %s\n", token->name);
-    if(strcmp(token->name, "ERR_SEM") == 0)
+    if (strcmp(token->name, "ERR_SEM") == 0)
     {
         destroyTokenArr(token_arr, state);
         destroyToken(token);
         return ERR_SEM_TYPE;
     }
-    else if(strcmp(token->name, "ERR_INT") == 0)
+    else if (strcmp(token->name, "ERR_INT") == 0)
     {
         destroyTokenArr(token_arr, state);
         destroyToken(token);
         return ERR_INTERNAL;
     }
-    else if(term != correct_term)
+    else if (term != correct_term)
     {
         destroyTokenArr(token_arr, state);
         return ERR_SYN;
-    } 
+    }
 
     return SUCCESS;
 }
@@ -171,13 +171,13 @@ int Check_err(token_t *token, token_t *token_arr[], int state, table_elem_t term
  */
 bool sa_isEndToken(token_t *token)
 {
-    if(strcmp(token->name, "EOL") == 0)
+    if (strcmp(token->name, "EOL") == 0)
         return true;
-    else if(strcmp(token->name, "then") == 0)
+    else if (strcmp(token->name, "then") == 0)
         return true;
-    else if(strcmp(token->name, "do") == 0)
+    else if (strcmp(token->name, "do") == 0)
         return true;
-    else if(strcmp(token->name, "EOF") == 0)
+    else if (strcmp(token->name, "EOF") == 0)
         return true;
 
     return false;
@@ -186,47 +186,47 @@ bool sa_isEndToken(token_t *token)
 char sa_getTokenIndex(token_t *token)
 {
     //printf("=> sa_getTokenIndex: %s\n", token->name);
-    if(strcmp(token->name, "+") == 0)
+    if (strcmp(token->name, "+") == 0)
         return _plus_;
-    else if(strcmp(token->name, "*") == 0)
+    else if (strcmp(token->name, "*") == 0)
         return _mult_;
-    else if(strcmp(token->name, "ID") == 0)
+    else if (strcmp(token->name, "ID") == 0)
         return _id_;
-    else if(strcmp(token->name, "INT") == 0)
+    else if (strcmp(token->name, "INT") == 0)
         return _id_;
-    else if(strcmp(token->name, "DBL") == 0)
+    else if (strcmp(token->name, "DBL") == 0)
         return _id_;
-    else if(strcmp(token->name, "nil") == 0)
+    else if (strcmp(token->name, "nil") == 0)
         return _id_;
-    else if(strcmp(token->name, "(") == 0)
+    else if (strcmp(token->name, "(") == 0)
         return _lbrc_;
-    else if(strcmp(token->name, ")") == 0)
+    else if (strcmp(token->name, ")") == 0)
         return _rbrc_;
-    else if(strcmp(token->name, "-") == 0)
+    else if (strcmp(token->name, "-") == 0)
         return _mins_;
-    else if(strcmp(token->name, "/") == 0)
+    else if (strcmp(token->name, "/") == 0)
         return _div_;
-    else if(strcmp(token->name, "STR") == 0)
+    else if (strcmp(token->name, "STR") == 0)
         return _id_;
-    else if(strcmp(token->name, "<=") == 0)
+    else if (strcmp(token->name, "<=") == 0)
         return _rel_;
-    else if(strcmp(token->name, ">=") == 0)
+    else if (strcmp(token->name, ">=") == 0)
         return _rel_;
-    else if(strcmp(token->name, "==") == 0)
+    else if (strcmp(token->name, "==") == 0)
         return _rel_;
-    else if(strcmp(token->name, "!=") == 0)
+    else if (strcmp(token->name, "!=") == 0)
         return _rel_;
-    else if(strcmp(token->name, "<") == 0)
+    else if (strcmp(token->name, "<") == 0)
         return _rel_;
-    else if(strcmp(token->name, ">") == 0)
+    else if (strcmp(token->name, ">") == 0)
         return _rel_;
-    else if(strcmp(token->name, ",") == 0)
+    else if (strcmp(token->name, ",") == 0)
         return _coma_;
-    else if(strcmp(token->name, "BUILTIN") == 0)
+    else if (strcmp(token->name, "BUILTIN") == 0)
         return _func_;
-    else if(strcmp(token->name, "FUNC") == 0)
+    else if (strcmp(token->name, "FUNC") == 0)
         return _id_;
-    else if(sa_isEndToken(token))
+    else if (sa_isEndToken(token))
         return _empt_;
 
     return INVALID_TOKEN;
@@ -234,21 +234,21 @@ char sa_getTokenIndex(token_t *token)
 
 int sa_builtinType(token_t *token)
 {
-    if(strcmp(token->info.string, "inputs") == 0)
+    if (strcmp(token->info.string, "inputs") == 0)
         return _inputs_;
-    else if(strcmp(token->info.string, "inputi") == 0)
+    else if (strcmp(token->info.string, "inputi") == 0)
         return _inputi_;
-    else if(strcmp(token->info.string, "inputf") == 0)
+    else if (strcmp(token->info.string, "inputf") == 0)
         return _inputf_;
-    else if(strcmp(token->info.string, "length") == 0)
+    else if (strcmp(token->info.string, "length") == 0)
         return _length_;
-    else if(strcmp(token->info.string, "chr") == 0)
+    else if (strcmp(token->info.string, "chr") == 0)
         return _chr_;
-    else if(strcmp(token->info.string, "ord") == 0)
+    else if (strcmp(token->info.string, "ord") == 0)
         return _ord_;
-    else if(strcmp(token->info.string, "substr") == 0)
+    else if (strcmp(token->info.string, "substr") == 0)
         return _substr_;
-    else if(strcmp(token->info.string, "print") == 0)
+    else if (strcmp(token->info.string, "print") == 0)
         return _print_;
 
     return INVALID_TOKEN;
@@ -256,13 +256,13 @@ int sa_builtinType(token_t *token)
 
 static inline bool sa_isNonTerm(table_elem_t term)
 {
-    if(term == _E_)
+    if (term == _E_)
         return true;
-    else if(term == _L_)
+    else if (term == _L_)
         return true;
-    else if(term == _S_)
+    else if (term == _S_)
         return true;
-    else if(term == _F_)
+    else if (term == _F_)
         return true;
 
     return false;
@@ -271,16 +271,16 @@ static inline bool sa_isNonTerm(table_elem_t term)
 static inline bool sa_detectSucEnd(stack_sa_t *stack, table_elem_t token)
 {
 
-    return (sa_isNonTerm(stack->top->term) 
-            && stack->top->lptr->term == _empt_ 
+    return (sa_isNonTerm(stack->top->term)
+            && stack->top->lptr->term == _empt_
             && token == _empt_);
 }
 
 static inline bool sa_isExprVar(token_t *token)
 {
-    if(strcmp(token->name, "INT") == 0 ||
-       strcmp(token->name, "DBL") == 0 ||
-       strcmp(token->name, "STR") == 0)
+    if (strcmp(token->name, "INT") == 0 ||
+            strcmp(token->name, "DBL") == 0 ||
+            strcmp(token->name, "STR") == 0)
         return true;
 
     return false;
@@ -289,7 +289,7 @@ static inline bool sa_isExprVar(token_t *token)
 char *strToLower(char str[])
 {
     int i = 0;
-    while(str[i])
+    while (str[i])
     {
         str[i] = tolower(str[i]);
         i++;
@@ -300,7 +300,7 @@ char *strToLower(char str[])
 char *strToUpper(char str[])
 {
     int i = 0;
-    while(str[i])
+    while (str[i])
     {
         str[i] = toupper(str[i]);
         i++;
@@ -310,11 +310,11 @@ char *strToUpper(char str[])
 
 char *sa_retType(char *type, char *gl_lf)
 {
-    if(strcmp(type, "INT") == 0)
+    if (strcmp(type, "INT") == 0)
         return "int";
-    else if(strcmp(type, "DBL") == 0)
+    else if (strcmp(type, "DBL") == 0)
         return "float";
-    else if(strcmp(type, "STR") == 0)
+    else if (strcmp(type, "STR") == 0)
         return "string";
     else
         return gl_lf;
@@ -325,7 +325,7 @@ char *sa_retType(char *type, char *gl_lf)
 token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, list_t *code_buffer, bool in_stat)
 {
     DEBUG_PRINT("=>sa_callFunc: %d\n", is_builtin);
-    if(!is_builtin)
+    if (!is_builtin)
     {
         token_t *func = stcTkn_pop(stack);
 
@@ -334,29 +334,29 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
         int i = 1;
         char *val = NULL;
 
-        while((param = stcTkn_pop(stack)) != NULL)
+        while ((param = stcTkn_pop(stack)) != NULL)
         {
-            val = sa_isExprVar(param) ? param->info.string : 
-                                        param->info.ptr->var.key;
-            
-            char *gl_lf = strcmp(symtable->name, "$GT") == 0 ? 
+            val = sa_isExprVar(param) ? param->info.string :
+                  param->info.ptr->var.key;
+
+            char *gl_lf = strcmp(symtable->name, "$GT") == 0 ?
                           "GF" :
                           "LF";
 
             print_or_append(code_buffer, in_stat,
-                   "DEFVAR TF@%%%d\n"
-                   "MOVE TF@%%%d %s@%s\n",
-                    i,
-                    i,
-                    sa_retType(param->name, gl_lf),
-                    val
-                  );
+                            "DEFVAR TF@%%%d\n"
+                            "MOVE TF@%%%d %s@%s\n",
+                            i,
+                            i,
+                            sa_retType(param->name, gl_lf),
+                            val
+                           );
 
             i++;
             destroyToken(param);
         }
 
-        if(is_builtin)
+        if (is_builtin)
             print_or_append(code_buffer, in_stat, "CALL $%s\n", func->info.string);
         else
             print_or_append(code_buffer, in_stat, "CALL %s\n", func->info.ptr->func.key);
@@ -370,7 +370,7 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
         token_t *func_name = stcTkn_pop(stack);
         token_t *array[3];
         destroyToken(func_name);
-        switch(is_builtin)
+        switch (is_builtin)
         {
             case _inputs_: result = input(code_buffer, in_stat, symtable, 2);
                 break;
@@ -378,48 +378,48 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
                 break;
             case _inputf_: result = input(code_buffer, in_stat, symtable, 1);
                 break;
-            case _length_: array[0] = stcTkn_pop(stack); 
-                           result = length(code_buffer, in_stat, symtable, array[0]);
-                           if(strcmp(result->name, "ERR_SEM") == 0)
-                           {
-                                destroyToken(result);
-                                return NULL;
-                           }
+            case _length_: array[0] = stcTkn_pop(stack);
+                result = length(code_buffer, in_stat, symtable, array[0]);
+                if (strcmp(result->name, "ERR_SEM") == 0)
+                {
+                    destroyToken(result);
+                    return NULL;
+                }
                 break;
             case _chr_   : array[0] = stcTkn_pop(stack);
-                           result = chr(code_buffer, in_stat, symtable, array[0]);
-                           if(strcmp(result->name, "ERR_SEM") == 0)
-                           {
-                                destroyToken(result);
-                                return NULL;
-                           }
+                result = chr(code_buffer, in_stat, symtable, array[0]);
+                if (strcmp(result->name, "ERR_SEM") == 0)
+                {
+                    destroyToken(result);
+                    return NULL;
+                }
                 break;
             case _ord_   : array[0] = stcTkn_pop(stack);
-                           array[1] = stcTkn_pop(stack);
-                           result = ord(code_buffer, in_stat, symtable, array[0], array[1]);
-                           if(strcmp(result->name, "ERR_SEM") == 0)
-                           {
-                                destroyToken(result);
-                                return NULL;
-                           }
+                array[1] = stcTkn_pop(stack);
+                result = ord(code_buffer, in_stat, symtable, array[0], array[1]);
+                if (strcmp(result->name, "ERR_SEM") == 0)
+                {
+                    destroyToken(result);
+                    return NULL;
+                }
                 break;
             case _substr_: array[0] = stcTkn_pop(stack);
-                           array[1] = stcTkn_pop(stack);
-                           array[2] = stcTkn_pop(stack);
-                           result = substr(code_buffer, in_stat, symtable, array[0], array[1], array[2]);
-                           if(strcmp(result->name, "ERR_SEM") == 0)
-                           {
-                                destroyToken(result);
-                                return NULL;
-                           }
+                array[1] = stcTkn_pop(stack);
+                array[2] = stcTkn_pop(stack);
+                result = substr(code_buffer, in_stat, symtable, array[0], array[1], array[2]);
+                if (strcmp(result->name, "ERR_SEM") == 0)
+                {
+                    destroyToken(result);
+                    return NULL;
+                }
                 break;
             case _print_ : result = print(symtable, stack, code_buffer, in_stat);
-                           if(strcmp(result->name, "ERR_SEM") == 0)
-                           {
-                                destroyToken(result);
-                                return NULL;
-                           }
-                break; 
+                if (strcmp(result->name, "ERR_SEM") == 0)
+                {
+                    destroyToken(result);
+                    return NULL;
+                }
+                break;
         }
 
         return result;
@@ -429,15 +429,15 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
 
 bool sa_isOperator(table_elem_t term)
 {
-    if(term == _plus_)
+    if (term == _plus_)
         return true;
-    else if(term == _mins_)
+    else if (term == _mins_)
         return true;
-    else if(term == _mult_)
+    else if (term == _mult_)
         return true;
-    else if(term == _div_)
+    else if (term == _div_)
         return true;
-    else if(term == _rel_)
+    else if (term == _rel_)
         return true;
 
     return false;
@@ -445,36 +445,44 @@ bool sa_isOperator(table_elem_t term)
 
 void pushToStack(token_t *token, list_t *code_buffer, bool in_stat)
 {
-    if(strcmp(token->name, "INT") &&
-       strcmp(token->name, "STR") &&
-       strcmp(token->name, "DBL") &&
-       strcmp(token->name, "nil"))
-       {
-         if(strcmp(token->name, "ID") == 0)
-         {
-            print_or_append(code_buffer, in_stat, "PUSHS GF@%s\n", 
-                            token->info.ptr->var.key);
-         }
-         else
-         {
+    if (strcmp(token->name, "INT") &&
+            strcmp(token->name, "STR") &&
+            strcmp(token->name, "DBL") &&
+            strcmp(token->name, "nil"))
+    {
+        if (strcmp(token->name, "ID") == 0)
+        {
+            if (token->info.ptr == NULL)
+            {
+                print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
+            }
+            else
+            {
+                print_or_append(code_buffer, in_stat, "PUSHS GF@%s\n",
+                                token->info.ptr->var.key);
+            }
+        }
+        else
+        {
             print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
-         }
-       }
+        }
+
+    }
 
 
     return;
 }
 /* Komentar */
-/* 
+/*
  * @brief Operator-precedence parser
  *
  * @params  sc_str    Param for scanner
  *          que       Param for scanner
  *          symtable  Param for scanner
- * @return  true      If analysed expression is correct  
- *          false     If analysed expression is incorrect 
- */   
-int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, token_t **ret_token, 
+ * @return  true      If analysed expression is correct
+ *          false     If analysed expression is incorrect
+ */
+int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, token_t **ret_token,
             list_t *code_buffer, bool in_stat) {
     stack_sa_t *stack = stc_init();
     token_info_t info;
@@ -497,36 +505,36 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     token_t *result = NULL;
     int err = 0;
     int builtin_func = 0;
-    while(42)
+    while (42)
     {
         stack_top_term = stc_topTerm(stack);
-    
+
         token_term = sa_getTokenIndex(token);
-        if(token_term == INVALID_TOKEN)
+        if (token_term == INVALID_TOKEN)
             goto fail_end;
-        if(token_term == _func_)
+        if (token_term == _func_)
         {
             detect_func = 1;
             builtin_func = sa_builtinType(token);
         }
 
-        if((token_term == _id_ && (strcmp(token->name, "ID") == 0)) || (strcmp(token->name, "FUNC")) == 0)
+        if ((token_term == _id_ && (strcmp(token->name, "ID") == 0)) || (strcmp(token->name, "FUNC")) == 0)
         {
             loc_elem = symtab_find(loc_symtab, sc_str->str);
-            if(!detect_func)
+            if (!detect_func)
             {
                 func_elem = symtab_find(func_symtab, sc_str->str);
                 token->info.ptr = func_elem;
             }
 
-            if(loc_elem != NULL)
+            if (loc_elem != NULL)
             {
                 token_term = _id_;
                 token->info.ptr = loc_elem;
             }
-            else if(func_elem != NULL)
+            else if (func_elem != NULL)
             {
-                if(detect_func == 1 || count != 0)
+                if (detect_func == 1 || count != 0)
                     goto sem_fail_defined;
 
                 token->info.ptr = func_elem;
@@ -535,10 +543,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             }
             else
             {
-                if(strcmp(loc_symtab->name, "$GT") == 0 && func_symtab->name == NULL)
+                if (strcmp(loc_symtab->name, "$GT") == 0 && func_symtab->name == NULL)
                     goto sem_fail_defined;
 
-                if(detect_func == 1 || count != 0)
+                if (detect_func == 1 || count != 0)
                     goto fail_end;
 
                 func_elem = symtab_elem_add(func_symtab, sc_str->str);
@@ -553,53 +561,53 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
         rule = sa_prec_table[stack_top_term][token_term];
 
-        if(rule == 'X')
+        if (rule == 'X')
         {
             goto fail_end;
         }
-        else if(rule == '=')
+        else if (rule == '=')
         {
-            if(func_read)
+            if (func_read)
                 goto fail_end;
 
             stc_push(stack, token_term, token);
 
         }
-        else if(rule == '<')
+        else if (rule == '<')
         {
-            if(func_read)
+            if (func_read)
                 goto fail_end;
 
-            if(sa_isOperator(token_term) && detect_func)
+            if (sa_isOperator(token_term) && detect_func)
                 goto fail_end;
 
             stc_pushAfter(stack, stack_top_term, _sml_);
             stc_push(stack, token_term, token);
             stc_print(stack);
         }
-        else if(rule == '>')
+        else if (rule == '>')
         {
-            switch(stack_top_term)
+            switch (stack_top_term)
             {
                 /* E -> i */
                 case _id_:
                     //term = stc_Top(stack);
                     //token_t *token = stc_tokPopTop(stack, &term);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    if(term != _id_)
+                    if (term != _id_)
                     {
                         destroyToken(ptr_tok[0]);
                         goto fail_end;
                     }
-            
+
                     term = stc_popTop(stack);
-                    if(term != _sml_)
+                    if (term != _sml_)
                         goto fail_end;
 
                     stc_push(stack, _E_, ptr_tok[0]);
-                    
 
-                    if(detect_func)
+
+                    if (detect_func)
                         num_params++;
 
                     break;
@@ -607,190 +615,190 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 /* E -> E + E */
                 case _plus_:
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
-                    {
-                        handleError(err); 
-                    }
-                    
-                    ptr_tok[1] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _plus_)) != SUCCESS)
-                    {
-                        handleError(err); 
-                    }
-                    
-                    ptr_tok[2] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
-                    {
-                        handleError(err); 
-                    }
-
-                    term = stc_popTop(stack);
-                    if(term != _sml_)
-                        goto fail_end;
-
-                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
-                    if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
                     {
                         handleError(err);
                     }
 
-                    stc_push(stack, _E_, result);  
+                    ptr_tok[1] = stc_tokPopTop(stack, &term);
+                    if ((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _plus_)) != SUCCESS)
+                    {
+                        handleError(err);
+                    }
+
+                    ptr_tok[2] = stc_tokPopTop(stack, &term);
+                    if ((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
+                    {
+                        handleError(err);
+                    }
+
+                    term = stc_popTop(stack);
+                    if (term != _sml_)
+                        goto fail_end;
+
+                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
+                    if ((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                    {
+                        handleError(err);
+                    }
+
+                    stc_push(stack, _E_, result);
                     break;
 
                 /* E -> E * E */
                 case _mult_:
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
-                    {
-                        handleError(err); 
-                    }
-
-                    ptr_tok[1] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _mult_)) != SUCCESS)
-                    {
-                        handleError(err); 
-                    }
-
-                    ptr_tok[2] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
-                    {
-                        handleError(err); 
-                    }
-
-                    term = stc_popTop(stack);
-                    if(term != _sml_)
-                        goto fail_end;
-
-                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
-                    if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
                     {
                         handleError(err);
                     }
 
-                    stc_push(stack, _E_, result);    
+                    ptr_tok[1] = stc_tokPopTop(stack, &term);
+                    if ((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _mult_)) != SUCCESS)
+                    {
+                        handleError(err);
+                    }
+
+                    ptr_tok[2] = stc_tokPopTop(stack, &term);
+                    if ((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
+                    {
+                        handleError(err);
+                    }
+
+                    term = stc_popTop(stack);
+                    if (term != _sml_)
+                        goto fail_end;
+
+                    result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
+                    if ((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                    {
+                        handleError(err);
+                    }
+
+                    stc_push(stack, _E_, result);
                     break;
 
                 /* E -> E - E */
                 case _mins_:
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _mins_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _mins_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     ptr_tok[2] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     term = stc_popTop(stack);
-                    if(term != _sml_)
+                    if (term != _sml_)
                         goto fail_end;
 
                     result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
-                    if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                    if ((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
-                    stc_push(stack, _E_, result);    
+                    stc_push(stack, _E_, result);
                     break;
 
                 /* E -> E / E */
                 case _div_:
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _div_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _div_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
-                    
+
                     ptr_tok[2] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     term = stc_popTop(stack);
-                    if(term != _sml_)
+                    if (term != _sml_)
                         goto fail_end;
 
                     result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
-                    if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                    if ((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     stc_push(stack, _E_, result);
                     break;
 
                 /* L -> E rel E
-                 * L -> S rel S 
+                 * L -> S rel S
                  */
                 case _rel_:
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[0], ptr_tok, 1, term, _E_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     ptr_tok[1] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _rel_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[1], ptr_tok, 2, term, _rel_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     ptr_tok[2] = stc_tokPopTop(stack, &term);
-                    if((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
+                    if ((err = Check_err(ptr_tok[2], ptr_tok, 3, term, _E_)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
-                
-                    term = stc_popTop(stack);  
-                    if(term != _sml_)
+
+                    term = stc_popTop(stack);
+                    if (term != _sml_)
                         goto fail_end;
-                     
+
                     result = gen_expr(ptr_tok[1], ptr_tok[2], ptr_tok[0], loc_symtab, code_buffer, in_stat);
-                    if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                    if ((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
-                        handleError(err); 
+                        handleError(err);
                     }
 
                     stc_push(stack, _L_, result);     // TODO
                     break;
 
-                ///////////////////////////////////////////////////////////////////////////// 
-                ////////                        FUNKCE                               //////// 
-                ///////////////////////////////////////////////////////////////////////////// 
-                
+                /////////////////////////////////////////////////////////////////////////////
+                ////////                        FUNKCE                               ////////
+                /////////////////////////////////////////////////////////////////////////////
+
                 /* F -> f
                  * F -> f E
                  */
                 case _func_:
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    if(term == _E_)
+                    if (term == _E_)
                     {
                         stcTkn_push(tok_stack, ptr_tok[0]);
                         ptr_tok[0] = stc_tokPopTop(stack, &term);
                         stcTkn_push(tok_stack, ptr_tok[0]);
-                        if(term != _func_)
+                        if (term != _func_)
                             goto fail_end;
                     }
-                    else if(term == _func_)
-                    {  
-                       stcTkn_push(tok_stack, ptr_tok[0]); 
+                    else if (term == _func_)
+                    {
+                        stcTkn_push(tok_stack, ptr_tok[0]);
                     }
                     else
                     {
@@ -798,7 +806,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     }
 
                     term = stc_popTop(stack);
-                    if(term != _sml_)
+                    if (term != _sml_)
                         goto fail_end;
 
                     callFunc(builtin_func);       // Zmena tady
@@ -807,39 +815,39 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     //callFunc(builtin_func);
                     break;
 
-                /* F -> f E, ... , E */    
+                /* F -> f E, ... , E */
                 case _coma_:
-                    while(42)
+                    while (42)
                     {
                         //term = stc_popTop(stack);
                         ptr_tok[0] = stc_tokPopTop(stack, &term);
                         stcTkn_push(tok_stack, ptr_tok[0]);
-                        if(term != _E_)
+                        if (term != _E_)
                             goto fail_end;
 
                         term = stc_popTop(stack);
-                        if(term == _sml_)
+                        if (term == _sml_)
                             break;
-                        else if(term != _coma_)
+                        else if (term != _coma_)
                             goto fail_end;
                     }
 
                     //term = stc_popTop(stack);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     stcTkn_push(tok_stack, ptr_tok[0]);
-                    if(term != _func_)
+                    if (term != _func_)
                         goto fail_end;
 
                     term = stc_popTop(stack);
-                    if(term != _sml_)
-                        goto fail_end;  
+                    if (term != _sml_)
+                        goto fail_end;
 
                     callFunc(builtin_func);           // Zmena tady
                     stc_push(stack, _F_, result);     // Zmena tady
-                   // callFunc(builtin_func);
+                    // callFunc(builtin_func);
                     break;
 
-                /* 
+                /*
                  * E -> (E)
                  * F -> f()
                  * F -> f(E)
@@ -849,39 +857,39 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     term = stc_popTop(stack);
                     //ptr_tok[0] = stc_tokPopTop(stack, &term);
                     //stcTkn_push(tok_stack, ptr_tok[0]);
-                    if(term != _rbrc_)
+                    if (term != _rbrc_)
                         goto fail_end;
 
                     token_t *expr_in_brc = ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    if(term == _lbrc_)
+                    if (term == _lbrc_)
                     {
                         destroyToken(ptr_tok[0]);
                         //term = stc_popTop(stack);
                         ptr_tok[0] = stc_tokPopTop(stack, &term);
                         stcTkn_push(tok_stack, ptr_tok[0]);
-                        if(term != _func_)
+                        if (term != _func_)
                             goto fail_end;
 
                         term = stc_popTop(stack);
-                        if(term != _sml_)
+                        if (term != _sml_)
                             goto fail_end;
 
                         callFunc(builtin_func);         // Zmena tady
                         stc_push(stack, _F_, result);   // Zmena tady
                         //callFunc(builtin_func);
-                   
+
                         break;
                     }
-                    else if(term == _E_)
+                    else if (term == _E_)
                     {
                         //##stcTkn_push(tok_stack, ptr_tok[0]);
                         term = stc_popTop(stack);
-                        if(term == _lbrc_)
+                        if (term == _lbrc_)
                         {
                             //term = stc_popTop(stack);
                             ptr_tok[0] = stc_tokPopTop(stack, &term);
                             //###stcTkn_push(tok_stack, ptr_tok[0]);
-                            if(term == _func_)
+                            if (term == _func_)
                             {
                                 stcTkn_push(tok_stack, expr_in_brc);  // Odkomentuj ### a dva radky smaz
                                 stcTkn_push(tok_stack, ptr_tok[0]);
@@ -889,50 +897,50 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                                 //stcTkn_push(tok_stack, ptr_tok[0]);
 
                                 term = stc_popTop(stack);
-                                if(term != _sml_)
+                                if (term != _sml_)
                                     goto fail_end;
 
                                 callFunc(builtin_func);         // Zmena tady
                                 stc_push(stack, _F_, result);   // Zmena tady
                                 //callFunc(builtin_func);
-                             
+
                                 break;
                             }
-                            else if(term == _sml_)
+                            else if (term == _sml_)
                             {
                                 destroyToken(ptr_tok[0]);
                                 stc_push(stack, _E_, expr_in_brc);
                                 break;
                             }
                         }
-                        else if(term == _coma_)
+                        else if (term == _coma_)
                         {
                             stcTkn_push(tok_stack, expr_in_brc);  // Odkomentuj ### a dva radky smaz
                             //stcTkn_push(tok_stack, ptr_tok[0]);
-                            while(42)
+                            while (42)
                             {
                                 //term = stc_popTop(stack);
                                 ptr_tok[0] = stc_tokPopTop(stack, &term);
                                 stcTkn_push(tok_stack, ptr_tok[0]);
-                                if(term != _E_)
+                                if (term != _E_)
                                     goto fail_end;
 
                                 //ptr_tok[0] = stc_tokPopTop(stack, &term);
                                 term = stc_popTop(stack);
-                                if(term == _lbrc_)
+                                if (term == _lbrc_)
                                     break;
-                                else if(term != _coma_)
+                                else if (term != _coma_)
                                     goto fail_end;
                             }
 
                             //term = stc_popTop(stack);
                             ptr_tok[0] = stc_tokPopTop(stack, &term);
                             stcTkn_push(tok_stack, ptr_tok[0]);
-                            if(term != _func_)
+                            if (term != _func_)
                                 goto fail_end;
 
                             term = stc_popTop(stack);
-                            if(term != _sml_)
+                            if (term != _sml_)
                                 goto fail_end;
 
                             callFunc(builtin_func);
@@ -942,25 +950,25 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         }
 
                     }
-                  
+
                     break;
             }
             stc_print(stack);
-            if(sa_detectSucEnd(stack, token_term))
+            if (sa_detectSucEnd(stack, token_term))
             {
-                if(detect_func)
+                if (detect_func)
                 {
-                    if(builtin_func)
+                    if (builtin_func)
                     {
-                        if(result == NULL)
+                        if (result == NULL)
                             goto sem_gen;
                         /*
                         char *func_retval = malloc(strlen(result->info.ptr->var.key) * sizeof(char) + 1);
                         strcpy(func_retval, result->info.ptr->var.key);
                         *ret_code = func_retval;
                         */
-                        
-                        *ret_token = stc_tokPopTop(stack, &term); 
+
+                        *ret_token = stc_tokPopTop(stack, &term);
                         pushToStack(*ret_token, code_buffer, in_stat);
 
                     }
@@ -983,7 +991,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                     }
                 }
-                else if(result != NULL)
+                else if (result != NULL)
                 {
 
                     token_t *tmp = stc_tokPopTop(stack, &term);
@@ -1004,8 +1012,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     result = gen_expr(NULL, ret_tok, NULL, loc_symtab);
                     if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                     {
-                        handleError(err); 
-                    } 
+                        handleError(err);
+                    }
 
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
                     strcpy(*ret_code, result->info.ptr->var.key);
@@ -1031,17 +1039,17 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
         }
         stc_print(stack);
 
-/* Tohle prijde pravdepodobne vymazat. */
+        /* Tohle prijde pravdepodobne vymazat. */
 #if 0
-        if(sa_detectSucEnd(stack, token_term))
+        if (sa_detectSucEnd(stack, token_term))
         {
-            if(detect_func)
+            if (detect_func)
             {
-              char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
-              strcpy(func_retval, "%retval");
-              DEBUG_PRINT("=> Expr: %s\n", func_retval);
+                char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
+                strcpy(func_retval, "%retval");
+                DEBUG_PRINT("=> Expr: %s\n", func_retval);
             }
-            else if(result != NULL)
+            else if (result != NULL)
             {
                 DEBUG_PRINT("=> Expr: %s\n", token->name);
             }
@@ -1049,10 +1057,10 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
                 token_t *ret_tok = stc_tokPopTop(stack, &term);
                 result = gen_expr(NULL, ret_tok, NULL, loc_symtab);
-                if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
+                if ((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
                 {
-                        handleError(err); 
-                } 
+                    handleError(err);
+                }
                 DEBUG_PRINT("=> Expr: %s\n", ret_tok->info.string);
             }
             stcTkn_destroy(tok_stack);
@@ -1091,7 +1099,7 @@ fail_end:
 
 sem_fail:
     //if(!builtin_func)
-        stcTkn_destroy(tok_stack);
+    stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
     //destroyToken(token);
