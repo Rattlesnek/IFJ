@@ -27,7 +27,7 @@ errors = {
     "ERR_SEM_TYPE" : 4,
     "ERR_SEM_FUNC" : 5,
     "ERR_SEM_OTHER" : 6,
-    "ERR_ZERO_DIV" : 7,
+    "ERR_ZERO_DIV" : 9,
     "ERR_INTERNAL" : 99
 }
 
