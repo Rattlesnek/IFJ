@@ -75,7 +75,7 @@ def run_test(folder, run_valgrind):
     
     call = return_call(names, run_valgrind)
     
-    print("{0:.<20}".format(folder[6:]), end=" ", flush=True)
+    print("{0:.<25}".format(folder[6:]), end=" ", flush=True)
     subprocess.call(call, shell=True)
 
 

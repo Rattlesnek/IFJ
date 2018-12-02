@@ -34,6 +34,18 @@ else
     print "j "
 end
 
+if nil != nil    then
+    print "q "
+else
+    print "r "
+end
+
+if 1 != nil then
+    print "s "
+else
+    print "t "
+end
+
 if  1 != 2 then
     print "k "
 else
@@ -52,17 +64,7 @@ else
     print "p "
 end
 
-if nil != nil    then
-    print "q "
-else
-    print "r "
-end
 
-if 1 != nil then
-    print "s "
-else
-    print "t "
-end
 
 if 1<1    then
     print "u "
