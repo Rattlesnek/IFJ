@@ -1631,7 +1631,8 @@ token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
     else
         goto err_sem_type;
 
-    if (! print_or_append(code_buffer, in_stat, "STRLEN GF@$des GF@$tmp\n"))
+    if (! print_or_append(code_buffer, in_stat, "STRLEN GF@$des GF@$tmp\n"
+                                                "PUSHS GF@$des\n"))
         goto err_internal;
 
     label_n++;
@@ -1708,7 +1709,8 @@ token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
     else
         goto err_sem_type;
 
-    if (! print_or_append(code_buffer, in_stat, "INT2CHAR GF@$des GF@$tmp\n"))        //INT2CHAR takes value <0,255>
+    if (! print_or_append(code_buffer, in_stat, "INT2CHAR GF@$des GF@$tmp\n"
+                                                "PUSHS GF@$des\n"))        //INT2CHAR takes value <0,255>
         goto err_internal;
 
     destroyToken(par);
@@ -1822,7 +1824,8 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
                           "JUMP $ord$end%llu\n"
                           "LABEL $ord%llu\n"
                           "STRI2INT GF@$des GF@$tmp GF@$eq\n"
-                          "LABEL $ord$end%llu\n",
+                          "LABEL $ord$end%llu\n"
+                          "PUSHS GF@$des\n",
                           label_n,
                           label_n,
                           label_n,
@@ -2023,7 +2026,8 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 
                           "LABEL $substr$nil%llu\n"
                           "MOVE GF@$des nil@nil\n"
-                          "LABEL $substr$end%llu\n",
+                          "LABEL $substr$end%llu\n"
+                          "PUSHS GF@$des\n",
 
                           label_n, label_n, label_n, label_n, label_n,
                           label_n, label_n, label_n, label_n, label_n,
@@ -2084,7 +2088,14 @@ token_t *input(list_t *code_buffer, bool in_stat, symtable_t *symtab, int type)
         info.ptr = symtab_elem_add(symtab, name);
         des = createToken("INT_ID", info);
         strcpy(param, "int");
-
+        if (! print_or_append(code_buffer, in_stat, "MOVE GF@$des int@0\n"))
+        {
+            label_n++;
+            destroyToken(des);
+            info.ptr = NULL;
+            des = createToken("ERR_INTERNAL", info);
+            return des;
+        }
     }
     else if (type == 1)
     {
@@ -2092,6 +2103,15 @@ token_t *input(list_t *code_buffer, bool in_stat, symtable_t *symtab, int type)
         info.ptr = symtab_elem_add(symtab, name);
         des = createToken("DBL_ID", info);
         strcpy(param, "float");
+        if (! print_or_append(code_buffer, in_stat, "MOVE GF@$des float@0x0p+0\n"))
+        {
+            label_n++;
+            destroyToken(des);
+            info.ptr = NULL;
+            des = createToken("ERR_INTERNAL", info);
+            return des;
+        }
+
     }
     else if (type == 2)
     {
@@ -2099,13 +2119,22 @@ token_t *input(list_t *code_buffer, bool in_stat, symtable_t *symtab, int type)
         info.ptr = symtab_elem_add(symtab, name);
         des = createToken("STR_ID", info);
         strcpy(param, "string");
+        if (! print_or_append(code_buffer, in_stat, "MOVE GF@$des nil@nil\n"))
+        {
+            label_n++;
+            destroyToken(des);
+            info.ptr = NULL;
+            des = createToken("ERR_INTERNAL", info);
+            return des;
+        }
     }
     else
     {
         return NULL;
     }
 
-    if (! print_or_append(code_buffer, in_stat, "READ GF@$des %s\n", param))
+    if (! print_or_append(code_buffer, in_stat, "READ GF@$des %s\n"
+                                                "PUSHS GF@$des\n", param))
     {
         label_n++;
         destroyToken(des);
@@ -2189,7 +2218,8 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack, list_t *code_buffer, bool
             }
         }
 
-        if (! print_or_append(code_buffer, in_stat, "WRITE %s@%s\n", param, print))
+        if (! print_or_append(code_buffer, in_stat, "WRITE %s@%s\n"
+                                                    "PUSHS nil@nil\n", param, print))
             goto err_internal;
         destroyToken(tmp); // ????
     }
