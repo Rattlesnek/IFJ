@@ -42,7 +42,7 @@
 #define INVALID_TOKEN -1
 #define TEST_FUNC 1
 
-//#define SA_PREC_PRINT 0
+#define SA_PREC_PRINT 0
 #ifdef SA_PREC_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
@@ -443,22 +443,22 @@ bool sa_isOperator(table_elem_t term)
     return false;
 }
 
-void pushToStack(token_t *token, list_t *code_buffer, bool in_stat)
+void pushToStack(token_t *token, list_t *code_buffer, bool in_stat, symtable_t *symtab)
 {
-    if (strcmp(token->name, "INT") &&
-            strcmp(token->name, "STR") &&
-            strcmp(token->name, "DBL") &&
-            strcmp(token->name, "nil"))
-    {
+    if (strcmp(token->name, "INT") && strcmp(token->name, "STR") && strcmp(token->name, "DBL") &&
+        strcmp(token->name, "nil")) {
+
         if (strcmp(token->name, "ID") == 0)
         {
+
             if (token->info.ptr == NULL)
             {
                 print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
             }
             else
-            {
-                print_or_append(code_buffer, in_stat, "PUSHS GF@%s\n",
+            {    
+                print_or_append(code_buffer, in_stat, "PUSHS %s@%s\n",
+                               (strcmp(symtab->name, "$GT") == 0) ? "GF" : "LF",
                                 token->info.ptr->var.key);
             }
         }
@@ -472,7 +472,7 @@ void pushToStack(token_t *token, list_t *code_buffer, bool in_stat)
 
     return;
 }
-/* Komentar */
+
 /*
  * @brief Operator-precedence parser
  *
@@ -511,7 +511,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
         token_term = sa_getTokenIndex(token);
         if (token_term == INVALID_TOKEN)
+        {
+            if(strcmp(token->name, "ERR_LEX") == 0)
+                goto err_lex;
+            else if(strcmp(token->name, "ERR_INTERNAL") == 0)
+                goto err_internal;
+
             goto fail_end;
+        }
         if (token_term == _func_)
         {
             detect_func = 1;
@@ -969,7 +976,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
 
                         *ret_token = stc_tokPopTop(stack, &term);
-                        pushToStack(*ret_token, code_buffer, in_stat);
+                        pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
 
                     }
                     else
@@ -981,7 +988,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
                         token_info_t info;
                         *ret_token = createToken("%%retval", info);
-                        pushToStack(*ret_token, code_buffer, in_stat);
+                        pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
 
                         /*
                         *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
@@ -996,7 +1003,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
-                    pushToStack(*ret_token, code_buffer, in_stat);
+                    pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
                     //stc_print(stack);
                     /*
                     *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
@@ -1022,7 +1029,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
 
-                    pushToStack(*ret_token, code_buffer, in_stat);
+                    pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
                 }
                 //stc_print(stack);
                 //stcTkn_print(tok_stack);
@@ -1088,6 +1095,18 @@ sem_internal:
     destroyToken(token);
     stc_destroy(stack);
     //destroyToken(token);
+    return ERR_INTERNAL;
+
+err_lex:
+    stcTkn_destroy(tok_stack);
+    destroyToken(token);
+    stc_destroy(stack);
+    return ERR_LEX;
+
+err_internal:
+    stcTkn_destroy(tok_stack);
+    destroyToken(token);
+    stc_destroy(stack);
     return ERR_INTERNAL;
 
 fail_end:
