@@ -10,7 +10,7 @@ def fun (a)
     end
 end
 
-def baz (b)
+def baz (a)
     if a <= 0 then
         a - 1
     else
