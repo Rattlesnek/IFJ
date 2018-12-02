@@ -1,0 +1,424 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+DEFVAR GF@a
+MOVE GF@a int@98
+DEFVAR GF@b
+MOVE GF@b string@JAMBALAJA
+DEFVAR GF@c
+MOVE GF@c int@4
+DEFVAR GF@d
+MOVE GF@d int@25
+MOVE GF@$des string@
+MOVE GF@$tmp GF@a
+TYPE GF@$type GF@a
+JUMPIFEQ $chr$tmp0$int$true GF@$type string@int
+EXIT int@4
+LABEL $chr$tmp0$int$true
+INT2CHAR GF@$des GF@$tmp
+PUSHS GF@$des
+MOVE GF@$des string@
+MOVE GF@$tmp GF@c
+TYPE GF@$type GF@c
+JUMPIFEQ $chr$tmp1$int$true GF@$type string@int
+EXIT int@4
+LABEL $chr$tmp1$int$true
+INT2CHAR GF@$des GF@$tmp
+PUSHS GF@$des
+MOVE GF@$des string@
+MOVE GF@$tmp int@42
+INT2CHAR GF@$des GF@$tmp
+PUSHS GF@$des
+MOVE GF@$des int@0
+MOVE GF@$tmp GF@b
+TYPE GF@$type GF@b
+JUMPIFEQ $ord$string3$string$true GF@$type string@string
+EXIT int@4
+LABEL $ord$string3$string$true
+MOVE GF@$eq GF@c
+TYPE GF@$type GF@c
+JUMPIFEQ $ord$position3$int$true GF@$type string@int
+EXIT int@4
+LABEL $ord$position3$int$true
+STRLEN GF@$des GF@$tmp
+LT GF@$type GF@$eq GF@$des
+JUMPIFEQ $ord3 GF@$type bool@true
+MOVE GF@$des nil@nil
+JUMP $ord$end3
+LABEL $ord3
+STRI2INT GF@$des GF@$tmp GF@$eq
+LABEL $ord$end3
+PUSHS GF@$des
+MOVE GF@$des int@0
+MOVE GF@$tmp GF@b
+TYPE GF@$type GF@b
+JUMPIFEQ $ord$string4$string$true GF@$type string@string
+EXIT int@4
+LABEL $ord$string4$string$true
+MOVE GF@$eq int@8
+STRLEN GF@$des GF@$tmp
+LT GF@$type GF@$eq GF@$des
+JUMPIFEQ $ord4 GF@$type bool@true
+MOVE GF@$des nil@nil
+JUMP $ord$end4
+LABEL $ord4
+STRI2INT GF@$des GF@$tmp GF@$eq
+LABEL $ord$end4
+PUSHS GF@$des
+MOVE GF@$des int@0
+MOVE GF@$tmp string@Jak\032se\032vede
+MOVE GF@$eq int@3
+STRLEN GF@$des GF@$tmp
+LT GF@$type GF@$eq GF@$des
+JUMPIFEQ $ord5 GF@$type bool@true
+MOVE GF@$des nil@nil
+JUMP $ord$end5
+LABEL $ord5
+STRI2INT GF@$des GF@$tmp GF@$eq
+LABEL $ord$end5
+PUSHS GF@$des
+MOVE GF@$des int@0
+MOVE GF@$tmp string@Jde\032to\032skvele
+MOVE GF@$eq GF@c
+TYPE GF@$type GF@c
+JUMPIFEQ $ord$position6$int$true GF@$type string@int
+EXIT int@4
+LABEL $ord$position6$int$true
+STRLEN GF@$des GF@$tmp
+LT GF@$type GF@$eq GF@$des
+JUMPIFEQ $ord6 GF@$type bool@true
+MOVE GF@$des nil@nil
+JUMP $ord$end6
+LABEL $ord6
+STRI2INT GF@$des GF@$tmp GF@$eq
+LABEL $ord$end6
+PUSHS GF@$des
+WRITE GF@b
+WRITE string@Nazdarek
+READ GF@$des int
+PUSHS GF@$des
+DEFVAR GF@q
+POPS GF@q
+READ GF@$des int
+PUSHS GF@$des
+DEFVAR GF@r
+POPS GF@r
+READ GF@$des string
+PUSHS GF@$des
+DEFVAR GF@s
+POPS GF@s
+READ GF@$des string
+PUSHS GF@$des
+DEFVAR GF@t
+POPS GF@t
+READ GF@$des float
+PUSHS GF@$des
+DEFVAR GF@u
+POPS GF@u
+READ GF@$des float
+PUSHS GF@$des
+DEFVAR GF@v
+POPS GF@v
+MOVE GF@$des string@
+MOVE GF@$jump GF@b
+TYPE GF@$type GF@b
+JUMPIFEQ $substr$string15$string$true GF@$type string@string
+EXIT int@4
+LABEL $substr$string15$string$true
+MOVE GF@$eq GF@c
+TYPE GF@$type GF@c
+JUMPIFEQ $substr$begin15$int$true GF@$type string@int
+EXIT int@4
+LABEL $substr$begin15$int$true
+MOVE GF@$tmp GF@d
+TYPE GF@$type GF@d
+JUMPIFEQ $substr$end15$int$true GF@$type string@int
+EXIT int@4
+LABEL $substr$end15$int$true
+STRLEN GF@$des GF@$jump
+LT GF@$type GF@$eq int@0
+JUMPIFEQ $substr$nil15 GF@$type bool@true
+GT GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil15 GF@$type bool@true
+EQ GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil15 GF@$type bool@true
+LT GF@$type GF@$tmp int@0
+JUMPIFEQ $substr$nil15 GF@$type bool@true
+ADD GF@$tmp GF@$eq GF@$tmp
+LT GF@$type GF@$des GF@$tmp
+JUMPIFEQ $substr$whole15 GF@$type bool@true
+MOVE GF@$des string@
+LABEL $substr$reqsize15
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextchar15 GF@$type bool@true
+JUMP $substr$end15
+LABEL $substr$nextchar15
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$reqsize15
+LABEL $substr$whole15
+MOVE GF@$tmp GF@$des
+MOVE GF@$des string@
+LABEL $substr$wholestr15
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextcharwhole15 GF@$type bool@true
+JUMP $substr$end15
+LABEL $substr$nextcharwhole15
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$wholestr15
+LABEL $substr$nil15
+MOVE GF@$des nil@nil
+LABEL $substr$end15
+PUSHS GF@$des
+MOVE GF@$des string@
+MOVE GF@$jump string@AHOJ\032svete
+MOVE GF@$eq int@1
+MOVE GF@$tmp int@55
+STRLEN GF@$des GF@$jump
+LT GF@$type GF@$eq int@0
+JUMPIFEQ $substr$nil16 GF@$type bool@true
+GT GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil16 GF@$type bool@true
+EQ GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil16 GF@$type bool@true
+LT GF@$type GF@$tmp int@0
+JUMPIFEQ $substr$nil16 GF@$type bool@true
+ADD GF@$tmp GF@$eq GF@$tmp
+LT GF@$type GF@$des GF@$tmp
+JUMPIFEQ $substr$whole16 GF@$type bool@true
+MOVE GF@$des string@
+LABEL $substr$reqsize16
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextchar16 GF@$type bool@true
+JUMP $substr$end16
+LABEL $substr$nextchar16
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$reqsize16
+LABEL $substr$whole16
+MOVE GF@$tmp GF@$des
+MOVE GF@$des string@
+LABEL $substr$wholestr16
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextcharwhole16 GF@$type bool@true
+JUMP $substr$end16
+LABEL $substr$nextcharwhole16
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$wholestr16
+LABEL $substr$nil16
+MOVE GF@$des nil@nil
+LABEL $substr$end16
+PUSHS GF@$des
+MOVE GF@$des string@
+MOVE GF@$jump GF@b
+TYPE GF@$type GF@b
+JUMPIFEQ $substr$string17$string$true GF@$type string@string
+EXIT int@4
+LABEL $substr$string17$string$true
+MOVE GF@$eq GF@c
+TYPE GF@$type GF@c
+JUMPIFEQ $substr$begin17$int$true GF@$type string@int
+EXIT int@4
+LABEL $substr$begin17$int$true
+MOVE GF@$tmp GF@d
+TYPE GF@$type GF@d
+JUMPIFEQ $substr$end17$int$true GF@$type string@int
+EXIT int@4
+LABEL $substr$end17$int$true
+STRLEN GF@$des GF@$jump
+LT GF@$type GF@$eq int@0
+JUMPIFEQ $substr$nil17 GF@$type bool@true
+GT GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil17 GF@$type bool@true
+EQ GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil17 GF@$type bool@true
+LT GF@$type GF@$tmp int@0
+JUMPIFEQ $substr$nil17 GF@$type bool@true
+ADD GF@$tmp GF@$eq GF@$tmp
+LT GF@$type GF@$des GF@$tmp
+JUMPIFEQ $substr$whole17 GF@$type bool@true
+MOVE GF@$des string@
+LABEL $substr$reqsize17
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextchar17 GF@$type bool@true
+JUMP $substr$end17
+LABEL $substr$nextchar17
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$reqsize17
+LABEL $substr$whole17
+MOVE GF@$tmp GF@$des
+MOVE GF@$des string@
+LABEL $substr$wholestr17
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextcharwhole17 GF@$type bool@true
+JUMP $substr$end17
+LABEL $substr$nextcharwhole17
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$wholestr17
+LABEL $substr$nil17
+MOVE GF@$des nil@nil
+LABEL $substr$end17
+PUSHS GF@$des
+MOVE GF@$des string@
+MOVE GF@$jump GF@b
+TYPE GF@$type GF@b
+JUMPIFEQ $substr$string18$string$true GF@$type string@string
+EXIT int@4
+LABEL $substr$string18$string$true
+MOVE GF@$eq GF@c
+TYPE GF@$type GF@c
+JUMPIFEQ $substr$begin18$int$true GF@$type string@int
+EXIT int@4
+LABEL $substr$begin18$int$true
+MOVE GF@$tmp int@22
+STRLEN GF@$des GF@$jump
+LT GF@$type GF@$eq int@0
+JUMPIFEQ $substr$nil18 GF@$type bool@true
+GT GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil18 GF@$type bool@true
+EQ GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil18 GF@$type bool@true
+LT GF@$type GF@$tmp int@0
+JUMPIFEQ $substr$nil18 GF@$type bool@true
+ADD GF@$tmp GF@$eq GF@$tmp
+LT GF@$type GF@$des GF@$tmp
+JUMPIFEQ $substr$whole18 GF@$type bool@true
+MOVE GF@$des string@
+LABEL $substr$reqsize18
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextchar18 GF@$type bool@true
+JUMP $substr$end18
+LABEL $substr$nextchar18
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$reqsize18
+LABEL $substr$whole18
+MOVE GF@$tmp GF@$des
+MOVE GF@$des string@
+LABEL $substr$wholestr18
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextcharwhole18 GF@$type bool@true
+JUMP $substr$end18
+LABEL $substr$nextcharwhole18
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$wholestr18
+LABEL $substr$nil18
+MOVE GF@$des nil@nil
+LABEL $substr$end18
+PUSHS GF@$des
+MOVE GF@$des string@
+MOVE GF@$jump GF@b
+TYPE GF@$type GF@b
+JUMPIFEQ $substr$string19$string$true GF@$type string@string
+EXIT int@4
+LABEL $substr$string19$string$true
+MOVE GF@$eq int@1
+MOVE GF@$tmp GF@d
+TYPE GF@$type GF@d
+JUMPIFEQ $substr$end19$int$true GF@$type string@int
+EXIT int@4
+LABEL $substr$end19$int$true
+STRLEN GF@$des GF@$jump
+LT GF@$type GF@$eq int@0
+JUMPIFEQ $substr$nil19 GF@$type bool@true
+GT GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil19 GF@$type bool@true
+EQ GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil19 GF@$type bool@true
+LT GF@$type GF@$tmp int@0
+JUMPIFEQ $substr$nil19 GF@$type bool@true
+ADD GF@$tmp GF@$eq GF@$tmp
+LT GF@$type GF@$des GF@$tmp
+JUMPIFEQ $substr$whole19 GF@$type bool@true
+MOVE GF@$des string@
+LABEL $substr$reqsize19
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextchar19 GF@$type bool@true
+JUMP $substr$end19
+LABEL $substr$nextchar19
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$reqsize19
+LABEL $substr$whole19
+MOVE GF@$tmp GF@$des
+MOVE GF@$des string@
+LABEL $substr$wholestr19
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextcharwhole19 GF@$type bool@true
+JUMP $substr$end19
+LABEL $substr$nextcharwhole19
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$wholestr19
+LABEL $substr$nil19
+MOVE GF@$des nil@nil
+LABEL $substr$end19
+PUSHS GF@$des
+MOVE GF@$des string@
+MOVE GF@$jump GF@b
+TYPE GF@$type GF@b
+JUMPIFEQ $substr$string20$string$true GF@$type string@string
+EXIT int@4
+LABEL $substr$string20$string$true
+MOVE GF@$eq int@1
+MOVE GF@$tmp int@22
+STRLEN GF@$des GF@$jump
+LT GF@$type GF@$eq int@0
+JUMPIFEQ $substr$nil20 GF@$type bool@true
+GT GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil20 GF@$type bool@true
+EQ GF@$type GF@$eq GF@$des
+JUMPIFEQ $substr$nil20 GF@$type bool@true
+LT GF@$type GF@$tmp int@0
+JUMPIFEQ $substr$nil20 GF@$type bool@true
+ADD GF@$tmp GF@$eq GF@$tmp
+LT GF@$type GF@$des GF@$tmp
+JUMPIFEQ $substr$whole20 GF@$type bool@true
+MOVE GF@$des string@
+LABEL $substr$reqsize20
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextchar20 GF@$type bool@true
+JUMP $substr$end20
+LABEL $substr$nextchar20
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$reqsize20
+LABEL $substr$whole20
+MOVE GF@$tmp GF@$des
+MOVE GF@$des string@
+LABEL $substr$wholestr20
+LT GF@$type GF@$eq GF@$tmp
+JUMPIFEQ $substr$nextcharwhole20 GF@$type bool@true
+JUMP $substr$end20
+LABEL $substr$nextcharwhole20
+GETCHAR GF@$type GF@$jump GF@$eq
+CONCAT GF@$des GF@$des GF@$type
+ADD GF@$eq GF@$eq int@1
+JUMP $substr$wholestr20
+LABEL $substr$nil20
+MOVE GF@$des nil@nil
+LABEL $substr$end20
+PUSHS GF@$des
