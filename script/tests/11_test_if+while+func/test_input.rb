@@ -16,6 +16,13 @@ end
 
 
 def baz (a, b)
+    
+    print "\nbaz a is\n"
+    print a 
+    print "\nbaz b is\n"
+    print b
+    print "\n"
+
     x = 10
     while a < b do
         print "while\n"
@@ -25,7 +32,7 @@ def baz (a, b)
         y = a
     end
 
-    num = 10 + 1
+    num = y + x
     print num
     print "end\n"
 end

@@ -27,7 +27,7 @@ errors = {
     "ERR_SEM_TYPE" : 4,
     "ERR_SEM_FUNC" : 5,
     "ERR_SEM_OTHER" : 6,
-    "ERR_ZERO_DIV" : 7,
+    "ERR_ZERO_DIV" : 9,
     "ERR_INTERNAL" : 99
 }
 
@@ -58,7 +58,7 @@ def return_call(names, run_valgrind):
     add = ' false 0 ' + run_valgrind
     if first_line.startswith('# ERROR'):
         err_name = first_line.replace('# ERROR', '').strip()
-        add = ' true ' + str(errors[err_name] + ' ' + run_valgrind)
+        add = ' true ' + str(errors[err_name]) + ' ' + run_valgrind
 
     call = './test_run.sh'
     for name in names:

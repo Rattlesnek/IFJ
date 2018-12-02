@@ -24,7 +24,7 @@ ERR_SEM_UNDEF=3
 ERR_SEM_TYPE=4
 ERR_SEM_FUNC=5
 ERR_SEM_OTHER=6
-ERR_ZERO_DIV=7
+ERR_ZERO_DIV=9
 ERR_INTERNAL=99
 
 
@@ -56,12 +56,17 @@ then
         run_with_valgrind $testing $generate $valgr
     else
         ../parser <$testing >$generate
-        if [[ $? == $SUCCESS ]]
+        retval=$?
+        if [[ $retval == $SUCCESS ]]
         then
             printf "${GREEN}compile ok ${NC}"
         else
-            printf "${RED}compile fail (exit code: $?)\n${NC}" 
-            exit
+            if [[ "$err_test" == "true" ]]
+            then
+                printf "${GREEN}compile fail (exit code: $retval)\n${NC}" 
+            else
+                printf "${RED}compile fail (exit code: $retval)\n${NC}" 
+            fi
         fi
     fi
 
