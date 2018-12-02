@@ -56,15 +56,16 @@ then
         run_with_valgrind $testing $generate $valgr
     else
         ../parser <$testing >$generate
-        if [[ $? == $SUCCESS ]]
+        retval=$?
+        if [[ $retval == $SUCCESS ]]
         then
             printf "${GREEN}compile ok ${NC}"
         else
             if [[ "$err_test" == "true" ]]
             then
-                printf "${GREEN}compile fail (exit code: $?)\n${NC}" 
+                printf "${GREEN}compile fail (exit code: $retval)\n${NC}" 
             else
-                printf "${RED}compile fail (exit code: $?)\n${NC}" 
+                printf "${RED}compile fail (exit code: $retval)\n${NC}" 
             fi
         fi
     fi
