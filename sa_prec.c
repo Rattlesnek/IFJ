@@ -280,7 +280,8 @@ static inline bool sa_isExprVar(token_t *token)
 {
     if (strcmp(token->name, "INT") == 0 ||
             strcmp(token->name, "DBL") == 0 ||
-            strcmp(token->name, "STR") == 0)
+            strcmp(token->name, "STR") == 0 ||
+            strcmp(token->name, "nil") == 0)
         return true;
 
     return false;
@@ -316,6 +317,8 @@ char *sa_retType(char *type, char *gl_lf)
         return "float";
     else if (strcmp(type, "STR") == 0)
         return "string";
+    else if (strcmp(type, "nil") == 0)
+        return "nil";
     else
         return gl_lf;
 
@@ -339,6 +342,9 @@ token_t *sa_callFunc(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
             val = sa_isExprVar(param) ? param->info.string :
                   param->info.ptr->var.key;
 
+            if(val == NULL)
+                val = "nil";
+            
             char *gl_lf = strcmp(symtable->name, "$GT") == 0 ?
                           "GF" :
                           "LF";
