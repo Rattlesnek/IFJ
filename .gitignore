@@ -11,10 +11,10 @@
 !Makefile
 
 # Unignore script things
-!script/*
+!tests/*
 
 # Ignore tests
-script/tests/*/logs/
+tests/tests/*/logs/
 
 # Ignore hidden 
 .*

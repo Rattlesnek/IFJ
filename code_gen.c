@@ -161,6 +161,10 @@ char *operator(char *op, bool alternative)
     }
     else if (strcmp(op, "/") == 0)
     {
+        if (alternative)
+        {
+            return "IDIV";
+        }
         return "DIV";
     }
     else if (strcmp(op, "==") == 0)
@@ -690,19 +694,32 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
                                 "JUMPIFNEQ $%s$%llu$int$int1 GF@$tmp string@int\n"
                                 "JUMPIFNEQ $%s$%llu$int$notZero1 %s@%s int@0\n"
                                 "EXIT int@9\n"
-                                "LABEL $%s$%llu$int$notZero1\n"
-                                "JUMP $%s$%llu$int$notZero\n"
-                                "LABEL $%s$%llu$int$int1\n", param2, print2, symtab->name, label_n, symtab->name, label_n, param2, print2,
-                                symtab->name, label_n, symtab->name, label_n, symtab->name, label_n);
+                                "LABEL $%s$%llu$int$notZero1\n",
+                                param2, print2, symtab->name, label_n, symtab->name, label_n, param2, print2,
+                                symtab->name, label_n);
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des GF@$des %s@%s\n", operator(op->name, 1), param2, print2);
+                print_or_append(code_buffer, in_stat,
+                                "JUMP $%s$%llu$END\n"
+                                "LABEL $%s$%llu$int$int1\n", symtab->name, label_n, symtab->name, label_n);
 
                 print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$int$notZero %s@%s float@0x0p+0\n"
                                 "EXIT int@9\n"
                                 "LABEL $%s$%llu$int$notZero\n", symtab->name, label_n, param2, print2, symtab->name, label_n);
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des GF@$des %s@%s\n"
+                                "LABEL $%s$%llu$END\n", operator(op->name, 0), param2, print2, symtab->name, label_n);
+            }
+            else
+            {
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des GF@$des %s@%s\n", operator(op->name, 0), param2, print2);
             }
 
-            print_or_append(code_buffer, in_stat,
-                            "MOVE GF@$eq GF@$des\n"
-                            "%s GF@$des GF@$des %s@%s\n", operator(op->name, 0), param2, print2);
+
 
             if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
             {
@@ -712,13 +729,6 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
                                 "OR GF@$des GF@$eq GF@$des\n", param2, print2);
             }
 
-            if (strcmp(op->name, "/") == 0)
-            {
-                print_or_append(code_buffer, in_stat,
-                                "JUMPIFNEQ $%s$%llu$int GF@$type string@int\n"
-                                "FLOAT2INT GF@$des GF@$des\n"
-                                "LABEL $%s$%llu$int\n", symtab->name, label_n, symtab->name, label_n);
-            }
 
         }
         else
@@ -730,19 +740,31 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
                                 "JUMPIFNEQ $%s$%llu$int$int1 GF@$tmp string@int\n"
                                 "JUMPIFNEQ $%s$%llu$int$notZero1 GF@$des int@0\n"
                                 "EXIT int@9\n"
-                                "LABEL $%s$%llu$int$notZero1\n"
-                                "JUMP $%s$%llu$int$notZero\n"
-                                "LABEL $%s$%llu$int$int1\n", param2, print2, symtab->name, label_n, symtab->name, label_n,
-                                symtab->name, label_n, symtab->name, label_n, symtab->name, label_n);
+                                "LABEL $%s$%llu$int$notZero1\n",
+                                param2, print2, symtab->name, label_n, symtab->name, label_n,
+                                symtab->name, label_n);
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des %s@%s GF@$des\n", operator(op->name, 1), param2, print2);
+                print_or_append(code_buffer, in_stat,
+                                "JUMP $%s$%llu$END\n"
+                                "LABEL $%s$%llu$int$int1\n", symtab->name, label_n, symtab->name, label_n);
 
                 print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$int$notZero GF@$des float@0x0p+0\n"
                                 "EXIT int@9\n"
                                 "LABEL $%s$%llu$int$notZero\n", symtab->name, label_n, symtab->name, label_n);
-            }
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des %s@%s GF@$des\n"
+                                "LABEL $%s$%llu$END\n", operator(op->name, 0), param2, print2, symtab->name, label_n);
 
-            print_or_append(code_buffer, in_stat,
-                            "MOVE GF@$eq GF@$des\n"
-                            "%s GF@$des %s@%s GF@$des\n", operator(op->name, 0), param2, print2);
+            }
+            else
+            {
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des %s@%s GF@$des\n", operator(op->name, 0), param2, print2);
+            }
 
             if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
             {
@@ -750,13 +772,6 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
                 print_or_append(code_buffer, in_stat, "EQ GF@$eq %s@%s GF@$eq\n"
                                 "OR GF@$des GF@$eq GF@$des\n", param2, print2);
-            }
-            if (strcmp(op->name, "/") == 0)
-            {
-                print_or_append(code_buffer, in_stat,
-                                "JUMPIFNEQ $%s$%llu$int GF@$type string@int\n"
-                                "FLOAT2INT GF@$des GF@$des\n"
-                                "LABEL $%s$%llu$int\n", symtab->name, label_n, symtab->name, label_n);
             }
 
         }
@@ -851,9 +866,9 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         {
             if (strcmp(op->name, "/") == 0)
             {
-                print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$float$notZero GF@$des float@0x0p+0\n"
+                print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$float$notZero %s@%s float@0x0p+0\n"
                                 "EXIT int@9\n"
-                                "LABEL $%s$%llu$float$notZero\n", symtab->name, label_n, symtab->name, label_n);
+                                "LABEL $%s$%llu$float$notZero\n", symtab->name, label_n, param1, print1, symtab->name, label_n);
             }
 
             print_or_append(code_buffer, in_stat,
@@ -897,7 +912,7 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     if (strcmp(op->name, "+") == 0 || strcmp(op->name, "-") == 0 || strcmp(op->name, "*") == 0 ||
             strcmp(op->name, "/") == 0)
     {
-        strncpy(des->name, "ID", 8);
+        strncpy(des->name, "DBL_ID", 8);
     }
 
 
@@ -1123,7 +1138,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
     {
         print_or_append(code_buffer, in_stat, "TYPE GF@$type %s@%s\n"
-                        "JUMPIFNEQ $%s$%llu$int$string GF@$type string@string\n", param2, print2, symtab->name, label_n);
+                        "JUMPIFNEQ $%s$%llu$int$string1 GF@$type string@string\n", param2, print2, symtab->name, label_n);
         if (strcmp(op->name, "!=") == 0)
         {
             print_or_append(code_buffer, in_stat, "MOVE GF@$des bool@true\n");
@@ -1134,12 +1149,12 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
 
         print_or_append(code_buffer, in_stat,
-                        "JUMP END4$%llu\n"
-                        "LABEL $%s$%llu$int$string\n"
+                        "JUMP END1$%llu\n"
+                        "LABEL $%s$%llu$int$string1\n"
                         "MOVE GF@$des %s@%s\n"
-                        "JUMPIFNEQ $%s$%llu$int$float GF@$type string@float\n"
+                        "JUMPIFNEQ $%s$%llu$int$float1 GF@$type string@float\n"
                         "INT2FLOAT GF@$des %s@%s\n"
-                        "LABEL $%s$%llu$int$float\n"
+                        "LABEL $%s$%llu$int$float1\n"
                         "%s GF@$des GF@$des %s@%s\n", label_n, symtab->name, label_n, param1, print1, symtab->name, label_n, param1, print1,
                         symtab->name, label_n, operator(op->name, 0), param2, print2);
 
@@ -1147,19 +1162,19 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         {
             print_or_append(code_buffer, in_stat, "NOT GF@$des GF@$des\n");
         }
-        print_or_append(code_buffer, in_stat, "LABEL END4$%llu\n", label_n);
+        print_or_append(code_buffer, in_stat, "LABEL END1$%llu\n", label_n);
     }
     else
     {
         print_or_append(code_buffer, in_stat,
                         "TYPE GF@$type %s@%s\n"
-                        "JUMPIFNEQ $%s$%llu$int$string GF@$type string@string\n"
+                        "JUMPIFNEQ $%s$%llu$int$string1 GF@$type string@string\n"
                         "EXIT int@4\n"
-                        "LABEL $%s$%llu$int$string\n"
+                        "LABEL $%s$%llu$int$string1\n"
                         "MOVE GF@$des %s@%s\n"
-                        "JUMPIFNEQ $%s$%llu$int$float GF@$type string@float\n"
+                        "JUMPIFNEQ $%s$%llu$int$float1 GF@$type string@float\n"
                         "INT2FLOAT GF@$des %s@%s\n"
-                        "LABEL $%s$%llu$int$float\n",  param2, print2, symtab->name, label_n, symtab->name, label_n, param1,
+                        "LABEL $%s$%llu$int$float1\n",  param2, print2, symtab->name, label_n, symtab->name, label_n, param1,
                         print1, symtab->name, label_n, param1, print1, symtab->name, label_n);
 
         if (!switched)
@@ -1171,19 +1186,32 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
                                 "JUMPIFNEQ $%s$%llu$int$int1 GF@$tmp string@int\n"
                                 "JUMPIFNEQ $%s$%llu$int$notZero1 %s@%s int@0\n"
                                 "EXIT int@9\n"
-                                "LABEL $%s$%llu$int$notZero1\n"
-                                "JUMP $%s$%llu$int$notZero\n"
-                                "LABEL $%s$%llu$int$int1\n", param2, print2, symtab->name, label_n, symtab->name, label_n, param2, print2,
-                                symtab->name, label_n, symtab->name, label_n, symtab->name, label_n);
+                                "LABEL $%s$%llu$int$notZero1\n",
+                                param2, print2, symtab->name, label_n, symtab->name, label_n, param2, print2,
+                                symtab->name, label_n);
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des GF@$des %s@%s\n", operator(op->name, 1), param2, print2);
+                print_or_append(code_buffer, in_stat,
+                                "JUMP $%s$%llu$END\n"
+                                "LABEL $%s$%llu$int$int1\n", symtab->name, label_n, symtab->name, label_n);
 
                 print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$int$notZero %s@%s float@0x0p+0\n"
                                 "EXIT int@9\n"
                                 "LABEL $%s$%llu$int$notZero\n", symtab->name, label_n, param2, print2, symtab->name, label_n);
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des GF@$des %s@%s\n"
+                                "LABEL $%s$%llu$END\n", operator(op->name, 0), param2, print2, symtab->name, label_n);
+            }
+            else
+            {
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des GF@$des %s@%s\n", operator(op->name, 0), param2, print2);
             }
 
-            print_or_append(code_buffer, in_stat,
-                            "MOVE GF@$eq GF@$des\n"
-                            "%s GF@$des GF@$des %s@%s\n", operator(op->name, 0), param2, print2);
+
 
             if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
             {
@@ -1193,13 +1221,6 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
                                 "OR GF@$des GF@$eq GF@$des\n", param2, print2);
             }
 
-            if (strcmp(op->name, "/") == 0)
-            {
-                print_or_append(code_buffer, in_stat,
-                                "JUMPIFNEQ $%s$%llu$int GF@$type string@int\n"
-                                "FLOAT2INT GF@$des GF@$des\n"
-                                "LABEL $%s$%llu$int\n", symtab->name, label_n, symtab->name, label_n);
-            }
 
         }
         else
@@ -1211,19 +1232,31 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
                                 "JUMPIFNEQ $%s$%llu$int$int1 GF@$tmp string@int\n"
                                 "JUMPIFNEQ $%s$%llu$int$notZero1 GF@$des int@0\n"
                                 "EXIT int@9\n"
-                                "LABEL $%s$%llu$int$notZero1\n"
-                                "JUMP $%s$%llu$int$notZero\n"
-                                "LABEL $%s$%llu$int$int1\n", param2, print2, symtab->name, label_n, symtab->name, label_n,
-                                symtab->name, label_n, symtab->name, label_n, symtab->name, label_n);
+                                "LABEL $%s$%llu$int$notZero1\n",
+                                param2, print2, symtab->name, label_n, symtab->name, label_n,
+                                symtab->name, label_n);
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des %s@%s GF@$des\n", operator(op->name, 1), param2, print2);
+                print_or_append(code_buffer, in_stat,
+                                "JUMP $%s$%llu$END\n"
+                                "LABEL $%s$%llu$int$int1\n", symtab->name, label_n, symtab->name, label_n);
 
                 print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$int$notZero GF@$des float@0x0p+0\n"
                                 "EXIT int@9\n"
                                 "LABEL $%s$%llu$int$notZero\n", symtab->name, label_n, symtab->name, label_n);
-            }
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des %s@%s GF@$des\n"
+                                "LABEL $%s$%llu$END\n", operator(op->name, 0), param2, print2, symtab->name, label_n);
 
-            print_or_append(code_buffer, in_stat,
-                            "MOVE GF@$eq GF@$des\n"
-                            "%s GF@$des %s@%s GF@$des\n", operator(op->name, 0), param2, print2);
+            }
+            else
+            {
+                print_or_append(code_buffer, in_stat,
+                                "MOVE GF@$eq GF@$des\n"
+                                "%s GF@$des %s@%s GF@$des\n", operator(op->name, 0), param2, print2);
+            }
 
             if (strcmp(op->name, "<=") == 0 || strcmp(op->name, ">=") == 0)
             {
@@ -1231,13 +1264,6 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
                 print_or_append(code_buffer, in_stat, "EQ GF@$eq %s@%s GF@$eq\n"
                                 "OR GF@$des GF@$eq GF@$des\n", param2, print2);
-            }
-            if (strcmp(op->name, "/") == 0)
-            {
-                print_or_append(code_buffer, in_stat,
-                                "JUMPIFNEQ $%s$%llu$int GF@$type string@int\n"
-                                "FLOAT2INT GF@$des GF@$des\n"
-                                "LABEL $%s$%llu$int\n", symtab->name, label_n, symtab->name, label_n);
             }
 
         }
@@ -1271,7 +1297,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
 
         print_or_append(code_buffer, in_stat,
-                        "JUMP END5$%llu\n"
+                        "JUMP END2$%llu\n"
                         "LABEL $%s$%llu$float$string\n"
                         "MOVE GF@$des %s@%s\n"
                         "JUMPIFEQ $%s$%llu$float GF@$type string@float\n"
@@ -1284,7 +1310,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         {
             print_or_append(code_buffer, in_stat, "NOT GF@$des GF@$des\n");
         }
-        print_or_append(code_buffer, in_stat, "LABEL END5$%llu\n", label_n);
+        print_or_append(code_buffer, in_stat, "LABEL END2$%llu\n", label_n);
     }
     else
     {
@@ -1303,9 +1329,9 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         {
             if (strcmp(op->name, "/") == 0)
             {
-                print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$float$notZero GF@$des float@0x0p+0\n"
+                print_or_append(code_buffer, in_stat, "JUMPIFNEQ $%s$%llu$float$notZero %s@%s float@0x0p+0\n"
                                 "EXIT int@9\n"
-                                "LABEL $%s$%llu$float$notZero\n", symtab->name, label_n, symtab->name, label_n);
+                                "LABEL $%s$%llu$float$notZero\n", symtab->name, label_n, param1, print1, symtab->name, label_n);
             }
 
             print_or_append(code_buffer, in_stat,
@@ -1345,6 +1371,8 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
     }
 
+
+
     print_or_append(code_buffer, in_stat, "JUMP ENDTHISMADNESS%llu\n", label_n);
 
     print_or_append(code_buffer, in_stat, "LABEL $%s$%llu$string0\n", symtab->name,
@@ -1365,7 +1393,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         }
 
         print_or_append(code_buffer, in_stat,
-                        "JUMP END6$%llu\n"
+                        "JUMP END3$%llu\n"
                         "LABEL $%s$%llu$string$string\n"
                         "MOVE GF@$des %s@%s\n"
                         "%s GF@$des GF@$des %s@%s\n", label_n, symtab->name, label_n, param1, print1, operator(op->name, 0), param2, print2);
@@ -1374,7 +1402,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
         {
             print_or_append(code_buffer, in_stat, "NOT GF@$des GF@$des\n");
         }
-        print_or_append(code_buffer, in_stat, "LABEL END6$%llu\n", label_n);
+        print_or_append(code_buffer, in_stat, "LABEL END3$%llu\n", label_n);
     }
 //TADY JSEM SKONCIL
     else
@@ -1399,10 +1427,15 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
             print_or_append(code_buffer, in_stat, "EQ GF@$eq %s@%s %s@%s\n"
                             "OR GF@$des GF@$eq GF@$des\n", param1, print1, param2, print2);
         }
-
     }
     print_or_append(code_buffer, in_stat, "LABEL ENDTHISMADNESS%llu\n", label_n);
 
+
+    if (strcmp(op->name, "+") == 0 || strcmp(op->name, "-") == 0 || strcmp(op->name, "*") == 0 ||
+            strcmp(op->name, "/") == 0)
+    {
+        strncpy(des->name, "ID", 8);
+    }
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
