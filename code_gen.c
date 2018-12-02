@@ -278,7 +278,7 @@ char *params(symtable_t *symtab, char* param, token_t *par, bool id_variant)
             {
                 strcpy(print, "$des2");
             }
-            param = "GF";
+            strcpy(param, "GF");
 
         }
         else
