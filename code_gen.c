@@ -1067,7 +1067,9 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         }
 
     }
-    if (strcmp(op->name, "+"))
+
+
+    if (strcmp(op->name, "+") == 0)
     {
         strncpy(des->name, "STR_ID", 8);
     }
