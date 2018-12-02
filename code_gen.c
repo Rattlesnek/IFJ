@@ -40,7 +40,7 @@ GF@$jump\n"
 GF@$tmp\n"
 GF@$type\n\n"
 */
-
+static unsigned long long label_n = 0;
 ////////////////////////////////////////////////////////////////////////
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
@@ -331,7 +331,7 @@ token_t *nil(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, boo
         return error;
     }
 
-    static unsigned long long label_n = 0;
+
 
 
     token_info_t info = {.ptr = NULL};
@@ -376,7 +376,7 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     {
         return NULL;
     }
-    static unsigned long long label_n = 0;
+
 
     char param1[10];
     char param2[10];
@@ -469,7 +469,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     {
         return NULL;
     }
-    static unsigned long long label_n = 0;
+
     char param1[10];
     char param2[10];
     token_info_t info = {.ptr = NULL};
@@ -541,7 +541,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer,
     {
         return NULL;
     }
-    static unsigned long long label_n = 0;
+
 
 
     token_info_t info = {.ptr = NULL};
@@ -581,7 +581,7 @@ token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer,
     {
         return NULL;
     }
-    static unsigned long long label_n = 0;
+
 
     token_info_t info = {.ptr = NULL};
     token_t *des = createToken("BOOL_ID", info);
@@ -619,7 +619,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     {
         return NULL;
     }
-    static unsigned long long label_n = 0;
+
 
     char param1[10];
     char param2[10];
@@ -785,7 +785,7 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     {
         return NULL;
     }
-    static unsigned long long label_n = 0;
+
 
     char param1[10];
     char param2[10];
@@ -916,7 +916,7 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     {
         return NULL;
     }
-    static unsigned long long label_n = 0;
+
 
     char param1[10];
     char param2[10];
@@ -977,14 +977,13 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
 token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat)
 {
-    static unsigned long long label_n = 0;
+
     if (operator(op->name, 0) == NULL)
     {
         return NULL;
     }
     if (strcmp(op->name, "/") == 0 || strcmp(op->name, "-") == 0 || strcmp(op->name, "*") == 0)
     {
-        label_n++;
         destroyToken(par1);
         destroyToken(par2);
         destroyToken(op);
@@ -1087,13 +1086,9 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     {
         return NULL;
     }
-    static unsigned long long label_n = 0;
-    label_n++;
-    label_n++;
-    label_n++;
+
     char param1[10];
     char param2[10];
-
     token_info_t info = {.ptr = NULL};
 
     token_t *des = createToken("BOOL_ID", info);
@@ -1562,7 +1557,7 @@ token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
         return err;
     }
 
-    static unsigned long long label_n = 0;
+
     char name[20];
     token_info_t info;
     sprintf(name, "LEN%lluSTR", label_n);
@@ -1636,7 +1631,7 @@ err_sem_type:
 //RETURN ascii char of value par<0,255> "chr(42)"
 token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par)
 {
-    static unsigned long long label_n = 0;
+
     char name[24];
     sprintf(name, "CHR%llu", label_n);
     token_info_t info;
@@ -1712,7 +1707,7 @@ err_sem_type:
 
 token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par1, token_t *par2)      //par1 == string, par2 == position(INT)
 {
-    static unsigned long long label_n = 0;
+
     char name[24];
     sprintf(name, "ORD%llu", label_n);
     token_info_t info;
@@ -1834,7 +1829,7 @@ err_sem_type:
 
 token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *string, token_t *begin, token_t *end)
 {
-    static unsigned long long label_n = 0;
+
     char name[24];
     sprintf(name, "SUBS%llu", label_n);
     token_info_t info;
@@ -2039,7 +2034,7 @@ err_sem_type:
 
 token_t *input(list_t *code_buffer, bool in_stat, symtable_t *symtab, int type)
 {
-    static unsigned long long label_n = 0;
+
     char name[20];
     token_info_t info;
     token_t *des;
@@ -2090,7 +2085,7 @@ token_t *input(list_t *code_buffer, bool in_stat, symtable_t *symtab, int type)
 
 token_t *print(symtable_t *symtab, stack_tkn_t *stack, list_t *code_buffer, bool in_stat)
 {
-    static unsigned long long label_n = 0;
+
     token_info_t info;
     info.string = "nil";
     token_t *des = createToken("nil", info);
