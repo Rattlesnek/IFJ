@@ -1,0 +1,141 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+DEFVAR GF@a
+PUSHS bool@true
+PUSHS bool@false
+JUMPIFEQS $if$0
+
+MOVE GF@a string@ifwithoutelse\010
+WRITE GF@a
+
+JUMP $endif$0
+LABEL $if$0
+LABEL $endif$0
+
+PUSHS bool@false
+PUSHS bool@false
+JUMPIFEQS $if$1
+
+MOVE GF@a string@ifwithoutelse\010
+WRITE GF@a
+
+JUMP $endif$1
+LABEL $if$1
+LABEL $endif$1
+
+DEFVAR GF@b
+PUSHS bool@false
+PUSHS bool@false
+JUMPIFEQS $if$2
+
+WRITE string@if\010
+
+JUMP $endif$2
+LABEL $if$2
+PUSHS bool@false
+PUSHS bool@false
+JUMPIFEQS $if$4
+
+WRITE string@elsif\010
+
+JUMP $endif$2
+LABEL $if$3
+PUSHS bool@false
+PUSHS bool@false
+JUMPIFEQS $if$5
+
+WRITE string@elisf2\010
+
+JUMP $endif$2
+LABEL $if$4
+
+MOVE GF@b int@1
+WRITE GF@b
+WRITE string@ok1\010
+LABEL $endif$2
+
+DEFVAR GF@c
+PUSHS bool@true
+PUSHS bool@false
+JUMPIFEQS $if$5
+
+MOVE GF@c int@2
+WRITE GF@c
+WRITE string@ok2\010
+
+JUMP $endif$3
+LABEL $if$5
+PUSHS bool@true
+PUSHS bool@false
+JUMPIFEQS $if$7
+
+WRITE string@elsif\010
+
+JUMP $endif$3
+LABEL $if$6
+
+WRITE string@else\010
+LABEL $endif$3
+
+DEFVAR GF@d
+PUSHS bool@false
+PUSHS bool@false
+JUMPIFEQS $if$7
+
+WRITE string@if\010
+
+JUMP $endif$4
+LABEL $if$7
+PUSHS bool@true
+PUSHS bool@false
+JUMPIFEQS $if$9
+
+MOVE GF@d int@1
+WRITE GF@d
+WRITE string@ok3\010
+
+JUMP $endif$4
+LABEL $if$8
+
+WRITE string@else\010
+LABEL $endif$4
+
+DEFVAR GF@x
+PUSHS bool@false
+PUSHS bool@false
+JUMPIFEQS $if$9
+
+WRITE string@if
+
+JUMP $endif$5
+LABEL $if$9
+PUSHS bool@true
+PUSHS bool@false
+JUMPIFEQS $if$11
+
+WRITE string@ok4
+PUSHS bool@true
+PUSHS bool@false
+JUMPIFEQS $if$11
+
+WRITE string@if_in
+MOVE GF@x string@in
+WRITE GF@x
+
+JUMP $endif$6
+LABEL $if$11
+LABEL $endif$6
+
+
+JUMP $endif$5
+LABEL $if$10
+LABEL $endif$5
+

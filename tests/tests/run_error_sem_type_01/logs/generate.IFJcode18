@@ -1,0 +1,51 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+DEFVAR GF@a
+MOVE GF@a int@1
+DEFVAR GF@b
+MOVE GF@b string@as
+TYPE GF@$type GF@a
+JUMPIFEQ $$GT$0$int0 GF@$type string@int
+JUMPIFEQ $$GT$0$float0 GF@$type string@float
+JUMPIFEQ $$GT$0$string0 GF@$type string@string
+LABEL $$GT$0$int0
+TYPE GF@$type GF@b
+JUMPIFNEQ $$GT$0$int$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$0$int$string
+MOVE GF@$des GF@a
+JUMPIFNEQ $$GT$0$int$float GF@$type string@float
+INT2FLOAT GF@$des GF@a
+LABEL $$GT$0$int$float
+MOVE GF@$eq GF@$des
+MUL GF@$des GF@$des GF@b
+JUMP ENDTHISMADNESS0
+LABEL $$GT$0$float0
+TYPE GF@$type GF@b
+JUMPIFNEQ $$GT$0$float$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$0$float$string
+MOVE GF@$des GF@b
+JUMPIFEQ $$GT$0$float GF@$type string@float
+INT2FLOAT GF@$des GF@b
+LABEL $$GT$0$float
+MOVE GF@$eq GF@$des
+MUL GF@$des GF@a GF@$des
+JUMP ENDTHISMADNESS0
+LABEL $$GT$0$string0
+TYPE GF@$type GF@b
+JUMPIFEQ $$GT$0$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$0$string$string
+MOVE GF@$des GF@a
+MUL GF@$des GF@$des GF@b
+LABEL ENDTHISMADNESS0
+PUSHS GF@$des

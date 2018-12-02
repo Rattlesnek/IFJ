@@ -1,0 +1,148 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+ADD GF@$des int@1 int@1
+PUSHS GF@$des
+DEFVAR GF@a
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+ADD GF@$des float@0x1p-1 GF@$tmp
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+ADD GF@$des GF@$tmp float@0x1p-1
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+ADD GF@$des float@0x1.08b2a2c280291p+82 float@0x1.999999999999ap-4
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+SUB GF@$des int@1 int@1
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+SUB GF@$des float@0x1p-1 GF@$tmp
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+SUB GF@$des GF@$tmp float@0x1p-1
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+SUB GF@$des float@0x1.08b2a2c280291p+82 float@0x1.999999999999ap-4
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+MUL GF@$des int@1 int@1
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+MUL GF@$des float@0x1p-1 GF@$tmp
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+MUL GF@$des GF@$tmp float@0x1p-1
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+MUL GF@$des float@0x1.08b2a2c280291p+82 float@0x1.999999999999ap-4
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+JUMPIFNEQ $$GT$24$notZero0 int@1 int@0
+EXIT int@9
+LABEL $$GT$24$notZero0
+IDIV GF@$des int@1 int@1
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+JUMPIFNEQ $$GT$26$notZero int@1 int@0
+EXIT int@9
+LABEL $$GT$26$notZero
+DIV GF@$des float@0x1p-1 GF@$tmp
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+JUMPIFNEQ $$GT$28$notZero float@0x1p-1 float@0x0p+0
+EXIT int@9
+LABEL $$GT$28$notZero
+DIV GF@$des GF@$tmp float@0x1p-1
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+JUMPIFNEQ $$GT$30$notZero1 float@0x1.999999999999ap-4 float@0x0p+0
+EXIT int@9
+LABEL $$GT$30$notZero1
+DIV GF@$des float@0x1.08b2a2c280291p+82 float@0x1.999999999999ap-4
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+ADD GF@$des float@0x1.8p+0 float@0x1.8p+0
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+SUB GF@$des float@0x1.8p+0 float@0x1.8p+0
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@4
+MUL GF@$des float@0x1.2666666666666p+1 GF@$tmp
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@2
+JUMPIFNEQ $$GT$38$notZero int@2 int@0
+EXIT int@9
+LABEL $$GT$38$notZero
+DIV GF@$des float@0x1p-1 GF@$tmp
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@1
+SUB GF@$des float@0x1.bef1c9657a686p+831 GF@$tmp
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+JUMPIFNEQ $$GT$42$notZero0 int@2 int@0
+EXIT int@9
+LABEL $$GT$42$notZero0
+IDIV GF@$des int@3 int@2
+INT2FLOAT GF@$tmp GF@$des
+MUL GF@$des GF@$tmp float@0x1.52d02c7e14af6p+75
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@25
+MUL GF@$des GF@$tmp float@0x1.2309ce54p+43
+INT2FLOAT GF@$tmp int@3
+JUMPIFNEQ $$GT$46$notZero GF@$des float@0x0p+0
+EXIT int@9
+LABEL $$GT$46$notZero
+DIV GF@$des GF@$tmp GF@$des
+INT2FLOAT GF@$tmp int@1
+ADD GF@$des GF@$tmp GF@$des
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+INT2FLOAT GF@$tmp int@24
+MUL GF@$des float@0x1.cd2b297d889bcp-53 GF@$tmp
+ADD GF@$des float@0x1.203af9ee75616p-50 GF@$des
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a

@@ -16,6 +16,9 @@ scanner:  main_scanner.c parser.c parser.h code_gen.c code_gen.h scanner.c scann
 sa_prec: main_sa_prec.c stack_tkn.c stack_tkn.h symtable.c symtable.h scanner.c scanner.h token.c token.h dynamic_str.c dynamic_str.h dynamic_arr_param.c dynamic_arr_param.h sa_prec.c sa_prec.h stack_sa_prec.c stack_sa_prec.h
 	gcc $(CFLAGS) main_sa_prec.c stack_tkn.c scanner.c token.c dynamic_str.c queue.c symtable.c sa_prec.c stack_sa_prec.c dynamic_arr_param.c -o sa_prec -D DEBUG_PREC
 
+test:
+	python ./tests/main_test.py
+
 
 clean:
 	rm -f parser

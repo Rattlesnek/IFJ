@@ -1,0 +1,24 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+DEFVAR GF@a
+MOVE GF@a string@Ahoj\010Sve'te\032\092\034
+WRITE GF@a
+MOVE GF@a string@
+WRITE GF@a
+WRITE string@test_input
+DEFVAR GF@b
+MOVE GF@b string@\009test_input\092\034string\034
+WRITE GF@b
+CONCAT GF@$des string@\034\009\221datum\162 string@\010asd
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a
+WRITE string@as\013\032\014\001\032\016\032\032\032\010
