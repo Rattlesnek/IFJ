@@ -258,6 +258,7 @@ char *params(symtable_t *symtab, char* param, token_t *par, bool id_variant)
             return "ERR_INT";
         }
         strcpy(print, "$des");
+        strcpy(param, "GF");
     }
     else if (strcmp(par->name, "ID") == 0)
     {
