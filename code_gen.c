@@ -278,6 +278,7 @@ char *params(symtable_t *symtab, char* param, token_t *par, bool id_variant)
             {
                 strcpy(print, "$des2");
             }
+            param = "GF";
 
         }
         else
@@ -628,6 +629,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     char *print1 = params(symtab, param1, par1, 1);
     if (strcmp(print1, "$des1") == 0)
     {
+
         print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
     }
     char *print2 = params(symtab, param2, par2, 0);
