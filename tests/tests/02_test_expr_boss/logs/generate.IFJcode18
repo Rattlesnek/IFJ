@@ -699,3 +699,95 @@ MOVE GF@$des string@\032sa\032
 CONCAT GF@$des GF@str GF@$des
 PUSHS GF@$des
 DEFVAR GF@idk
+POPS GF@idk
+TYPE GF@$type GF@idk
+JUMPIFEQ $$GT$41$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$41$string$string
+MOVE GF@$des string@a\032s
+CONCAT GF@$des GF@$des GF@idk
+TYPE GF@$type GF@str
+JUMPIFEQ $$GT$42$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$42$string$string
+MOVE GF@$des GF@$des
+CONCAT GF@$des GF@$des GF@str
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@str
+TYPE GF@$type GF@str
+JUMPIFEQ $$GT$44$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$44$string$string
+MOVE GF@$des string@sas\032
+CONCAT GF@$des GF@str GF@$des
+TYPE GF@$type GF@str
+JUMPIFEQ $$GT$45$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$45$string$string
+MOVE GF@$des GF@$des
+CONCAT GF@$des GF@$des GF@str
+TYPE GF@$type GF@idk
+JUMPIFEQ $$GT$46$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$46$string$string
+MOVE GF@$des GF@$des
+CONCAT GF@$des GF@$des GF@idk
+PUSHS GF@$des
+POPS GF@str
+WRITE GF@str
+CONCAT GF@$des string@as\032dse\032 string@ased
+CONCAT GF@$des GF@$des string@eds\032
+TYPE GF@$type GF@a
+JUMPIFEQ $$GT$50$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$50$string$string
+MOVE GF@$des GF@$des
+CONCAT GF@$des GF@$des GF@a
+TYPE GF@$type GF@str
+JUMPIFEQ $$GT$51$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$51$string$string
+MOVE GF@$des GF@$des
+CONCAT GF@$des GF@$des GF@str
+PUSHS GF@$des
+TYPE GF@$type GF@a
+JUMPIFEQ $$GT$52$int0 GF@$type string@int
+JUMPIFEQ $$GT$52$float0 GF@$type string@float
+JUMPIFEQ $$GT$52$string0 GF@$type string@string
+LABEL $$GT$52$int0
+TYPE GF@$type GF@a
+JUMPIFNEQ $$GT$52$int$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$52$int$string
+MOVE GF@$des GF@a
+JUMPIFNEQ $$GT$52$int$float GF@$type string@float
+INT2FLOAT GF@$des GF@a
+LABEL $$GT$52$int$float
+MOVE GF@$eq GF@$des
+ADD GF@$des GF@$des GF@a
+JUMP ENDTHISMADNESS52
+LABEL $$GT$52$float0
+TYPE GF@$type GF@a
+JUMPIFNEQ $$GT$52$float$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$52$float$string
+MOVE GF@$des GF@a
+JUMPIFEQ $$GT$52$float GF@$type string@float
+INT2FLOAT GF@$des GF@a
+LABEL $$GT$52$float
+MOVE GF@$eq GF@$des
+ADD GF@$des GF@a GF@$des
+JUMP ENDTHISMADNESS52
+LABEL $$GT$52$string0
+TYPE GF@$type GF@a
+JUMPIFEQ $$GT$52$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$52$string$string
+MOVE GF@$des GF@a
+CONCAT GF@$des GF@$des GF@a
+LABEL ENDTHISMADNESS52
+PUSHS GF@$des
+WRITE GF@a
+WRITE GF@str
+WRITE GF@idk

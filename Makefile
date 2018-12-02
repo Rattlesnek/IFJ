@@ -17,7 +17,7 @@ sa_prec: main_sa_prec.c stack_tkn.c stack_tkn.h symtable.c symtable.h scanner.c 
 	gcc $(CFLAGS) main_sa_prec.c stack_tkn.c scanner.c token.c dynamic_str.c queue.c symtable.c sa_prec.c stack_sa_prec.c dynamic_arr_param.c -o sa_prec -D DEBUG_PREC
 
 test:
-	python ./tests/main_test.py
+	python3	./tests/main_test.py
 
 
 clean:
