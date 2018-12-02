@@ -40,7 +40,7 @@
 ///                       GLOBAL VARIABLES                           ///
 ////////////////////////////////////////////////////////////////////////
 #define INVALID_TOKEN -1
-#define TEST_FUNC 1
+//#define TEST_FUNC 1
 
 //#define SA_PREC_PRINT 0
 #ifdef SA_PREC_PRINT
@@ -507,8 +507,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
     int builtin_func = 0;
     while (42)
     {
+        stc_print(stack);
         stack_top_term = stc_topTerm(stack);
-
         token_term = sa_getTokenIndex(token);
         if (token_term == INVALID_TOKEN)
         {
@@ -565,7 +565,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
         }
         count++;
-
         rule = sa_prec_table[stack_top_term][token_term];
 
         if (rule == 'X')
@@ -818,7 +817,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                     callFunc(builtin_func);       // Zmena tady
                     stc_push(stack, _F_, result); // Zmena tady
-
+                    stc_print(stack);
                     //callFunc(builtin_func);
                     break;
 
@@ -976,19 +975,19 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         */
 
                         *ret_token = stc_tokPopTop(stack, &term);
-                        pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
+                        //pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
 
                     }
                     else
                     {
                         /*
                         char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
-                        strcpy(func_retval, "%retval");
-                        *ret_code = func_retval;
+                       strcpy(func_retval, "%retval");
+                      *ret_code = func_retval;
                         */
                         token_info_t info;
                         *ret_token = createToken("%%retval", info);
-                        pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
+                        //pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
 
                         /*
                         *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
