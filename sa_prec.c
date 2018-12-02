@@ -42,7 +42,7 @@
 #define INVALID_TOKEN -1
 #define TEST_FUNC 1
 
-#define SA_PREC_PRINT 0
+//#define SA_PREC_PRINT 0
 #ifdef SA_PREC_PRINT
 #define DEBUG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
