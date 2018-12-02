@@ -1,19 +1,29 @@
-def fun_1 (a,b,c)
-    print a,b,c
+
+
+def fun (a)
+    if a <= 0 then
+        a - 1
+    else
+        x = a - 1
+        x = baz x
+        x = x + a
+    end
 end
 
-fun_1 1,2,3
-
-
-def fun_2 (a,b,c)
-    print a,b,c
+def baz (b)
+    if a <= 0 then
+        a - 1
+    else
+        x = a - 1
+        x = fun x
+        x + a
+    end
 end
 
-fun_2 1,2,3
 
-
-
-
+y = fun 5
+print y
+print "\n"
      
  
 
