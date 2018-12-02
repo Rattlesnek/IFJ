@@ -34,8 +34,53 @@ print "\n"
 
 def bazmeg(a, b)
     if a < b then
-        a
+        a + 1
     else
-        b
+        b + 1
     end
 end
+
+y = bazmeg(1, 2)
+print y
+print "\n"
+
+y = bazmeg 3.5, 2
+print y
+print "\n"
+
+
+def baz_while()
+    i = 0
+    while i < 2 do
+        print i
+        i = i + 1
+    end
+end
+
+
+y = baz_while
+print "\n"
+print y
+print "\n"
+
+def fun_assign(ifx, a, b)
+    sum = a + b
+    diff = a + b
+
+    
+    if ifx then
+        x = sum
+    else
+        y = diff
+    end
+end
+
+x = fun_assign(nil, 1, 2)
+print "\n"
+print x
+print "\n"
+
+x = fun_assign("as", 1, 2)
+print "\n"
+print x
+print "\n"
