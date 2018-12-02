@@ -42,7 +42,7 @@
 #define ERR_SEM_TYPE 4
 #define ERR_SEM_FUNC 5
 #define ERR_SEM_OTHER 6
-#define ERR_ZERO_DIV 7
+#define ERR_ZERO_DIV 9
 #define ERR_INTERNAL 99
 
 ////////////////////////////////////////////////////////////////////////
