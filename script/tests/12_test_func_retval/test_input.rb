@@ -30,3 +30,12 @@ end
 y = bum()
 print y
 print "\n"
+
+
+def bazmeg(a, b)
+    if a < b then
+        a
+    else
+        b
+    end
+end

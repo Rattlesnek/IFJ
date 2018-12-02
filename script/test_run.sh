@@ -60,8 +60,12 @@ then
         then
             printf "${GREEN}compile ok ${NC}"
         else
-            printf "${RED}compile fail (exit code: $?)\n${NC}" 
-            exit
+            if [[ "$err_test" == "true" ]]
+            then
+                printf "${GREEN}compile fail (exit code: $?)\n${NC}" 
+            else
+                printf "${RED}compile fail (exit code: $?)\n${NC}" 
+            fi
         fi
     fi
 

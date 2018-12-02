@@ -58,7 +58,7 @@ def return_call(names, run_valgrind):
     add = ' false 0 ' + run_valgrind
     if first_line.startswith('# ERROR'):
         err_name = first_line.replace('# ERROR', '').strip()
-        add = ' true ' + str(errors[err_name] + ' ' + run_valgrind)
+        add = ' true ' + str(errors[err_name]) + ' ' + run_valgrind
 
     call = './test_run.sh'
     for name in names:
