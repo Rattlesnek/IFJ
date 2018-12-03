@@ -494,7 +494,8 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     char *print1 = params(symtab, param1, par1, 1);
     char *print2 = params(symtab, param2, par2, 0);
 
-    if (!switched)    {
+    if (!switched)
+    {
 
         if (strcmp(print2, "$des2") == 0)
         {
@@ -667,15 +668,33 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print2 = params(symtab, param2, par2, 0);
-    if (strcmp(print2, "$des2") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
-    }
     char *print1 = params(symtab, param1, par1, 1);
-    if (strcmp(print1, "$des1") == 0)
+    char *print2 = params(symtab, param2, par2, 0);
+
+    if (!switched)
     {
-        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+
+        if (strcmp(print2, "$des2") == 0)
+        {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
+
+        if (strcmp(print1, "$des1") == 0)
+        {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+
+    }
+    else
+    {
+        if (strcmp(print1, "$des1") == 0)
+        {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+        if (strcmp(print2, "$des2") == 0)
+        {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
     }
 
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
@@ -844,15 +863,24 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print2 = params(symtab, param2, par2, 0);
-    if (strcmp(print2, "$des2") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
-    }
     char *print1 = params(symtab, param1, par1, 1);
-    if (strcmp(print1, "$des1") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+    char *print2 = params(symtab, param2, par2, 0);
+
+    if (!switched) {
+        if (strcmp(print2, "$des2") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
+        if (strcmp(print1, "$des1") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+    }
+    else {
+        if (strcmp(print1, "$des1") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+        if (strcmp(print2, "$des2") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
     }
 
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
@@ -1061,15 +1089,24 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print2 = params(symtab, param2, par2, 0);
-    if (strcmp(print2, "$des2") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
-    }
     char *print1 = params(symtab, param1, par1, 1);
-    if (strcmp(print1, "$des1") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+    char *print2 = params(symtab, param2, par2, 0);
+
+    if (!switched) {
+        if (strcmp(print2, "$des2") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
+        if (strcmp(print1, "$des1") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+    }
+    else {
+        if (strcmp(print1, "$des1") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+        if (strcmp(print2, "$des2") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
     }
 
     which_frame(symtab, frame);
@@ -1153,15 +1190,24 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print2 = params(symtab, param2, par2, 0);
-    if (strcmp(print2, "$des2") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
-    }
     char *print1 = params(symtab, param1, par1, 1);
-    if (strcmp(print1, "$des1") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+    char *print2 = params(symtab, param2, par2, 0);
+
+    if (!switched) {
+        if (strcmp(print2, "$des2") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
+        if (strcmp(print1, "$des1") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+    }
+    else {
+        if (strcmp(print1, "$des1") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+        if (strcmp(print2, "$des2") == 0) {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
     }
 
 
