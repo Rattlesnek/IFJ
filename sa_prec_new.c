@@ -518,29 +518,43 @@ bool detectSucEnd(stack_sa_t *stack, table_elem_t token)
 
 void pushToStack(token_t *token, list_t *code_buffer, bool in_stat, symtable_t *symtab)
 {
-    if (strcmp(token->name, "INT") == 0 || strcmp(token->name, "STR") == 0 || strcmp(token->name, "DBL") == 0 ||
-        strcmp(token->name, "nil") == 0) {
 
-        if (strcmp(token->name, "ID") == 0)
-        {
-            if (token->info.ptr == NULL)
-            {
-                print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
-            }
-            else
-            {    
-                print_or_append(code_buffer, in_stat, "PUSHS %s@%s\n",
-                               (strcmp(symtab->name, "$GT") == 0) ? "GF" : "LF",
-                                token->info.ptr->var.key);
-            }
-        }
-        else
+    if (strcmp(token->name, "ID") == 0)
+    {
+        if (token->info.ptr == NULL)
         {
             print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
         }
-
+        else
+        {    
+            print_or_append(code_buffer, in_stat, "PUSHS %s@%s\n",
+                           (strcmp(symtab->name, "$GT") == 0) ? "GF" : "LF",
+                            token->info.ptr->var.key);
+        }
     }
-
+    else if(strcmp(token->name, "INT") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "PUSHS int@%s\n",
+                        token->info.string);
+    }
+    else if(strcmp(token->name, "DBL") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "PUSHS float@%s\n",
+                        token->info.string);
+    }
+    else if(strcmp(token->name, "STR") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "PUSHS string@%s\n",
+                        token->info.string);
+    }
+    else if(strcmp(token->name, "nil") == 0)
+    {
+       print_or_append(code_buffer, in_stat, "PUSHS nil@nil\n"); 
+    } 
+    else
+    {
+        print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
+    }  
 
     return;
 }
@@ -943,10 +957,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_symtab,
                 {
                     if(builtin_func_type)
                     {
-<<<<<<< HEAD
-=======
-                        //printf("KONEC 1\n");
->>>>>>> e4a66dec7d39bc64310ab73b3a959e77bb07745d
                         if(result == NULL)
                             goto err_sem_type;
 
@@ -954,22 +964,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_symtab,
                     }
                     else
                     {
-<<<<<<< HEAD
-=======
-                        //printf("KONEC 2\n");
->>>>>>> e4a66dec7d39bc64310ab73b3a959e77bb07745d
+
                         token_info_t info;
                         *ret_token = createToken("%%retval", info);
                     }
                 }
                 else
-<<<<<<< HEAD
                 {     
-=======
-                {  
 
-                    //printf("KONEC 3\n"); 
->>>>>>> e4a66dec7d39bc64310ab73b3a959e77bb07745d
                     token_t *tmp = stc_tokPopTop(prec_stack, &stack_term);
                     *ret_token = tmp;
                     pushToStack(*ret_token, code_buffer, in_stat, var_symtab);
