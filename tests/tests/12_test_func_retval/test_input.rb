@@ -84,3 +84,68 @@ x = fun_assign("as", 1, 2)
 print "\n"
 print x
 print "\n"
+
+def bazing()
+    1
+end
+
+def ck()
+    1.5
+end
+
+x = ck()
+print x
+
+def idk()
+    "as"
+end
+
+x = idk
+print x
+
+def ids(a, b)
+    a + b
+end
+
+x = ids 2.5, 1
+print x
+
+def ints()
+    1 + 2
+end
+
+x = ints
+print x
+
+def floats()
+    1.5 - 2
+end
+
+x = floats
+print x
+
+def strings()
+    "as" + "5"
+end 
+
+x = strings
+print x
+
+
+def ifs()
+    if 1 then
+    else
+        1
+    end
+end
+
+x = ifs()
+print x
+
+def empty()
+
+
+end
+
+x = empty()
+print x
