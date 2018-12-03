@@ -288,36 +288,12 @@ int generate_var(list_t *code_buffer, list_t *defvar_buffer, bool in_stat, symta
             return ERR_INTERNAL;
     }
 
-
     if (strcmp(right_val->name, "BOOL_ID") == 0)
         return ERR_SEM_TYPE;
-    else if (strcmp(right_val->name, "INT") == 0)
-    {
-        if (! print_or_append(code_buffer, in_stat, "MOVE %s@%s int@%s\n", frame, var_name, right_val->info.string))
-            return ERR_INTERNAL;
-    }
-    else if (strcmp(right_val->name, "STR") == 0)
-    {
-        if (! print_or_append(code_buffer, in_stat, "MOVE %s@%s string@%s\n", frame, var_name, right_val->info.string))
-            return ERR_INTERNAL;
-    }
-    else if (strcmp(right_val->name, "DBL") == 0)
-    {
-        if (! print_or_append(code_buffer, in_stat, "MOVE %s@%s float@%s\n", frame, var_name, right_val->info.string))
-            return ERR_INTERNAL;
-    }
-    else if (strcmp(right_val->name, "nil") == 0)
-    {
-        if (! print_or_append(code_buffer, in_stat, "MOVE %s@%s nil@nil\n", frame, var_name))
-            return ERR_INTERNAL;
-    }
-    else
-    {
-        if (! print_or_append(code_buffer, in_stat, "POPS %s@%s\n", frame, var_name))
-            return ERR_INTERNAL;
-    }
 
-
+    if (! print_or_append(code_buffer, in_stat, "POPS %s@%s\n", frame, var_name))
+        return ERR_INTERNAL;
+    
     if (strcmp(frame, "LF") == 0)
     {
         if (! print_or_append(code_buffer, in_stat, "PUSHS %s@%s\n", frame, var_name))

@@ -44,16 +44,16 @@ typedef enum {
     _func_,     // f-ce() 
     _coma_,     // , 
     _empt_,     // $
-    
-    _E_,        /* Non-Terminal */
-    _L_,
-    _S_,
-    _F_,
-
-                /* Rules        */
+ 
+                 /* Rules        */
    _sml_,       // <
    _big_,       // >
-   _eql_        // =
+   _eql_,        // =
+
+    _E_,        /* Non-Terminal */
+    _F_,
+    _L_,
+    _S_
 
 } table_elem_t;
 

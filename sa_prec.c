@@ -475,7 +475,6 @@ void pushToStack(token_t *token, list_t *code_buffer, bool in_stat, symtable_t *
 
     }
 
-
     return;
 }
 
@@ -490,6 +489,7 @@ void pushToStack(token_t *token, list_t *code_buffer, bool in_stat, symtable_t *
  */
 int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable_t *func_symtab, token_t **ret_token,
             list_t *code_buffer, bool in_stat) {
+    
     stack_sa_t *stack = stc_init();
     token_info_t info;
     token_t *empty_token = createToken("$", info);
@@ -603,8 +603,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
             {
                 /* E -> i */
                 case _id_:
-                    //term = stc_Top(stack);
-                    //token_t *token = stc_tokPopTop(stack, &term);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     if (term != _id_)
                     {
@@ -824,14 +822,11 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     callFunc(builtin_func);       // Zmena tady
                     stc_push(stack, _F_, result); // Zmena tady
                     stc_print(stack);
-                    //callFunc(builtin_func);
                     break;
 
-                /* F -> f E, ... , E */
                 case _coma_:
                     while (42)
                     {
-                        //term = stc_popTop(stack);
                         ptr_tok[0] = stc_tokPopTop(stack, &term);
                         stcTkn_push(tok_stack, ptr_tok[0]);
                         if (term != _E_)
@@ -844,7 +839,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                             goto fail_end;
                     }
 
-                    //term = stc_popTop(stack);
                     ptr_tok[0] = stc_tokPopTop(stack, &term);
                     stcTkn_push(tok_stack, ptr_tok[0]);
                     if (term != _func_)
@@ -854,9 +848,8 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     if (term != _sml_)
                         goto fail_end;
 
-                    callFunc(builtin_func);           // Zmena tady
-                    stc_push(stack, _F_, result);     // Zmena tady
-                    // callFunc(builtin_func);
+                    callFunc(builtin_func);           
+                    stc_push(stack, _F_, result);     
                     break;
 
                 /*
@@ -867,8 +860,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                  */
                 case _rbrc_:
                     term = stc_popTop(stack);
-                    //ptr_tok[0] = stc_tokPopTop(stack, &term);
-                    //stcTkn_push(tok_stack, ptr_tok[0]);
                     if (term != _rbrc_)
                         goto fail_end;
 
@@ -886,36 +877,28 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         if (term != _sml_)
                             goto fail_end;
 
-                        callFunc(builtin_func);         // Zmena tady
-                        stc_push(stack, _F_, result);   // Zmena tady
-                        //callFunc(builtin_func);
+                        callFunc(builtin_func);        
+                        stc_push(stack, _F_, result);  
 
                         break;
                     }
                     else if (term == _E_)
                     {
-                        //##stcTkn_push(tok_stack, ptr_tok[0]);
                         term = stc_popTop(stack);
                         if (term == _lbrc_)
                         {
-                            //term = stc_popTop(stack);
                             ptr_tok[0] = stc_tokPopTop(stack, &term);
-                            //###stcTkn_push(tok_stack, ptr_tok[0]);
                             if (term == _func_)
                             {
-                                stcTkn_push(tok_stack, expr_in_brc);  // Odkomentuj ### a dva radky smaz
+                                stcTkn_push(tok_stack, expr_in_brc);  
                                 stcTkn_push(tok_stack, ptr_tok[0]);
-                                //stcTkn_print(tok_stack);
-                                //stcTkn_push(tok_stack, ptr_tok[0]);
 
                                 term = stc_popTop(stack);
                                 if (term != _sml_)
                                     goto fail_end;
 
-                                callFunc(builtin_func);         // Zmena tady
-                                stc_push(stack, _F_, result);   // Zmena tady
-                                //callFunc(builtin_func);
-
+                                callFunc(builtin_func);         
+                                stc_push(stack, _F_, result);   
                                 break;
                             }
                             else if (term == _sml_)
@@ -927,17 +910,14 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                         }
                         else if (term == _coma_)
                         {
-                            stcTkn_push(tok_stack, expr_in_brc);  // Odkomentuj ### a dva radky smaz
-                            //stcTkn_push(tok_stack, ptr_tok[0]);
+                            stcTkn_push(tok_stack, expr_in_brc);  
                             while (42)
                             {
-                                //term = stc_popTop(stack);
                                 ptr_tok[0] = stc_tokPopTop(stack, &term);
                                 stcTkn_push(tok_stack, ptr_tok[0]);
                                 if (term != _E_)
                                     goto fail_end;
 
-                                //ptr_tok[0] = stc_tokPopTop(stack, &term);
                                 term = stc_popTop(stack);
                                 if (term == _lbrc_)
                                     break;
@@ -945,7 +925,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                                     goto fail_end;
                             }
 
-                            //term = stc_popTop(stack);
                             ptr_tok[0] = stc_tokPopTop(stack, &term);
                             stcTkn_push(tok_stack, ptr_tok[0]);
                             if (term != _func_)
@@ -957,7 +936,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                             callFunc(builtin_func);
                             stc_push(stack, _F_, result);
-                            //callFunc(builtin_func);
                             break;
                         }
 
@@ -974,32 +952,13 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                     {
                         if (result == NULL)
                             goto sem_gen;
-                        /*
-                        char *func_retval = malloc(strlen(result->info.ptr->var.key) * sizeof(char) + 1);
-                        strcpy(func_retval, result->info.ptr->var.key);
-                        *ret_code = func_retval;
-                        */
 
                         *ret_token = stc_tokPopTop(stack, &term);
-                        //pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
-
                     }
                     else
                     {
-                        /*
-                        char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
-                       strcpy(func_retval, "%retval");
-                      *ret_code = func_retval;
-                        */
                         token_info_t info;
                         *ret_token = createToken("%%retval", info);
-                        //pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
-
-                        /*
-                        *ret_code = malloc((strlen("%retval") + 1) * sizeof(char));
-                        strcpy(*ret_code, "%retval");
-                        DEBUG_PRINT("=> Expr: %s\n", *ret_code);
-                        */
 
                     }
                 }
@@ -1008,41 +967,20 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
 
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
-                    pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
-                    //stc_print(stack);
-                    /*
-                    *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
-                    strcpy(*ret_code, result->info.ptr->var.key);
-                    DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
-                    */
-
+                    pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);                   
                 }
                 else
                 {
-                    /*
-                    token_t *ret_tok = stc_tokPopTop(stack, &term);
-                    result = gen_expr(NULL, ret_tok, NULL, loc_symtab);
-                    if((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
-                    {
-                        handleError(err);
-                    }
-
-                    *ret_code = malloc((strlen(result->info.ptr->var.key) + 1) * sizeof(char));
-                    strcpy(*ret_code, result->info.ptr->var.key);
-                    DEBUG_PRINT("=> Expr: %s\n", result->info.ptr->var.key);
-                    */
                     token_t *tmp = stc_tokPopTop(stack, &term);
                     *ret_token = tmp;
 
                     pushToStack(*ret_token, code_buffer, in_stat, loc_symtab);
                 }
-                //stc_print(stack);
-                //stcTkn_print(tok_stack);
-                //if(!builtin_func)
+
                 stcTkn_destroy(tok_stack);
                 stc_destroy(stack);
                 scanner_unget(que, token, sc_str->str);
-                //stc_print(stack);
+                
 
                 return SUCCESS;
             }
@@ -1050,37 +988,6 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *loc_symtab, symtable
                 continue;
         }
         stc_print(stack);
-
-        /* Tohle prijde pravdepodobne vymazat. */
-#if 0
-        if (sa_detectSucEnd(stack, token_term))
-        {
-            if (detect_func)
-            {
-                char *func_retval = malloc(strlen("%retval") * sizeof(char) + 1);
-                strcpy(func_retval, "%retval");
-                DEBUG_PRINT("=> Expr: %s\n", func_retval);
-            }
-            else if (result != NULL)
-            {
-                DEBUG_PRINT("=> Expr: %s\n", token->name);
-            }
-            else
-            {
-                token_t *ret_tok = stc_tokPopTop(stack, &term);
-                result = gen_expr(NULL, ret_tok, NULL, loc_symtab);
-                if ((err = Check_err(result, ptr_tok, 0, 0, 0)) != SUCCESS)
-                {
-                    handleError(err);
-                }
-                DEBUG_PRINT("=> Expr: %s\n", ret_tok->info.string);
-            }
-            stcTkn_destroy(tok_stack);
-            stc_destroy(stack);
-            scanner_unget(que, token, sc_str->str);
-            return SUCCESS;
-        }
-#endif
 
         token = scanner_get(sc_str, que);
     }
@@ -1092,14 +999,12 @@ sem_gen:
     stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
-    //destroyToken(token);
     return ERR_SEM_TYPE;
 
 sem_internal:
     stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
-    //destroyToken(token);
     return ERR_INTERNAL;
 
 err_lex:
@@ -1118,15 +1023,12 @@ fail_end:
     stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
-    //destroyToken(token);
     return ERR_SYN;
 
 sem_fail:
-    //if(!builtin_func)
     stcTkn_destroy(tok_stack);
     destroyToken(token);
     stc_destroy(stack);
-    //destroyToken(token);
     return ERR_SEM_FUNC;
 
 sem_fail_defined:
