@@ -1,0 +1,7 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+

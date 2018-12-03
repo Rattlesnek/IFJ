@@ -1,0 +1,67 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+
+ADD GF@$des int@1 int@1
+DEFVAR GF@a
+MOVE GF@a GF@$des
+WRITE GF@a
+SUB GF@$des int@1 int@1
+MOVE GF@a GF@$des
+WRITE GF@a
+MUL GF@$des int@1 int@1
+MOVE GF@a GF@$des
+WRITE GF@a
+JUMPIFNEQ $$GT$3$notZero int@1 int@0
+EXIT int@9
+LABEL $$GT$3$notZero
+IDIV GF@$des int@1 int@1
+MOVE GF@a GF@$des
+WRITE GF@a
+SUB GF@$des int@1 int@1
+ADD GF@$des GF@$des int@1
+MOVE GF@a GF@$des
+WRITE GF@a
+MUL GF@$des int@1 int@1
+ADD GF@$des GF@$des int@1
+MOVE GF@a GF@$des
+WRITE GF@a
+JUMPIFNEQ $$GT$8$notZero int@1 int@0
+EXIT int@9
+LABEL $$GT$8$notZero
+IDIV GF@$des int@1 int@1
+SUB GF@$des GF@$des int@1
+MOVE GF@a GF@$des
+WRITE GF@a
+SUB GF@$des int@1 int@1
+ADD GF@$des GF@$des int@1
+JUMPIFNEQ $$GT$12$notZero GF@$des int@0
+EXIT int@9
+LABEL $$GT$12$notZero
+IDIV GF@$des int@1 GF@$des
+MOVE GF@a GF@$des
+WRITE GF@a
+ADD GF@$des int@1 int@1
+MUL GF@$des int@1 int@1
+ADD GF@$des GF@$des GF@$des
+SUB GF@$des GF@$des int@1
+MOVE GF@a GF@$des
+WRITE GF@a
+MUL GF@$des int@1 int@1
+SUB GF@$des int@1 int@1
+MUL GF@$des GF@$des GF@$des
+JUMPIFNEQ $$GT$20$notZero int@1 int@0
+EXIT int@9
+LABEL $$GT$20$notZero
+IDIV GF@$des GF@$des int@1
+SUB GF@$des int@1 int@3
+JUMPIFNEQ $$GT$22$notZero int@4 int@0
+EXIT int@9
+LABEL $$GT$22$notZero
+IDIV GF@$des GF@$des int@4
+ADD GF@$des GF@$des GF@$des
+MOVE GF@a GF@$des
+WRITE GF@a

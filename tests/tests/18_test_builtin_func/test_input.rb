@@ -1,3 +1,4 @@
+
 a = 98
 b = "JAMBALAJA"
 c = 4
@@ -43,8 +44,11 @@ print v
 
 subs = substr( b, c, d)
 print subs
+
+subs = "string"
 len = length(subs)
 print len
+
 subs = substr "AHOJ svete" , 1, 55
 print subs
 len = length(subs)

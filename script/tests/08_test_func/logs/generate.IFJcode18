@@ -1,0 +1,45 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+
+
+JUMP $end$function$0
+LABEL fun_1
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@a
+MOVE LF@a LF@%1
+
+WRITE LF@a
+
+POPFRAME
+RETURN
+LABEL $end$function$0
+
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 int@1
+CALL fun_1
+
+JUMP $end$function$1
+LABEL fun_2
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@a
+MOVE LF@a LF@%1
+
+WRITE LF@a
+
+POPFRAME
+RETURN
+LABEL $end$function$1
+
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 int@1
+CALL fun_2
