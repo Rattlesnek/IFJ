@@ -72,15 +72,42 @@ void expected_LABEL_if(bool in_stat, char label_stat[]);
  * @return true       if success
  * @return false      if internal error
  */
-bool generate_if(list_t *code_buffer, bool in_stat, stack_str_t *stack, token_t *cond);
+bool generate_if_condition(list_t *code_buffer, bool in_stat, stack_str_t *stack, token_t *cond);
 
 
+/**
+ * @brief Generate elsif label
+ * 
+ * @param code_buffer buffer for code when in if-statement/while-loop
+ * @param in_stat     determines whether inside if-statement/while-loop or not
+ * @param stack       stack of strings
+ * @return true       if success
+ * @return false      if internal error
+ */
 bool generate_LABEL_elsif(list_t *code_buffer, bool in_stat, stack_str_t *stack);
 
 
-bool generate_elsif(list_t *code_buffer, bool in_stat, token_t *cond);
+/**
+ * @brief Generate elsif condition
+ * 
+ * @param code_buffer buffer for code when in if-statement/while-loop
+ * @param in_stat     determines whether inside if-statement/while-loop or not
+ * @param cond        stack of strings
+ * @return true       if success
+ * @return false      if internal error
+ */
+bool generate_elsif_condition(list_t *code_buffer, bool in_stat, token_t *cond);
 
 
+/**
+ * @brief Generate else
+ * 
+ * @param code_buffer buffer for code when in if-statement/while-loop
+ * @param in_stat     determines whether inside if-statement/while-loop or not
+ * @param stack       stack of strings
+ * @return true       if success
+ * @return false      if internal error
+ */
 bool generate_else(list_t *code_buffer, bool in_stat, stack_str_t *stack);
 
 
@@ -113,7 +140,7 @@ bool generate_LABEL_while(list_t *code_buffer, bool in_stat);
  * @return true       if success
  * @return false      if internal error
  */
-bool generate_while_false(list_t *code_buffer, bool in_stat, token_t *cond);
+bool generate_while_condition(list_t *code_buffer, bool in_stat, token_t *cond);
 
 
 /**
@@ -126,10 +153,27 @@ bool generate_while_false(list_t *code_buffer, bool in_stat, token_t *cond);
 bool generate_while_ending(stack_str_t *stack);
 
 
+/**
+ * @brief Pushes needed values to stack before JUMPIFEQ
+ * 
+ * @param code_buffer buffer for code when in if-statement/while-loop
+ * @param in_stat     determines whether inside if-statement/while-loop or not
+ * @param cond        condition token
+ * @return true       if success
+ * @return false      if internal error
+ */
 bool condition_adjust(list_t *code_buffer, bool in_stat, token_t *cond);
 
 
+/**
+ * @brief Returns true if it is funciton epilog
+ * 
+ * @param generated_code generated string
+ * @return true          if it is function epilog
+ * @return false         if its not
+ */
 bool isFunctionEnd(char *generated_code);
+
 
 /**
  * @brief Generate function definition
@@ -141,7 +185,6 @@ bool isFunctionEnd(char *generated_code);
  * @return false    if internal error
  */
 bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *param_arr);
-
 
 
 /**

@@ -440,7 +440,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
                     in_stat = true;
-                    if (! generate_if(code_buffer, in_stat, stack_str, sa_prec_ret))
+                    if (! generate_if_condition(code_buffer, in_stat, stack_str, sa_prec_ret))
                         goto err_internal_main;
 
                     destroyToken(sa_prec_ret);
@@ -463,7 +463,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
-                    if (! generate_elsif(code_buffer, in_stat, sa_prec_ret))
+                    if (! generate_elsif_condition(code_buffer, in_stat, sa_prec_ret))
                         goto err_internal_main;
 
                     destroyToken(sa_prec_ret);
@@ -501,7 +501,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
 
-                    if (! generate_while_false(code_buffer, in_stat, sa_prec_ret))
+                    if (! generate_while_condition(code_buffer, in_stat, sa_prec_ret))
                         goto err_internal_main;
 
                     // push to stack_tkn "epilog of while"
