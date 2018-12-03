@@ -247,7 +247,8 @@ bool generate_function(stack_str_t *stack_str, elem_t *fun, dynamicArrParam_t *p
     printf( "\n"
             "JUMP $end$function$%llu\n"
             "LABEL %s\n"
-            "PUSHFRAME\n",
+            "PUSHFRAME\n"
+            "PUSHS nil@nil\n",
             func_cnt,
             fun->func.key
           );
