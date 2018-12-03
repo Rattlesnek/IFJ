@@ -494,8 +494,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     char *print1 = params(symtab, param1, par1, 1);
     char *print2 = params(symtab, param2, par2, 0);
 
-    if (!switched)
-    {
+    if (!switched)    {
 
         if (strcmp(print2, "$des2") == 0)
         {
@@ -1664,7 +1663,8 @@ token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
                               "LABEL $%s$%llu$string\n",
                               frame_act, par->info.ptr->var.key,
                               frame_act, par->info.ptr->var.key,
-                              label_n,
+                              frame_act,
+                              label_n, frame_act,
                               label_n))
             goto err_internal;
     }
