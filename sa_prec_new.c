@@ -518,7 +518,7 @@ bool detectSucEnd(stack_sa_t *stack, table_elem_t token)
 
 void pushToStack(token_t *token, list_t *code_buffer, bool in_stat, symtable_t *symtab)
 {
-    if (strcmp(token->name, "INT") && strcmp(token->name, "STR") && strcmp(token->name, "DBL") &&
+    if (strcmp(token->name, "INT") || strcmp(token->name, "STR") || strcmp(token->name, "DBL") ||
         strcmp(token->name, "nil")) {
 
         if (strcmp(token->name, "ID") == 0)
@@ -955,7 +955,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_symtab,
                     }
                 }
                 else
-                {     
+                {   
                     token_t *tmp = stc_tokPopTop(prec_stack, &stack_term);
                     *ret_token = tmp;
                     pushToStack(*ret_token, code_buffer, in_stat, var_symtab);
