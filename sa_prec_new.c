@@ -518,8 +518,9 @@ bool detectSucEnd(stack_sa_t *stack, table_elem_t token)
 
 void pushToStack(token_t *token, list_t *code_buffer, bool in_stat, symtable_t *symtab)
 {
-    if (strcmp(token->name, "INT") || strcmp(token->name, "STR") || strcmp(token->name, "DBL") ||
-        strcmp(token->name, "nil")) {
+
+    if (strcmp(token->name, "INT") == 0 || strcmp(token->name, "STR") == 0 || strcmp(token->name, "DBL") == 0 ||
+        strcmp(token->name, "nil") == 0) {
 
         if (strcmp(token->name, "ID") == 0)
         {
@@ -943,6 +944,7 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_symtab,
                 {
                     if(builtin_func_type)
                     {
+                        //printf("KONEC 1\n");
                         if(result == NULL)
                             goto err_sem_type;
 
@@ -950,12 +952,15 @@ int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_symtab,
                     }
                     else
                     {
+                        //printf("KONEC 2\n");
                         token_info_t info;
                         *ret_token = createToken("%%retval", info);
                     }
                 }
                 else
-                {   
+                {  
+
+                    //printf("KONEC 3\n"); 
                     token_t *tmp = stc_tokPopTop(prec_stack, &stack_term);
                     *ret_token = tmp;
                     pushToStack(*ret_token, code_buffer, in_stat, var_symtab);
