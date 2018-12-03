@@ -4,11 +4,13 @@
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName []
+  PackageName [Code generation]
 
-  Synopsis    []
+  Synopsis    [Generate code for constructs in parser]
 
   Author      [Adam Pankuch, Jindrich Sestak]
+
+  Login       [xpanku00]
 
   Affiliation []
 

@@ -4,11 +4,13 @@
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName []
+  PackageName [Lexical analysis]
 
-  Synopsis    []
+  Synopsis    [Enable ungetting of tokens to scanner]
 
   Author      [Adam Pankuch]
+
+  Login       [xpanku00]
 
   Affiliation []
 

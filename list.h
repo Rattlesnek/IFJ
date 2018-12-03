@@ -4,11 +4,13 @@
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName []
+  PackageName [Code generation]
 
-  Synopsis    []
+  Synopsis    [Buffer for code while inside if-statement or while-loop]
 
   Author      [Adam Pankuch]
+
+  Login       [xpanku00]
 
   Affiliation []
 

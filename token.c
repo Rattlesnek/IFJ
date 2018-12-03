@@ -4,11 +4,13 @@
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName [Lexical analysis]
+  PackageName [Compiler]
 
   Synopsis    [Token manipulation]
 
   Author      [Adam Pankuch]
+
+  Login       [xpanku00]
 
   Affiliation []
 

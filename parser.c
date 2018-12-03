@@ -4,11 +4,13 @@
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName [Syntactic analysis]
+  PackageName [Syntax analysis]
 
-  Synopsis    []
+  Synopsis    [Predictive syntax analysis -- main part of compiler]
 
   Author      [Adam Pankuch]
+
+  Login       [xpanku00]
 
   Affiliation []
 
@@ -22,12 +24,16 @@
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
+#include "parser.h"
+
 #include <stdbool.h>
 
-#include "parser.h"
 
 #include "scanner.h"
 #include "sa_prec.h"
+
+#include "parser_gen.h"
+#include "error.h"
 
 #include "dynamic_arr_param.h"
 #include "dynamic_str.h"
@@ -35,19 +41,16 @@
 #include "stack_tkn.h"
 #include "queue.h"
 #include "list.h"
-
 #include "token.h"
 #include "symtable.h"
 
-#include "parser_gen.h"
-
-#include "error.h"
 
 #ifdef PARSER_PRINT
 #define PARSER_DBG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
 #define PARSER_DBG_PRINT(...) do{ } while(0)
 #endif
+
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -104,6 +107,7 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
+
 
 #define HANDLE_ERROR(ret_val) do {                                      \
         switch (ret_val)                                                \

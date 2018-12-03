@@ -4,11 +4,13 @@
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName []
+  PackageName [Compiler]
 
-  Synopsis    []
+  Synopsis    [Main function -- calls Parser]
 
   Author      [Adam Pankuch]
+
+  Login       [xpanku00]
 
   Affiliation []
 
