@@ -12,7 +12,7 @@
 
   Affiliation []
 
-  Date        19/10/2018]
+  Date        [19/10/2018]
 
   Revision    []
 
@@ -56,18 +56,14 @@ int Built_Func = 8;
 ///                     FUNCTION DEFINITIONS                         ///
 ///////////////////////////////////////////////////////////////////////
 
-/**
- * @brief Function returns char and set state to default (State_S)
- * 
- * @param c character to be ungetc (returning character)
- */
+
 void sc_unget(int c)
 {
     state = State_S;
     ungetc(c, stdin);
 }
 
-bool HextoStr(dynamicStr_t *sc_str,unsigned int position)
+bool Str_with_hex(dynamicStr_t *sc_str,unsigned int position)
 {
     if (position > sc_str->length)
         return false;
@@ -106,12 +102,6 @@ bool HextoStr(dynamicStr_t *sc_str,unsigned int position)
     return true;
 }
 
-/**
- * @brief Converts str from input to str according to task to format of int
- * 
- * @param s destined string with needed format
- * @param sc_str input string
- */
 bool InttoStr (char *s, dynamicStr_t *sc_str)
 {
     char *endptr;
@@ -124,12 +114,7 @@ bool InttoStr (char *s, dynamicStr_t *sc_str)
     return true;
 }
 
-/**
- * @brief Converts str from input to str according to task to format of double
- * 
- * @param s destined str with needed format
- * @param sc_str input string
- */
+
 bool DobtoStr (char *s, dynamicStr_t *sc_str)
 {
     char *endptr;
@@ -145,13 +130,7 @@ bool DobtoStr (char *s, dynamicStr_t *sc_str)
     }
     return true;
 }
-/**
- * @brief Check if ID is keywords
- * 
- * @param str string to be compared with keywords
- * @param keywords 
- * @return char* return token.name
- */
+
 char* inKeyword(char *str, char **keywords)
 {
     for (int i = 0; i < KeywordLen; i++)
@@ -174,6 +153,53 @@ char *inBuiltin_Func(char *str, char **builtin_func)
     return "ID";
 }
 
+bool BintoStr (char *s, dynamicStr_t *sc_str)
+{
+    char *endptr;
+    int num = strtol(sc_str->str, &endptr, 2);
+    if(*endptr)
+    {
+        return false;
+    }
+    while ( (unsigned)(sprintf(s, "%d", num)) > strlen(s) )
+    {
+        unsigned int new_size = strlen(s) + 10;
+		s = realloc(s, new_size * sizeof(char));
+    }
+    return true;
+}
+
+bool OcttoStr (char *s, dynamicStr_t *sc_str)
+{
+    char *endptr;
+    int num = strtol(sc_str->str, &endptr, 8);
+    if(*endptr)
+    {
+        return false;
+    }
+    while ( (unsigned)(sprintf(s, "%d", num)) > strlen(s) )
+    {
+        unsigned int new_size = strlen(s) + 10;
+		s = realloc(s, new_size * sizeof(char));
+    }
+    return true;
+}
+
+bool HextoStr (char *s, dynamicStr_t *sc_str)
+{
+    char *endptr;
+    int num = strtol(sc_str->str, &endptr, 2);
+    if(*endptr)
+    {
+        return false;
+    }
+    while ( (unsigned)(sprintf(s, "%d", num)) > strlen(s) )
+    {
+        unsigned int new_size = strlen(s) + 10;
+		s = realloc(s, new_size * sizeof(char));
+    }
+    return true;
+}
 
 bool scanner_unget(queue_t *que, token_t *token, char *name)
 {
@@ -181,12 +207,6 @@ bool scanner_unget(queue_t *que, token_t *token, char *name)
 }
 
 
-/**
- * @brief Scanner of the input, generates tokens (Lexical analysis)
- * 
- * @param c character to be read
- * @return token_t* token to be returned
- */
 token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 {
     dynamicStr_clear(sc_str);
@@ -276,6 +296,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                         state = State_ID;
                     } 
+                    else if ( c == '\\')
+                        state = State_Backslash;
 
                     else if ( c == '\n')
                         state = State_EOL;
@@ -603,7 +625,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         if(!dynamicStr_add(sc_str, c))
                             goto err_internal;
 
-                        if ((HextoStr(sc_str, sc_str->length - 2)) == false)
+                        if ((Str_with_hex(sc_str, sc_str->length - 2)) == false)
                             goto err_internal;
 
                         state = State_QUATATION1;
@@ -613,14 +635,14 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                     else if (c == '"')
                     {
-                        if ((HextoStr(sc_str, sc_str->length - 1)) == false)
+                        if ((Str_with_hex(sc_str, sc_str->length - 1)) == false)
                             goto err_internal;
 
                         state = State_QUATATION2;
                     }
                     else
                     {
-                        if ((HextoStr(sc_str, sc_str->length - 1)) == false)
+                        if ((Str_with_hex(sc_str, sc_str->length - 1)) == false)
                             goto err_internal;
                         
                         sc_unget(c);
@@ -670,7 +692,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     }
                             //( ,) ,* ,+ , , , -              /             <,=,>
                     else if ((c >= '(' && c <= '-') || c == '/' || (c >= '<' && c <= '>') || isspace(c))
-                        // (c >= '(' && c <= '/') || (c >= '<' && c <= '>') || isspace(c))
                     {
                         state = State_S;
                         sc_unget(c);
@@ -868,6 +889,18 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                         SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string);
                         return sc_token;  
+                    }
+                    else if ( isdigit(c))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+
+                        state = State_Octal;
+                    }
+                    else if (c == 'b')
+                    {
+                        dynamicStr_clear(sc_str);
+                        state = State_Binary;
                     }
                     else
                     {
@@ -1160,6 +1193,111 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
 
                     SCANNER_DBG_PRINT("Token-name: %s\n", sc_token->name);
                     return sc_token;
+                    break;
+
+                case State_Octal:
+                    if ( c >= '0' && c <= '7')
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_Octal;
+                    }   
+                                //(,),*,+, , ,-         /             <,=,>
+                    else if ( (c >= '(' && c <= '-') || c == '/' || (c >= '<' && c <= '>') || isspace(c))    //another characters like: +,-,*,/
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                        if ( !(OcttoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                            goto err_internal;
+
+                        sc_token= createToken("INT", sc_info);
+                        if (sc_token == NULL)
+                            goto err_internal;
+
+                        SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
+                        return sc_token;   
+                    }
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
+                    break;
+
+                case State_Binary:
+                    if ( c == '1' || c == '0' )
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_Binary;
+                    }   
+                                //(,),*,+, , ,-         /             <,=,>
+                    else if ( (c >= '(' && c <= '-') || c == '/' || (c >= '<' && c <= '>') || isspace(c))    //another characters like: +,-,*,/
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                        if ( !(BintoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                            goto err_internal;
+
+                        sc_token= createToken("INT", sc_info);
+                        if (sc_token == NULL)
+                            goto err_internal;
+
+                        SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
+                        return sc_token;   
+                    }
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
+                    break;
+
+                case State_Backslash:
+                    if (c == 'x')
+                    {
+                        state = State_Hexidecimal;
+                    }
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
+                    break;
+
+                case State_Hexidecimal:
+                    if ( isdigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'))
+                    {
+                        if(!dynamicStr_add(sc_str, c))
+                            goto err_internal;
+                        
+                        state = State_Hexidecimal;
+                    }   
+                                //(,),*,+, , ,-         /             <,=,>
+                    else if ( (c >= '(' && c <= '-') || c == '/' || (c >= '<' && c <= '>') || isspace(c))    //another characters like: +,-,*,/
+                    {
+                        state = State_S;
+                        sc_unget(c);
+                        sc_info.string = malloc( (strlen(sc_str->str) + 1) * sizeof(char) );
+                        if ( !(HextoStr(sc_info.string, sc_str)))   //False = convert wasn't succesful
+                            goto err_internal;
+
+                        sc_token= createToken("INT", sc_info);
+                        if (sc_token == NULL)
+                            goto err_internal;
+
+                        SCANNER_DBG_PRINT("Token-name: %s  || Value : %s\n", sc_token->name, sc_info.string );
+                        return sc_token;   
+                    }
+                    else
+                    {
+                        sc_unget(c);
+                        state = State_ERR;
+                    }
                     break;
 
                 case State_ERR:

@@ -17,8 +17,6 @@
 #include "token.h"
 #include "symtable.h"
 
-#include "builtin_gen.h"
-
 #include "error.h"
 int main()
 {
