@@ -5,17 +5,25 @@ d = 25
 
 def ch(z)
 	a = 5
-	chr(a)
-	chr(z)
-	chr z
-	chr 42
+	ch = chr(a)
+	print ch
+	ch = chr(z)
+	print ch
+	ch = chr z
+	print ch
+	ch = chr 42
+	print ch
 end
 
 def ordinal(q,r)
-	ord( q, r)
-	ord q, 8
-	ord "Jak se vede", 3
-	ord "Jde to skvele" , r
+	ordinal = ord( q, r)
+	print ordinal
+	ordinal = ord q, 8
+	print ordinal
+	ordinal = ord "Jak se vede", 3
+	print ordinal
+	ordinal = ord "Jde to skvele" , r
+	print ordinal
 end
 
 def printing(o)
@@ -25,22 +33,34 @@ end
 
 def inputting(p)
 	p = inputi
+	print p
 	p = inputi()
+	print p
 
 	p = inputs
+	print p
 	p = inputs()
+	print p
 
 	p = inputf
+	print p
 	p = inputf()
+	print p
 end
 
 def substring(s,b,e)
-	substr( s, b, e)
-	substr "AHOJ svete" , 1, 55
-	substr s, b, e
-	substr s, b, 22
-	substr s, 1, e
-	substr s, 1, 22
+	sub = substr( s, b, e)
+	print sub
+	sub = substr "AHOJ svete" , 1, 55
+	print sub
+	sub = substr s, b, e
+	print sub
+	sub = substr s, b, 22
+	print sub
+	sub = substr s, 1, e
+	print sub
+	sub = substr s, 1, 22
+	print sub
 end
 
 ch(a)
