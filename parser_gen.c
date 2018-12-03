@@ -80,7 +80,7 @@ bool generate_if_condition(list_t *code_buffer, bool in_stat, stack_str_t *stack
         return false;
 
     // jump to ELSE if cond == false
-    if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\n\n", if_cnt))
+    if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\nPUSHS nil@nil\n\n", if_cnt))
         return false;
 
 
@@ -150,7 +150,7 @@ bool generate_elsif_condition(list_t *code_buffer, bool in_stat, token_t *cond)
     if (! condition_adjust(code_buffer, in_stat, cond))
         return false;
 
-    if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\n\n", if_cnt))
+    if (! print_or_append(code_buffer, in_stat, "PUSHS bool@false\nJUMPIFEQS $if$%llu\nPUSHS nil@nil\n\n", if_cnt))
         return false;
 
     return true;
@@ -163,7 +163,7 @@ bool generate_else(list_t *code_buffer, bool in_stat, stack_str_t *stack)
         return false;
     stcStr_pop(stack);
 
-    if (! print_or_append(code_buffer, in_stat, "%s\n", stcStr_top(stack)))
+    if (! print_or_append(code_buffer, in_stat, "%s\nPUSHS nil@nil\n", stcStr_top(stack)))
         return false;
     stcStr_pop(stack);
     return true;
@@ -280,8 +280,6 @@ int generate_var(list_t *code_buffer, list_t *defvar_buffer, bool in_stat, symta
     char frame[3] = "LF";
     if (strcmp(var_tab->name, "$GT") == 0)
         strcpy(frame, "GF");
-
-
 
     if (symtab_find(var_tab, var_name) == NULL)
     {

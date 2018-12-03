@@ -130,6 +130,13 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief Find number of corresponding rule in ll_table
+ *
+ * @param nonterm   name of nonterminal
+ * @param term      name of terminal
+ * @return int      number of rule
+ */
 int LLtableFind(char *nonterm, char *term)
 {
     int nonterm_idx = 0;
@@ -211,6 +218,14 @@ int LLtableFind(char *nonterm, char *term)
 }
 
 
+/**
+ * @brief Cretes a temporary key (either identifier or function key)
+ * 
+ * @param key_tmp   temporary key
+ * @param name      name of new temporary key
+ * @return true     if success
+ * @return false    if internal error
+ */ 
 bool tempKey_create(char **key_tmp, char *name)
 {
     *key_tmp = malloc( (strlen(name) + 1) * sizeof(char) );
@@ -222,6 +237,11 @@ bool tempKey_create(char **key_tmp, char *name)
 }
 
 
+/**
+ * @brief Destroys temporary key (either identifier or function key)
+ * 
+ * @param key_tmp key to be destroyed
+ */
 void tempKey_destroy(char **key_tmp)
 {
     if (*key_tmp != NULL)
@@ -232,6 +252,14 @@ void tempKey_destroy(char **key_tmp)
 }
 
 
+/**
+ * @brief Pushes reverted rules to the stack of tokens 
+ * 
+ * @param stack_tkn stack of tokens
+ * @param rule      rule which is going to be used
+ * @return true     if success
+ * @return false    if internal error
+ */
 bool pushRevertedRules(stack_tkn_t *stack_tkn, int rule)
 {
     int i = 0;
@@ -255,6 +283,20 @@ bool pushRevertedRules(stack_tkn_t *stack_tkn, int rule)
 }
 
 
+/**
+ * @brief Frees all structures that were allocated in parser
+ * 
+ * @param gl_var_tab    global variables symtable
+ * @param fun_tab       function symtable
+ * @param lc_var_tab    local variables symtable
+ * @param param_arr     dynamic array of a function parameters
+ * @param id_key_tmp    temporary key of an identifier
+ * @param func_key_tmp  temporary key of a function
+ * @param act           active token from Scanner
+ * @param token         temporary token
+ * @param id_token_tmp  temporary token of an identifier
+ * @param sa_prec_ret   temporary token from Precedenc analysis
+ */
 void freeAll(symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab,
              dynamicArrParam_t *param_arr,
              char **id_key_tmp, char **func_key_tmp,
@@ -275,7 +317,6 @@ void freeAll(symtable_t *gl_var_tab, symtable_t *fun_tab, symtable_t *lc_var_tab
     destroyToken(id_token_tmp);
     destroyToken(sa_prec_ret);
 }
-
 
 
 #ifdef PARSER_PRINT
@@ -301,27 +342,6 @@ bool print_var(elem_t *element)
 }
 #endif
 
-
-#ifdef DEBUG_PARSER
-int prec_tmp(dynamicStr_t *sc_str, queue_t *que)
-{
-    token_t *act = scanner_get(sc_str, que);
-    PARSER_DBG_PRINT("expr handling: %s\n", act->name);
-    if (strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0)
-    {
-        do {
-            destroyToken(act);
-            act = scanner_get(sc_str, que);
-            PARSER_DBG_PRINT("expr handling: %s\n", act->name);
-        } while (strcmp(act->name, "then") != 0 && strcmp(act->name, "do") != 0 && strcmp(act->name, "EOL") != 0 && strcmp(act->name, "EOF") != 0);
-    }
-    scanner_unget(que, act, sc_str->str);
-
-    return 0;
-}
-#endif
-
-
 ////////////////////////////////////////////////////////////////////////
 ///                             PARSER                               ///
 ////////////////////////////////////////////////////////////////////////
@@ -344,7 +364,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
     int rule;       // ll-grammar rule which is going to be used
     int ret_val;    // return value of precedenc analysis
 
-    token_t *sa_prec_ret = NULL; // TODO
+    token_t *sa_prec_ret = NULL;    // token returned from precedenc analysis
 
     char *id_key_tmp = NULL;        // temporary key of an identifier
     token_t *id_token_tmp = NULL;   // temporary token of an identifier
@@ -353,8 +373,8 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
     int param_cnt;                  // number of parameters of a function
     dynamicArrParam_t *param_arr = NULL;  // array where parameters of a function are stored
 
-    char label_stat[40] = "\0";
-    bool in_stat = false;
+    char label_stat[40] = "";       // expected end label of if-statement or while-loop
+    bool in_stat = false;           // determines whether in if-statement or while-loop
 
     // INIT SYMTABLES
     symtable_t *fun_tab;            // function symtable
@@ -396,9 +416,9 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
     do {
         // get token from the top of the stack
         top = stcTkn_top(stack_tkn);
+        // if needed get new token from scanner
         if (get_new_token)
         {
-            // if needed get new token from scanner
             act = scanner_get(sc_str, que);
             PARSER_DBG_PRINT("scanner_get: %s\n", act->name);
             if (strcmp(act->name, "ERR_LEX") == 0)
@@ -429,65 +449,45 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                 PARSER_DBG_PRINT("top == act: %s\n", act->name);
                 if (strcmp(top->name, "if") == 0)
                 {
-                    PARSER_DBG_PRINT("*********** IF ***********\n");
                     ///////////////////
                     //  GENERATE IF  //
                     ///////////////////
                     expected_LABEL_if(in_stat, label_stat);
 
-#ifdef DEBUG_PARSER
-                    ret_val = prec_tmp(sc_str, que);
-#else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                     HANDLE_ERROR(ret_val);
 
-                    PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-#endif
                     in_stat = true;
                     if (! generate_if_condition(code_buffer, in_stat, stack_str, sa_prec_ret))
                         goto err_internal_main;
 
                     destroyToken(sa_prec_ret);
                     sa_prec_ret = NULL;
-
-                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "elsif") == 0)
                 {
-                    PARSER_DBG_PRINT("*********** ELIF ***********\n");
-
+                    //////////////////////
+                    //  GENERATE ELSIF  //
+                    //////////////////////
                     if (! generate_LABEL_elsif(code_buffer, in_stat, stack_str))
                         goto err_internal_main;
 
-#ifdef DEBUG_PARSER
-                    ret_val = prec_tmp(sc_str, que);
-#else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                     HANDLE_ERROR(ret_val);
 
-                    PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-#endif
                     if (! generate_elsif_condition(code_buffer, in_stat, sa_prec_ret))
                         goto err_internal_main;
 
                     destroyToken(sa_prec_ret);
                     sa_prec_ret = NULL;
-
-                    get_new_token = true;
-                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "else") == 0)
                 {
-                    PARSER_DBG_PRINT("*********** ELSE ***********\n");
-
                     if (! generate_else(code_buffer, in_stat, stack_str))
                         goto err_internal_main;
-
-                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "while") == 0)
                 {
-                    PARSER_DBG_PRINT("********* WHILE **********\n");
                     //////////////////////
                     //  GENERATE WHILE  //
                     //////////////////////
@@ -496,14 +496,8 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     if (! generate_LABEL_while(code_buffer, in_stat))
                         goto err_internal_main;
 
-#ifdef DEBUG_PARSER
-                    ret_val = prec_tmp(sc_str, que);
-#else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                     HANDLE_ERROR(ret_val);
-
-                    PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-#endif
 
                     if (! generate_while_condition(code_buffer, in_stat, sa_prec_ret))
                         goto err_internal_main;
@@ -514,31 +508,16 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 
                     destroyToken(sa_prec_ret);
                     sa_prec_ret = NULL;
-
-                    //printf("in_stat: %d\n", in_stat);
-                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(top->name, "=") == 0)
                 {
-                    PARSER_DBG_PRINT("********** EXPR **********\n");
                     /////////////////////////
                     //  GENERATE VARIABLE  //
                     /////////////////////////
-#ifdef DEBUG_PARSER
-                    ret_val = prec_tmp(sc_str, que);
-#else
                     ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                     HANDLE_ERROR(ret_val);
 
-                    if (sa_prec_ret == NULL)
-                        PARSER_DBG_PRINT("token is NULL\n");
-                    else if (sa_prec_ret->name == NULL)
-                        PARSER_DBG_PRINT("token->name is NULL\n");
-                    PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-                    //PARSER_DBG_PRINT("Returned Token val: %s\n", sa_prec_ret->info.string);
-#endif
-
-                    ret_val = generate_var(code_buffer, defvar_buffer, in_stat, var_tab, id_key_tmp, sa_prec_ret); // TODO
+                    ret_val = generate_var(code_buffer, defvar_buffer, in_stat, var_tab, id_key_tmp, sa_prec_ret);
                     HANDLE_ERROR(ret_val);
 
                     // check if same name isnt used for function
@@ -550,8 +529,6 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     tempKey_destroy(&id_key_tmp);
                     destroyToken(sa_prec_ret);
                     sa_prec_ret = NULL;
-
-                    PARSER_DBG_PRINT("********** END ***********\n");
                 }
                 else if (strcmp(act->name, "end") == 0)
                 {
@@ -569,8 +546,6 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                         symtab_foreach(lc_var_tab, print_var);
                         PARSER_DBG_PRINT("\n\n");
 #endif
-                        // return value TODO
-                        //printf("MOVE LF@%%retval LF@%s\n", "something");
 
                         symtab_free(lc_var_tab);
                         lc_var_tab = NULL;
@@ -586,18 +561,15 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                         generated_code = stcStr_top(stack_str);
                     }
 
-                    //if (strncmp(generated_code, "LABEL $endif$", strlen("LABEL $endif$")) == 0)
-                    //    inc_endif();
-                    //printf("%s", generated_code);
-                    //printf("%s", label_stat);
-
                     if (strlen(label_stat) != 0 && strncmp(generated_code, label_stat, strlen(label_stat)) == 0)
                     {
                         list_print_clean(defvar_buffer);
                         list_print_clean(code_buffer);
                         in_stat = false;
                     }
-                    print_or_append(code_buffer, in_stat, "%s", generated_code);
+                    
+                    if (! print_or_append(code_buffer, in_stat, "%s", generated_code))
+                        goto err_internal_main;
 
                     stcStr_pop(stack_str);
                 }
@@ -715,48 +687,39 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     goto err_internal_main;
 
                 PARSER_DBG_PRINT("create local hash table for function\n");
-                if (lc_var_tab == NULL) // TODO
-                {
-                    lc_var_tab = symtab_init(func_key_tmp, VARIABLES);
-                    var_tab = lc_var_tab;
-                }
+            
+                lc_var_tab = symtab_init(func_key_tmp, VARIABLES);
+                var_tab = lc_var_tab;
 
                 get_func_params = true;
+            }
+            else if (rule == FUNC_ASSIGN_EXPR_11)
+            {
+                destroyToken(id_token_tmp);
+                id_token_tmp = NULL;
             }
 
             // need to be if (not else if) !!!
             if (rule == EXPR_INCLUDE)
             {
-                PARSER_DBG_PRINT("********** EXPR **********\n");
+                // destroy token: "[command]"
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
 
                 scanner_unget(que, act, sc_str->str);
-                PARSER_DBG_PRINT("Unget Token: %s\n", act->name);
-                PARSER_DBG_PRINT("Unget sc_str: %s\n", sc_str->str);
                 act = NULL;
-#ifdef DEBUG_PARSER
-                ret_val = prec_tmp(sc_str, que);
-#else
+
                 ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                 HANDLE_ERROR(ret_val);
-
                 PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-#endif
 
-                // expression TODO
                 destroyToken(sa_prec_ret);
                 sa_prec_ret = NULL;
-
                 get_new_token = true;
-                PARSER_DBG_PRINT("********** END ***********\n");
             }
             else if (rule == EXPR_INCLUDE_TWO)
             {
-
-                PARSER_DBG_PRINT("********** EXPR **********\n");
-
                 // destroy token: "[func-assign-expr]"
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
@@ -768,29 +731,22 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                 scanner_unget(que, act, sc_str->str);
                 act = NULL;
 
-#ifdef DEBUG_PARSER
-                ret_val = prec_tmp(sc_str, que);
-#else
                 ret_val = sa_prec(sc_str, que, var_tab, fun_tab, &sa_prec_ret, code_buffer, in_stat);
                 HANDLE_ERROR(ret_val);
-
                 PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
-#endif
 
-                // expression TODO
                 destroyToken(sa_prec_ret);
                 sa_prec_ret = NULL;
-
                 get_new_token = true;
-                PARSER_DBG_PRINT("********** END ***********\n");
             }
             else if (rule) // in case rule == 0 -- fail
             {
                 PARSER_DBG_PRINT("top: %s\tact: %s\n", top->name, act->name);
+                // destroy nonterminal on top of stack
                 token = stcTkn_pop(stack_tkn);
                 destroyToken(token);
                 token = NULL;
-
+                // push reverted grammar rule
                 if ( ! pushRevertedRules(stack_tkn, rule))
                     goto err_internal_main;
             }
