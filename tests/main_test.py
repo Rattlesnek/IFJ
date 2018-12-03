@@ -79,7 +79,8 @@ def run_test(folder, run_valgrind):
     subprocess.call(call, shell=True)
 
 
-os.chdir('./tests')
+if os.getcwd()[-5:] != 'tests':
+    os.chdir('./tests')
 
 try:
     if len(sys.argv) == 1:

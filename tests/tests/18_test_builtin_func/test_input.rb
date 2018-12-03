@@ -3,16 +3,24 @@ b = "JAMBALAJA"
 c = 4
 d = 25
 
-chr(a)
-chr c
-chr 42
+ch = chr(a)
+print ch
+ch = chr c
+print ch
+ch = chr 42
+print ch
 
 
 
-ord( b, c)
-ord b, 8
-ord "Jak se vede", 3
-ord "Jde to skvele" , c
+ordinal = ord(b, c)
+print ordinal
+ordinal = ord(b, 8)
+print ordinal
+ordinal = ord("Jak se vede", 3)
+print ordinal
+ordinal = ord("Jde to skvele" , c)
+print ordinal
+
 
 
 print b
@@ -33,12 +41,29 @@ print u
 v = inputf()
 print v
 
-substr( b, c, d)
-print b
-print c
-print d
-substr "AHOJ svete" , 1, 55
-substr b, c, d
-substr b, c, 22
-substr b, 1, d
-substr b, 1, 22
+subs = substr( b, c, d)
+print subs
+len = length(subs)
+print len
+subs = substr "AHOJ svete" , 1, 55
+print subs
+len = length(subs)
+print len
+subs = substr b, c, d
+print subs
+len = length(subs)
+print len
+subs = substr b, c, 22
+print subs
+len = length(subs)
+print len
+subs = substr b, 1, d
+print subs
+len = length(subs)
+print len
+subs = substr b, 1, 22
+print subs
+len = length(subs)
+print len
+
+

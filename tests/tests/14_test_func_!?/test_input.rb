@@ -35,5 +35,8 @@ x = baz! 1.5, "ok"
 print x
 
 bazmeg!
- 
+
+def fun (a)
+end
+
 
