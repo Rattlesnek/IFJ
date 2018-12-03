@@ -188,7 +188,7 @@ bool OcttoStr (char *s, dynamicStr_t *sc_str)
 bool HextoStr (char *s, dynamicStr_t *sc_str)
 {
     char *endptr;
-    int num = strtol(sc_str->str, &endptr, 2);
+    int num = strtol(sc_str->str, &endptr, 16);
     if(*endptr)
     {
         return false;
