@@ -4,11 +4,13 @@
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName [Syntactic analysis]
+  PackageName [Syntax analysis]
 
-  Synopsis    []
+  Synopsis    [Predictive syntax analysis -- main part of compiler]
 
   Author      [Adam Pankuch]
+
+  Login       [xpanku00]
 
   Affiliation []
 
@@ -22,12 +24,16 @@
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
+#include "parser.h"
+
 #include <stdbool.h>
 
-#include "parser.h"
 
 #include "scanner.h"
 #include "sa_prec.h"
+
+#include "parser_gen.h"
+#include "error.h"
 
 #include "dynamic_arr_param.h"
 #include "dynamic_str.h"
@@ -35,19 +41,16 @@
 #include "stack_tkn.h"
 #include "queue.h"
 #include "list.h"
-
 #include "token.h"
 #include "symtable.h"
 
-#include "parser_gen.h"
-
-#include "error.h"
 
 #ifdef PARSER_PRINT
 #define PARSER_DBG_PRINT(...) do{ printf( __VA_ARGS__ ); } while(0)
 #else
 #define PARSER_DBG_PRINT(...) do{ } while(0)
 #endif
+
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -104,6 +107,7 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
 ////////////////////////////////////////////////////////////////////////
 ///                      MACRO DEFINITIONS                           ///
 ////////////////////////////////////////////////////////////////////////
+
 
 #define HANDLE_ERROR(ret_val) do {                                      \
         switch (ret_val)                                                \
@@ -440,7 +444,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
                     in_stat = true;
-                    if (! generate_if(code_buffer, in_stat, stack_str, sa_prec_ret))
+                    if (! generate_if_condition(code_buffer, in_stat, stack_str, sa_prec_ret))
                         goto err_internal_main;
 
                     destroyToken(sa_prec_ret);
@@ -463,7 +467,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
-                    if (! generate_elsif(code_buffer, in_stat, sa_prec_ret))
+                    if (! generate_elsif_condition(code_buffer, in_stat, sa_prec_ret))
                         goto err_internal_main;
 
                     destroyToken(sa_prec_ret);
@@ -501,7 +505,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     PARSER_DBG_PRINT("Returned Token: %s\n", sa_prec_ret->name);
 #endif
 
-                    if (! generate_while_false(code_buffer, in_stat, sa_prec_ret))
+                    if (! generate_while_condition(code_buffer, in_stat, sa_prec_ret))
                         goto err_internal_main;
 
                     // push to stack_tkn "epilog of while"

@@ -4,11 +4,13 @@
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName [Syntactic analysis]
+  PackageName [Syntax analysis]
 
-  Synopsis    []
+  Synopsis    [Predictive syntax analysis -- main part of compiler]
 
   Author      [Adam Pankuch]
+
+  Login       [xpanku00]
 
   Affiliation []
 

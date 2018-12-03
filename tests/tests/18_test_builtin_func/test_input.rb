@@ -19,15 +19,24 @@ print b
 print "Nazdarek"
 
 q = inputi
+print q
 r = inputi()
+print r
 
 s = inputs
+print s
 t = inputs()
+print t
 
 u = inputf
+print u
 v = inputf()
+print v
 
 substr( b, c, d)
+print b
+print c
+print d
 substr "AHOJ svete" , 1, 55
 substr b, c, d
 substr b, c, 22

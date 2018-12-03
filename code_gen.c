@@ -254,14 +254,19 @@ char *params(symtable_t *symtab, char* param, token_t *par, bool id_variant)
     char *print;
     if (strcmp(par->name, "INT_ID") == 0 || strcmp(par->name, "DBL_ID") == 0 || strcmp(par->name, "STR_ID") == 0 || strcmp(par->name, "BOOL_ID") == 0)
     {
-        which_frame(symtab, param);
-
-        print = malloc(sizeof(char) * (strlen("$des") + 1));
+        print = malloc(sizeof(char) * 6);
         if (print == NULL)
         {
             return "ERR_INT";
         }
-        strcpy(print, "$des");
+        if (id_variant)
+        {
+            strcpy(print, "$des1");
+        }
+        else
+        {
+            strcpy(print, "$des2");
+        }
         strcpy(param, "GF");
     }
     else if (strcmp(par->name, "ID") == 0)
@@ -380,8 +385,6 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     {
         return NULL;
     }
-
-
     char param1[10];
     char param2[10];
     char div_type[6] = "float";
@@ -390,9 +393,18 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1, 0);
 
     char *print2 = params(symtab, param2, par2, 0);
+    if (strcmp(print2, "$des2") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+    }
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+    }
+
 
     if (strcmp(print1, "ERR_INT") == 0 || strcmp(print2, "ERR_INT") == 0)
     {
@@ -456,7 +468,7 @@ token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     }
 
 
-
+    print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
@@ -479,10 +491,34 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     token_info_t info = {.ptr = NULL};
 
     token_t *des = createToken("BOOL_ID", info);
-
-    char *print1 = params(symtab, param1, par1, 0);
-
+    char *print1 = params(symtab, param1, par1, 1);
     char *print2 = params(symtab, param2, par2, 0);
+
+    if (!switched)
+    {
+
+        if (strcmp(print2, "$des2") == 0)
+        {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
+
+        if (strcmp(print1, "$des1") == 0)
+        {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+
+    }
+    else
+    {
+        if (strcmp(print1, "$des1") == 0)
+        {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+        }
+        if (strcmp(print2, "$des2") == 0)
+        {
+            print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+        }
+    }
 
 
     print_or_append(code_buffer, in_stat, "INT2FLOAT GF@$tmp %s@%s\n", param1, print1);
@@ -525,7 +561,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
     {
         strncpy(des->name, "DBL_ID", 8);
     }
-
+    print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
 
     label_n++;
     destroyToken(par1);
@@ -571,6 +607,7 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer,
         token_t *error = createToken("ERR_SEM", info1);
         return error;
     }
+
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
@@ -631,16 +668,15 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1, 1);
-    if (strcmp(print1, "$des1") == 0)
-    {
-
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
-    }
     char *print2 = params(symtab, param2, par2, 0);
     if (strcmp(print2, "$des2") == 0)
     {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des2 GF@$des\n");
+        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+    }
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
     }
 
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
@@ -784,7 +820,7 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     {
         strncpy(des->name, "ID", 8);
     }
-
+    print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
@@ -809,15 +845,15 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1, 1);
-    if (strcmp(print1, "$des1") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
-    }
     char *print2 = params(symtab, param2, par2, 0);
     if (strcmp(print2, "$des2") == 0)
     {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des2 GF@$des\n");
+        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+    }
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
     }
 
     if (strcmp(op->name, "==") == 0 || strcmp(op->name, "!=") == 0)
@@ -915,7 +951,7 @@ token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
         strncpy(des->name, "DBL_ID", 8);
     }
 
-
+    print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
@@ -939,10 +975,16 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1, 0);
-
     char *print2 = params(symtab, param2, par2, 0);
-
+    if (strcmp(print2, "$des2") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+    }
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
+    }
 
     if (strcmp(op->name, "==") == 0)
     {
@@ -981,6 +1023,7 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
         token_t *error = createToken("ERR_SEM", info1);
         return error;
     }
+    print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
@@ -1019,15 +1062,15 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1, 1);
-    if (strcmp(print1, "$des1") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
-    }
     char *print2 = params(symtab, param2, par2, 0);
     if (strcmp(print2, "$des2") == 0)
     {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des2 GF@$des\n");
+        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+    }
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
     }
 
     which_frame(symtab, frame);
@@ -1088,6 +1131,7 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
     {
         strncpy(des->name, "STR_ID", 8);
     }
+    print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
@@ -1110,15 +1154,15 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
 
     token_t *des = createToken("BOOL_ID", info);
 
-    char *print1 = params(symtab, param1, par1, 1);
-    if (strcmp(print1, "$des1") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des1 GF@$des\n");
-    }
     char *print2 = params(symtab, param2, par2, 0);
     if (strcmp(print2, "$des2") == 0)
     {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des2 GF@$des\n");
+        print_or_append(code_buffer, in_stat, "POPS GF@$des2\n");
+    }
+    char *print1 = params(symtab, param1, par1, 1);
+    if (strcmp(print1, "$des1") == 0)
+    {
+        print_or_append(code_buffer, in_stat, "POPS GF@$des1\n");
     }
 
 
@@ -1436,6 +1480,7 @@ token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bo
     {
         strncpy(des->name, "ID", 8);
     }
+    print_or_append(code_buffer, in_stat, "PUSHS GF@$des\n");
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
@@ -1632,7 +1677,7 @@ token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
         goto err_sem_type;
 
     if (! print_or_append(code_buffer, in_stat, "STRLEN GF@$des GF@$tmp\n"
-                                                "PUSHS GF@$des\n"))
+                          "PUSHS GF@$des\n"))
         goto err_internal;
 
     label_n++;
@@ -1710,7 +1755,7 @@ token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
         goto err_sem_type;
 
     if (! print_or_append(code_buffer, in_stat, "INT2CHAR GF@$des GF@$tmp\n"
-                                                "PUSHS GF@$des\n"))        //INT2CHAR takes value <0,255>
+                          "PUSHS GF@$des\n"))        //INT2CHAR takes value <0,255>
         goto err_internal;
 
     destroyToken(par);
@@ -2134,7 +2179,7 @@ token_t *input(list_t *code_buffer, bool in_stat, symtable_t *symtab, int type)
     }
 
     if (! print_or_append(code_buffer, in_stat, "READ GF@$des %s\n"
-                                                "PUSHS GF@$des\n", param))
+                          "PUSHS GF@$des\n", param))
     {
         label_n++;
         destroyToken(des);
@@ -2219,7 +2264,7 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack, list_t *code_buffer, bool
         }
 
         if (! print_or_append(code_buffer, in_stat, "WRITE %s@%s\n"
-                                                    "PUSHS nil@nil\n", param, print))
+                              "PUSHS nil@nil\n", param, print))
             goto err_internal;
         destroyToken(tmp); // ????
     }
