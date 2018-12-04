@@ -3,7 +3,7 @@ b = "JAMBALAJA"
 c = 4
 d = 25
 
-def ch(z)
+def chris(z)
 	a = 5
 	ch = chr(a)
 	print ch
@@ -15,7 +15,7 @@ def ch(z)
 	print ch
 end
 
-def ordinal(q,r)
+def ordi(q,r)
 	ordinal = ord( q, r)
 	print ordinal
 	ordinal = ord q, 8
@@ -63,8 +63,8 @@ def substring(s,b,e)
 	print sub
 end
 
-ch(a)
-ordinal(b,c)
+chris(a)
+ordi(b,c)
 printing(b)
 inputting(a)
 substring(b,c,d)

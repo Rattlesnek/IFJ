@@ -1,0 +1,28 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+
+JUMP $end$function$0
+LABEL fun
+PUSHFRAME
+
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 int@1
+DEFVAR TF@%2
+MOVE TF@%2 int@2
+CALL baz
+PUSHS GF@$des
+
+POPFRAME
+RETURN
+LABEL $end$function$0
+
+WRITE string@ok\010

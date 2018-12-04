@@ -1,0 +1,230 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+DEFVAR GF@o
+MOVE GF@o int@5
+WRITE GF@o
+EQ GF@$des int@1 int@1
+NOT GF@$des GF@$des
+PUSHS GF@$des
+DEFVAR GF@x
+DEFVAR GF@a
+DEFVAR GF@i
+DEFVAR GF@j
+DEFVAR GF@y
+PUSHS bool@false
+JUMPIFEQS $if$0
+
+
+JUMP $endif$0
+LABEL $if$0
+
+MOVE GF@x string@pok
+JUMPIFNEQ $$GT$2$notZero0 int@5 int@0
+EXIT int@9
+LABEL $$GT$2$notZero0
+IDIV GF@$des int@1 int@5
+GT GF@$des GF@$des int@6
+PUSHS GF@$des
+PUSHS bool@false
+JUMPIFEQS $if$1
+
+
+JUMP $endif$1
+LABEL $if$1
+
+PUSHS bool@false
+PUSHS bool@false
+JUMPIFEQS $if$2
+
+
+JUMP $endif$2
+LABEL $if$2
+
+MOVE GF@a string@asd
+MOVE GF@i int@1
+MOVE GF@j int@1
+
+LABEL $while$0
+TYPE GF@$type GF@i
+JUMPIFNEQ $$GT$4$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $$GT$4$int$string1
+MOVE GF@$des int@5
+JUMPIFNEQ $$GT$4$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@5
+LABEL $$GT$4$int$float1
+MOVE GF@$eq GF@$des
+LT GF@$des GF@i GF@$des
+PUSHS GF@$des
+PUSHS bool@false
+ JUMPIFEQS $end_while$0
+
+WRITE GF@i
+WRITE GF@x
+
+LABEL $while$1
+TYPE GF@$type GF@j
+JUMPIFEQ $$GT$7$int0 GF@$type string@int
+JUMPIFEQ $$GT$7$float0 GF@$type string@float
+JUMPIFEQ $$GT$7$string0 GF@$type string@string
+LABEL $$GT$7$int0
+TYPE GF@$type GF@i
+JUMPIFNEQ $$GT$7$int$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$7$int$string
+MOVE GF@$des GF@j
+JUMPIFNEQ $$GT$7$int$float GF@$type string@float
+INT2FLOAT GF@$des GF@j
+LABEL $$GT$7$int$float
+MOVE GF@$eq GF@$des
+ADD GF@$des GF@$des GF@i
+JUMP ENDTHISMADNESS7
+LABEL $$GT$7$float0
+TYPE GF@$type GF@i
+JUMPIFNEQ $$GT$7$float$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$7$float$string
+MOVE GF@$des GF@i
+JUMPIFEQ $$GT$7$float GF@$type string@float
+INT2FLOAT GF@$des GF@i
+LABEL $$GT$7$float
+MOVE GF@$eq GF@$des
+ADD GF@$des GF@j GF@$des
+JUMP ENDTHISMADNESS7
+LABEL $$GT$7$string0
+TYPE GF@$type GF@i
+JUMPIFEQ $$GT$7$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$7$string$string
+MOVE GF@$des GF@j
+CONCAT GF@$des GF@$des GF@i
+LABEL ENDTHISMADNESS7
+MOVE GF@$des2 GF@$des
+TYPE GF@$type GF@$des2
+JUMPIFNEQ $$GT$8$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $$GT$8$int$string1
+MOVE GF@$des int@10
+JUMPIFNEQ $$GT$8$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@10
+LABEL $$GT$8$int$float1
+MOVE GF@$eq GF@$des
+LT GF@$des GF@$des2 GF@$des
+PUSHS GF@$des
+PUSHS bool@false
+ JUMPIFEQS $end_while$1
+
+WRITE GF@a
+INT2FLOAT GF@$tmp int@5
+ADD GF@$des GF@$tmp float@0x1.6666666666666p+2
+PUSHS GF@$des
+POPS GF@a
+TYPE GF@$type GF@a
+JUMPIFEQ $$GT$11$int0 GF@$type string@int
+JUMPIFEQ $$GT$11$float0 GF@$type string@float
+JUMPIFEQ $$GT$11$string0 GF@$type string@string
+LABEL $$GT$11$int0
+TYPE GF@$type GF@a
+JUMPIFNEQ $$GT$11$int$string GF@$type string@string
+MOVE GF@$des bool@false
+JUMP END4$11
+LABEL $$GT$11$int$string
+MOVE GF@$des GF@a
+JUMPIFNEQ $$GT$11$int$float GF@$type string@float
+INT2FLOAT GF@$des GF@a
+LABEL $$GT$11$int$float
+EQ GF@$des GF@$des GF@a
+LABEL END4$11
+JUMP ENDTHISMADNESS11
+LABEL $$GT$11$float0
+TYPE GF@$type GF@a
+JUMPIFNEQ $$GT$11$float$string GF@$type string@string
+MOVE GF@$des bool@false
+JUMP END5$11
+LABEL $$GT$11$float$string
+MOVE GF@$des GF@a
+JUMPIFEQ $$GT$11$float GF@$type string@float
+INT2FLOAT GF@$des GF@a
+LABEL $$GT$11$float
+EQ GF@$des GF@$des GF@a
+LABEL END5$11
+JUMP ENDTHISMADNESS11
+LABEL $$GT$11$string0
+TYPE GF@$type GF@a
+JUMPIFEQ $$GT$11$string$string GF@$type string@string
+MOVE GF@$des bool@false
+JUMP END6$11
+LABEL $$GT$11$string$string
+MOVE GF@$des GF@a
+EQ GF@$des GF@$des GF@a
+LABEL END6$11
+LABEL ENDTHISMADNESS11
+PUSHS GF@$des
+PUSHS bool@false
+JUMPIFEQS $if$3
+
+WRITE string@a\032==\032a
+
+JUMP $endif$3
+LABEL $if$3
+
+LABEL $endif$3
+
+TYPE GF@$type GF@j
+JUMPIFNEQ $$GT$13$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $$GT$13$int$string1
+MOVE GF@$des int@1
+JUMPIFNEQ $$GT$13$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@1
+LABEL $$GT$13$int$float1
+MOVE GF@$eq GF@$des
+ADD GF@$des GF@j GF@$des
+PUSHS GF@$des
+POPS GF@j
+WRITE GF@j
+WRITE string@\010
+
+JUMP $while$1
+LABEL $end_while$1
+
+PUSHS nil@nil
+TYPE GF@$type GF@i
+JUMPIFNEQ $$GT$16$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $$GT$16$int$string1
+MOVE GF@$des int@1
+JUMPIFNEQ $$GT$16$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@1
+LABEL $$GT$16$int$float1
+MOVE GF@$eq GF@$des
+ADD GF@$des GF@i GF@$des
+PUSHS GF@$des
+POPS GF@i
+
+JUMP $while$0
+LABEL $end_while$0
+
+PUSHS nil@nil
+LABEL $endif$2
+
+MOVE GF@y string@slk
+LABEL $endif$1
+
+LABEL $endif$0
+
+DEFVAR GF@l
+MOVE GF@l int@10
+WRITE GF@o
+WRITE GF@l
+WRITE GF@y
+WRITE GF@i
+WRITE GF@a

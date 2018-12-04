@@ -210,17 +210,7 @@ token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
  * @return     { description_of_the_return_value }
  */
 token_t *int_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat);
-/**
- * @brief      { function_description }
- *
- * @param      op      The operation
- * @param      par1    The par 1
- * @param      par2    The par 2
- * @param      symtab  The symtab
- *
- * @return     { description_of_the_return_value }
- */
-token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat);
+
 /**
  * @brief      { function_description }
  *
@@ -300,7 +290,7 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
 
 /**
  * @brief Reads from input
- * 
+ *
  * @param code_buffer     Parametr for function print_or_append
  * @param in_stat         Parametr for function print_or_append
  * @param symtab          Symtable in which the function is called
@@ -311,8 +301,8 @@ token_t *input(list_t *code_buffer, bool in_stat, symtable_t *symtab, int type);
 
 /**
  * @brief Returns ASCII value of char in string par1 on position par2
- * 
- * @param code_buffer     Parametr for function print_or_append 
+ *
+ * @param code_buffer     Parametr for function print_or_append
  * @param in_stat         Parametr for function print_or_append
  * @param symtab          Symtable in which the function is called
  * @param par1            String
@@ -324,7 +314,7 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
 
 /**
  * @brief Return char (in ASCII) which is represented by number par
- * 
+ *
  * @param code_buffer     Parametr for function print_or_append
  * @param in_stat         Parametr for function print_or_append
  * @param symtab          Symtable in which is function called
@@ -332,11 +322,11 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
  * @return token_t*       Return new token. If error retrun token "ERR"
  */
 
-token_t *chr(list_t *code_buffer, bool in_stat,symtable_t *symtab, token_t *par);
+token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par);
 
 /**
  * @brief Returns length of string in par
- * 
+ *
  * @param code_buffer     Parametr for function print_or_append
  * @param in_stat         Parametr for function print_or_append
  * @param symtab          Symtable in which is function called
@@ -348,7 +338,7 @@ token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 
 /**
  * @brief Retrns substring starting on position begin and long end chars
- * 
+ *
  * @param code_buffer   Parametr for function print_or_append
  * @param in_stat       Parametr for function print_or_append
  * @param symtab        Symtable in which is function called
@@ -362,9 +352,9 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
 
 /**
  * @brief   Prints on stdout
- * 
+ *
  * @param symtab        Symtable in which is function called
- * @param stack 
+ * @param stack
  * @param code_buffer   Parametr for function print_or_append
  * @param in_stat       Parametr for function print_or_append
  * @return token_t*     Return new token. If error retrun token "ERR"

@@ -1,0 +1,76 @@
+in fun
+0if
+
+
+baz a is
+0
+baz b is
+1
+while
+1
+11end
+01in fun
+1if
+
+
+baz a is
+1
+baz b is
+3
+while
+2
+while
+3
+13end
+13in fun
+2else
+
+
+baz a is
+2
+baz b is
+5
+while
+3
+while
+4
+while
+5
+15end
+25in fun
+2else
+
+
+baz a is
+3
+baz b is
+7
+while
+4
+while
+5
+while
+6
+while
+7
+17end
+37in fun
+2else
+
+
+baz a is
+4
+baz b is
+9
+while
+5
+while
+6
+while
+7
+while
+8
+while
+9
+19end
+49

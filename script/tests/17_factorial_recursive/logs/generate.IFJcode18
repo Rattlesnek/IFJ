@@ -1,0 +1,143 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+
+JUMP $end$function$0
+LABEL factorial
+PUSHFRAME
+DEFVAR LF@n
+MOVE LF@n LF@%1
+
+TYPE GF@$type LF@n
+JUMPIFNEQ $factorial$0$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $factorial$0$int$string1
+MOVE GF@$des int@2
+JUMPIFNEQ $factorial$0$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@2
+LABEL $factorial$0$int$float1
+MOVE GF@$eq GF@$des
+LT GF@$des LF@n GF@$des
+PUSHS GF@$des
+DEFVAR LF@result
+DEFVAR LF@decremented_n
+DEFVAR LF@temp_result
+PUSHS bool@false
+JUMPIFEQS $if$0
+
+MOVE LF@result int@1
+PUSHS LF@result
+
+JUMP $endif$0
+LABEL $if$0
+
+TYPE GF@$type LF@n
+JUMPIFNEQ $factorial$1$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $factorial$1$int$string1
+MOVE GF@$des int@1
+JUMPIFNEQ $factorial$1$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@1
+LABEL $factorial$1$int$float1
+MOVE GF@$eq GF@$des
+SUB GF@$des LF@n GF@$des
+PUSHS GF@$des
+POPS LF@decremented_n
+PUSHS LF@decremented_n
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 LF@decremented_n
+CALL factorial
+PUSHS GF@$des
+POPS LF@temp_result
+PUSHS LF@temp_result
+TYPE GF@$type LF@n
+JUMPIFEQ $factorial$2$int0 GF@$type string@int
+JUMPIFEQ $factorial$2$float0 GF@$type string@float
+JUMPIFEQ $factorial$2$string0 GF@$type string@string
+LABEL $factorial$2$int0
+TYPE GF@$type LF@temp_result
+JUMPIFNEQ $factorial$2$int$string GF@$type string@string
+EXIT int@4
+LABEL $factorial$2$int$string
+MOVE GF@$des LF@n
+JUMPIFNEQ $factorial$2$int$float GF@$type string@float
+INT2FLOAT GF@$des LF@n
+LABEL $factorial$2$int$float
+MOVE GF@$eq GF@$des
+MUL GF@$des GF@$des LF@temp_result
+JUMP ENDTHISMADNESS2
+LABEL $factorial$2$float0
+TYPE GF@$type LF@temp_result
+JUMPIFNEQ $factorial$2$float$string GF@$type string@string
+EXIT int@4
+LABEL $factorial$2$float$string
+MOVE GF@$des LF@temp_result
+JUMPIFEQ $factorial$2$float GF@$type string@float
+INT2FLOAT GF@$des LF@temp_result
+LABEL $factorial$2$float
+MOVE GF@$eq GF@$des
+MUL GF@$des LF@n GF@$des
+JUMP ENDTHISMADNESS2
+LABEL $factorial$2$string0
+TYPE GF@$type LF@temp_result
+JUMPIFEQ $factorial$2$string$string GF@$type string@string
+EXIT int@4
+LABEL $factorial$2$string$string
+MOVE GF@$des LF@n
+MUL GF@$des GF@$des LF@temp_result
+LABEL ENDTHISMADNESS2
+PUSHS GF@$des
+POPS LF@result
+PUSHS LF@result
+LABEL $endif$0
+
+PUSHS LF@result
+
+POPFRAME
+RETURN
+LABEL $end$function$0
+
+WRITE string@Zadejte␣cislo␣pro␣vypocet␣faktorialu:␣
+READ GF@$des int
+PUSHS GF@$des
+DEFVAR GF@a
+POPS GF@a
+TYPE GF@$type GF@a
+JUMPIFNEQ $$GT$5$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $$GT$5$int$string1
+MOVE GF@$des int@0
+JUMPIFNEQ $$GT$5$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@0
+LABEL $$GT$5$int$float1
+MOVE GF@$eq GF@$des
+LT GF@$des GF@a GF@$des
+PUSHS GF@$des
+DEFVAR GF@vysl
+PUSHS bool@false
+JUMPIFEQS $if$1
+
+WRITE string@\010Faktorial␣nelze␣spocitat\010
+
+JUMP $endif$1
+LABEL $if$1
+
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 GF@a
+CALL factorial
+PUSHS GF@$des
+POPS GF@vysl
+WRITE string@\010Vysledek␣je:
+WRITE GF@vysl
+WRITE string@\010
+LABEL $endif$1
+
