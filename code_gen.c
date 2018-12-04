@@ -616,44 +616,6 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer,
 }
 
 
-token_t *dbl_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat)
-{
-    if (operator(op->name, 0) == NULL)
-    {
-        return NULL;
-    }
-
-
-    token_info_t info = {.ptr = NULL};
-    token_t *des = createToken("BOOL_ID", info);
-
-    if (strcmp(op->name, "!=") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des bool@true\n");
-    }
-    else if (strcmp(op->name, "==") == 0)
-    {
-        print_or_append(code_buffer, in_stat, "MOVE GF@$des bool@false\n");
-    }
-    else
-    {
-        label_n++;
-        destroyToken(par1);
-        destroyToken(par2);
-        destroyToken(op);
-        free(des->name);
-        free(des);
-        token_info_t info1 = {.ptr = NULL};
-        token_t *error = createToken("ERR_SEM", info1);
-        return error;
-    }
-    label_n++;
-    destroyToken(par1);
-    destroyToken(par2);
-    destroyToken(op);
-    return des;
-}
-
 token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat)
 {
     if (operator(op->name, 0) == NULL)
@@ -1559,7 +1521,7 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
             return int_int(op, param1, param2, symtab, true, code_buffer, in_stat);
             break;
         case DBL_STR:
-            return dbl_str(op, param1, param2, code_buffer, in_stat);
+            return int_str(op, param1, param2, code_buffer, in_stat);
             break;
         case DBL_ID:
             return dbl_id(op, param1, param2, symtab, 0, code_buffer, in_stat);
@@ -1568,7 +1530,7 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
             return int_str(op, param2, param1, code_buffer, in_stat);
             break;
         case STR_DBL:
-            return dbl_str(op, param2, param1, code_buffer, in_stat);
+            return int_str(op, param2, param1, code_buffer, in_stat);
             break;
         case STR_STR:
             return str_str(op, param1, param2, symtab, code_buffer, in_stat);
