@@ -2242,11 +2242,11 @@ token_t *print(symtable_t *symtab, stack_tkn_t *stack, list_t *code_buffer, bool
         if (! print_or_append(code_buffer, in_stat, "WRITE %s@%s\n"
                               "PUSHS nil@nil\n", param, print))
             goto err_internal;
+        free(print);
         destroyToken(tmp); // ????
     }
 
     label_n++;
-    free(print);
     return des;
 
 err_internal:
