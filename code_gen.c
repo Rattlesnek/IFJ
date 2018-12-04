@@ -1744,7 +1744,7 @@ err_sem:
     destroyToken(des);
     info.ptr = NULL;
     des = createToken("ERR_SEM_UNDEF", info);
-    return des;
+    return des; 
 }
 
 //RETURN ascii char of value par<0,255> "chr(42)"
