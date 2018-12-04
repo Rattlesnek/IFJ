@@ -168,6 +168,16 @@ bool condition_adjust(list_t *code_buffer, bool in_stat, token_t *cond);
 
 
 /**
+ * @brief Returns true if it is JUMP $endif -- special case when if-statement does not end with else
+ * 
+ * @param generated_code generated string
+ * @return true          if it is JUMP $endif
+ * @return false         if its not
+ */
+bool isJump_endif(char *generated_code);
+
+
+/**
  * @brief Returns true if it is funciton epilog
  * 
  * @param generated_code generated string

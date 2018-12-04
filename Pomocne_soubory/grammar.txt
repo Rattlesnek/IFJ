@@ -1,26 +1,51 @@
 # SUBOR S DERIVACIAMI
 
 # Pravidla:
-# - terminaly nesmu mat: < >
-# - neterminaly musia mat: < >
+# - terminaly nesmu mat: [ ]
+# - neterminaly musia mat: [ ]
 # - derivacia je znazornena sipkou: ->
 
-# STARTING NONTERMINAL = <st-list>
-1. <st-list> -> <stat> <EOL-EOF>
-2. <st-list> -> EOL <st-list>
-3. <st-list> -> EOF
+# STARTING NONTERMINAL = [st-list]
 
-4. <EOL-EOF> -> EOL <st-list>
-5. <EOL-EOF> -> EOF
+1.  [st-list] -> [stat] [EOL-EOF]
+2.  [st-list] -> EOL [st-list]
+3.  [st-list] -> epsilon
+
+4.  [EOL-EOF] -> EOL [st-list]
+5.  [EOL-EOF] -> epsilon
+
+6.  [stat]    -> def [id-func] [params-gen] [end-list]
+7.  [stat]    -> [command]
+
+8.  [command] -> while do EOL [end-list]
+9.  [command] -> if then EOL [if-list]
+10. [command] -> ID [func-assign-expr]
+
+11. [func-assign-expr] -> = 
+
+12. [end-list]  -> [command] EOL [end-list]
+13. [end-list]  -> EOL [end-list]
+14. [end-list]  -> end
+
+15. [if-list]  -> [command] EOL [if-list]
+16. [if-list]  -> EOL [if-list]
+17. [if-list]  -> elif then EOL [if-list]
+18. [if-list]  -> else EOL [end-list]
+19. [if-list]  -> end 
+
+20. [id-func]    -> ID
+21. [id-func]    -> FUNC
+
+22. [params-gen] -> ( [p-brackets] 
+23. [params-gen] -> EOL
+
+24. [p-brackets]   -> ID [p-brackets-cont] 
+25. [p-brackets]   -> ) EOL
+
+26. [p-brackets-cont] -> , ID [p-brackets-cont]
+27. [p-brackets-cont] -> ) EOL
 
 
-6. <stat>    -> def <id-func> <params-gen> <end-list>
-7. <stat>    -> <command>
-
-
-8. <command> -> while **expr** do EOL <end-list>
-9. <command> -> if **expr** then EOL <if-list>
-10. <command> -> ID <func-assign-expr>
 
 ##################################################################################
 # EXPRESIONS without assignment
@@ -28,47 +53,10 @@
 # dolezite je ze v tychto pripadoch musime zahrnut aj tieto tokeny do preced. a.
 
 # expr_include: + - FUNC STR INT DBL nil (
-# <command> -> **expr_include** EOL
+# [command] -> **expr_include** EOL
 
 # ak pride hocico ine ako = zapiname precedenc analyzu
 # musime zahrnut predchadzajuci token (ID) 
-# expr_include_two: arithmetic: +, -, *, /  relation: ==, !=, <, <=, >, >=
+# expr_include_two: arithmetic: +, -, *, /  relation: ==, !=, [, [=, ], ]=
 # 
 ##################################################################################
-
-
-11. <func-assign-expr> -> = **expr**
-
-
-# END-LIST
-12. <end-list>  -> <command> EOL <end-list>
-13. <end-list>  -> EOL <end-list>
-14. <end-list>  -> end
-
-15. <if-list>  -> <command> EOL <if-list>
-16. <if-list>  -> EOL <if-list>
-# po prijati "elif" zapiname precedencnu analyzu na prijatie vyrazu
-17. <if-list>  -> elif **expr** then EOL <if-list>
-18. <if-list>  -> else EOL <end-list>
-19. <if-list>  -> end 
-
-
-# FUNCTION
-20. <id-func>    -> ID
-21. <id-func>    -> FUNC
-
-# FUNCTION PARAMETERS
-22. <params-gen> -> ( <p-brackets> 
-23. <params-gen> -> EOL
-
-24. <p-brackets>   -> ID <p-brackets-cont> 
-25. <p-brackets>   -> ) EOL
-
-26. <p-brackets-cont> -> , ID <p-brackets-cont>
-27. <p-brackets-cont> -> ) EOL
-
-# 29. <p-without> -> , ID <p-without> 
-# 30. <p-without> -> EOL
-
-# 23. <params-gen> -> ID <p-without>
-

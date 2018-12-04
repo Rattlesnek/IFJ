@@ -28,7 +28,6 @@
 
 #include <stdbool.h>
 
-
 #include "scanner.h"
 #include "sa_prec.h"
 
@@ -535,10 +534,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                     ////////////////////////////////
                     //  STACK POP GENERATED CODE  //
                     ////////////////////////////////
-
                     char *generated_code = stcStr_top(stack_str);
-                    //printf("=== generated_code ===\n%s================\n", generated_code);
-                    //printf("=== label_stat ===\n%s================\n", label_stat);
                     if (isFunctionEnd(generated_code))
                     {
 #ifdef PARSER_PRINT
@@ -546,35 +542,47 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                         symtab_foreach(lc_var_tab, print_var);
                         PARSER_DBG_PRINT("\n\n");
 #endif
-
+                        // function ended so local symtable is destroyed and we continue using global symtable
                         symtab_free(lc_var_tab);
                         lc_var_tab = NULL;
                         var_tab = gl_var_tab;
                     }
-                    else if (strncmp(generated_code, "\nJUMP $endif$", strlen("\nJUMP $endif$")) == 0)
+                    else if (isJump_endif(generated_code))
                     {
-                        //printf("%s", generated_code);
-                        print_or_append(code_buffer, in_stat, "%s", generated_code);
+                        // special case when if-statment does not end with else -- extension IF-THEN
+                        // print_or_append: JUMP $endif$....
+                        if (! print_or_append(code_buffer, in_stat, "%s", generated_code))
+                            goto err_internal_main;
                         stcStr_pop(stack_str);
-                        print_or_append(code_buffer, in_stat, "%s", stcStr_top(stack_str));
+
+                        // print_or_append: LABEL $if$....
+                        if (! print_or_append(code_buffer, in_stat, "%s", stcStr_top(stack_str)))
+                            goto err_internal_main;
                         stcStr_pop(stack_str);
+
                         generated_code = stcStr_top(stack_str);
                     }
 
+                    // when expected label of most outer if-statement or while-loop is equal to what is being generated ...
+                    // it means that outer if-statment or while-loop just ended and we can print everything stored in buffers
                     if (strlen(label_stat) != 0 && strncmp(generated_code, label_stat, strlen(label_stat)) == 0)
                     {
+                        // first we need to print all variables that were defined in if-statement or while-loop
                         list_print_clean(defvar_buffer);
+                        // second we need to print buffered code from if-statement or while-loop
                         list_print_clean(code_buffer);
+                        // we set variable in_stat to false becaouse we are no longer inside if_statement or while-loop
                         in_stat = false;
                     }
                     
+                    // generated code is printed or appended to buffer
                     if (! print_or_append(code_buffer, in_stat, "%s", generated_code))
                         goto err_internal_main;
 
                     stcStr_pop(stack_str);
                 }
 
-
+                // if we are currently in function definition header -- we need to get function parameters
                 if (get_func_params)
                 {
                     if (strcmp(act->name, "ID") == 0)
@@ -655,7 +663,8 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
         else
         {
             rule = LLtableFind(top->name, act->name);
-            if (rule == COMMAND_10) // [command] -> ID [func-assign-expr] ????????????
+            
+            if (rule == COMMAND_10) // [command] -> ID [func-assign-expr] 
             {
                 if ( ! tempKey_create(&id_key_tmp, sc_str->str))
                     goto err_internal_main;
@@ -671,7 +680,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
                 id_token_tmp = createToken(act->name, info);
                 PARSER_DBG_PRINT("id_tmp load %s\n", id_key_tmp);
             }
-            else if (rule == ID_FUNC_20 || rule == ID_FUNC_21)
+            else if (rule == ID_FUNC_20 || rule == ID_FUNC_21) // [id-func] -> ID or [id-func] -> FUNC
             {
                 // check if same name isnt used global variable
                 if (symtab_find(gl_var_tab, sc_str->str) != NULL)
@@ -693,7 +702,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
 
                 get_func_params = true;
             }
-            else if (rule == FUNC_ASSIGN_EXPR_11)
+            else if (rule == FUNC_ASSIGN_EXPR_11) // [func-assign-expr] -> =
             {
                 destroyToken(id_token_tmp);
                 id_token_tmp = NULL;
@@ -762,7 +771,7 @@ int parser(stack_tkn_t *stack_tkn, stack_str_t *stack_str, list_t *code_buffer, 
     ///         END OF MAIN LOOP          ///
     /////////////////////////////////////////
 
-    //symtab_foreach(fun_tab, print_fun_info);
+    // check if all functions called in program were defined
     if (! symtab_foreach(fun_tab, checkFun))
         goto err_sem_undef;
 

@@ -236,6 +236,12 @@ bool condition_adjust(list_t *code_buffer, bool in_stat, token_t *cond)
 }
 
 
+bool isJump_endif(char *generated_code)
+{
+    return (strncmp(generated_code, "\nJUMP $endif$", strlen("\nJUMP $endif$")) == 0);
+}
+
+
 bool isFunctionEnd(char *generated_code)
 {
     return (strncmp(generated_code, "\nPOPFRAME\nRETURN\n", strlen("\nPOPFRAME\nRETURN\n")) == 0);
