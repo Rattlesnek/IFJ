@@ -1,0 +1,75 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+DEFVAR GF@a
+MOVE GF@a int@1
+DEFVAR GF@b
+MOVE GF@b int@5
+DEFVAR GF@x
+MOVE GF@x int@1
+
+JUMP $end$function$0
+LABEL fun
+PUSHFRAME
+DEFVAR LF@a
+MOVE LF@a LF@%1
+DEFVAR LF@b
+MOVE LF@b LF@%2
+
+TYPE GF@$type LF@a
+JUMPIFEQ $fun$0$int0 GF@$type string@int
+JUMPIFEQ $fun$0$float0 GF@$type string@float
+JUMPIFEQ $fun$0$string0 GF@$type string@string
+LABEL $fun$0$int0
+TYPE GF@$type LF@b
+JUMPIFNEQ $fun$0$int$string GF@$type string@string
+EXIT int@4
+LABEL $fun$0$int$string
+MOVE GF@$des LF@a
+JUMPIFNEQ $fun$0$int$float GF@$type string@float
+INT2FLOAT GF@$des LF@a
+LABEL $fun$0$int$float
+MOVE GF@$eq GF@$des
+ADD GF@$des GF@$des LF@b
+JUMP ENDTHISMADNESS0
+LABEL $fun$0$float0
+TYPE GF@$type LF@b
+JUMPIFNEQ $fun$0$float$string GF@$type string@string
+EXIT int@4
+LABEL $fun$0$float$string
+MOVE GF@$des LF@b
+JUMPIFEQ $fun$0$float GF@$type string@float
+INT2FLOAT GF@$des LF@b
+LABEL $fun$0$float
+MOVE GF@$eq GF@$des
+ADD GF@$des LF@a GF@$des
+JUMP ENDTHISMADNESS0
+LABEL $fun$0$string0
+TYPE GF@$type LF@b
+JUMPIFEQ $fun$0$string$string GF@$type string@string
+EXIT int@4
+LABEL $fun$0$string$string
+MOVE GF@$des LF@a
+CONCAT GF@$des GF@$des LF@b
+LABEL ENDTHISMADNESS0
+PUSHS GF@$des
+DEFVAR LF@y
+POPS LF@y
+PUSHS LF@y
+TYPE GF@$type LF@a
+JUMPIFNEQ $fun$1$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $fun$1$int$string1
+MOVE GF@$des int@1
+JUMPIFNEQ $fun$1$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@1
+LABEL $fun$1$int$float1
+MOVE GF@$eq GF@$des
+ADD GF@$des LF@a GF@$des

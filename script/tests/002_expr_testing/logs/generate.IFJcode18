@@ -1,0 +1,23 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+CONCAT GF@$des string@str1 string@str2
+PUSHS GF@$des
+DEFVAR GF@a
+POPS GF@a
+TYPE GF@$type GF@a
+JUMPIFEQ $$GT$1$string$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$1$string$string
+MOVE GF@$des string@str3
+CONCAT GF@$des GF@a GF@$des
+PUSHS GF@$des
+POPS GF@a
+WRITE GF@a

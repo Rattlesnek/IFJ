@@ -1,0 +1,30 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+DEFVAR GF@a
+MOVE GF@a float@0x1.199999999999ap+0
+TYPE GF@$type GF@a
+JUMPIFNEQ $$GT$0$float$string GF@$type string@string
+EXIT int@4
+LABEL $$GT$0$float$string
+MOVE GF@$des GF@a
+JUMPIFEQ $$GT$0$float GF@$type string@float
+INT2FLOAT GF@$des GF@a
+LABEL $$GT$0$float
+JUMPIFNEQ $$GT$0$float$notZero GF@$des float@0x0p+0
+EXIT int@9
+LABEL $$GT$0$float$notZero
+MOVE GF@$eq GF@$des
+DIV GF@$des GF@$des float@0x0p+0
+PUSHS GF@$des
+DEFVAR GF@b
+POPS GF@b
+WRITE string@THIS\032SHOULD\032NOT\032PRINT
+WRITE GF@b

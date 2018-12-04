@@ -1,0 +1,122 @@
+.IFJcode18
+DEFVAR GF@$des
+DEFVAR GF@$des1
+DEFVAR GF@$des2
+DEFVAR GF@$eq
+DEFVAR GF@$jump
+DEFVAR GF@$tmp
+DEFVAR GF@$type
+MOVE GF@$des nil@nil
+
+
+JUMP $end$function$0
+LABEL fun
+PUSHFRAME
+DEFVAR LF@a
+MOVE LF@a LF@%1
+
+TYPE GF@$type LF@a
+JUMPIFNEQ $fun$0$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $fun$0$int$string1
+MOVE GF@$des int@0
+JUMPIFNEQ $fun$0$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@0
+LABEL $fun$0$int$float1
+MOVE GF@$eq GF@$des
+LT GF@$des LF@a GF@$des
+EQ GF@$eq LF@a GF@$eq
+OR GF@$des GF@$eq GF@$des
+PUSHS GF@$des
+DEFVAR LF@x
+PUSHS bool@false
+JUMPIFEQS $if$0
+
+TYPE GF@$type LF@a
+JUMPIFNEQ $fun$1$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $fun$1$int$string1
+MOVE GF@$des int@1
+JUMPIFNEQ $fun$1$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@1
+LABEL $fun$1$int$float1
+MOVE GF@$eq GF@$des
+SUB GF@$des LF@a GF@$des
+PUSHS GF@$des
+
+JUMP $endif$0
+LABEL $if$0
+
+TYPE GF@$type LF@a
+JUMPIFNEQ $fun$2$int$string1 GF@$type string@string
+EXIT int@4
+LABEL $fun$2$int$string1
+MOVE GF@$des int@1
+JUMPIFNEQ $fun$2$int$float1 GF@$type string@float
+INT2FLOAT GF@$des int@1
+LABEL $fun$2$int$float1
+MOVE GF@$eq GF@$des
+SUB GF@$des LF@a GF@$des
+PUSHS GF@$des
+POPS LF@x
+PUSHS LF@x
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 LF@x
+CALL baz
+PUSHS GF@$des
+POPS LF@x
+PUSHS LF@x
+TYPE GF@$type LF@x
+JUMPIFEQ $fun$3$int0 GF@$type string@int
+JUMPIFEQ $fun$3$float0 GF@$type string@float
+JUMPIFEQ $fun$3$string0 GF@$type string@string
+LABEL $fun$3$int0
+TYPE GF@$type LF@a
+JUMPIFNEQ $fun$3$int$string GF@$type string@string
+EXIT int@4
+LABEL $fun$3$int$string
+MOVE GF@$des LF@x
+JUMPIFNEQ $fun$3$int$float GF@$type string@float
+INT2FLOAT GF@$des LF@x
+LABEL $fun$3$int$float
+MOVE GF@$eq GF@$des
+ADD GF@$des GF@$des LF@a
+JUMP ENDTHISMADNESS3
+LABEL $fun$3$float0
+TYPE GF@$type LF@a
+JUMPIFNEQ $fun$3$float$string GF@$type string@string
+EXIT int@4
+LABEL $fun$3$float$string
+MOVE GF@$des LF@a
+JUMPIFEQ $fun$3$float GF@$type string@float
+INT2FLOAT GF@$des LF@a
+LABEL $fun$3$float
+MOVE GF@$eq GF@$des
+ADD GF@$des LF@x GF@$des
+JUMP ENDTHISMADNESS3
+LABEL $fun$3$string0
+TYPE GF@$type LF@a
+JUMPIFEQ $fun$3$string$string GF@$type string@string
+EXIT int@4
+LABEL $fun$3$string$string
+MOVE GF@$des LF@x
+CONCAT GF@$des GF@$des LF@a
+LABEL ENDTHISMADNESS3
+PUSHS GF@$des
+POPS LF@x
+PUSHS LF@x
+LABEL $endif$0
+
+
+POPFRAME
+RETURN
+LABEL $end$function$0
+
+
+JUMP $end$function$1
+LABEL baz
+PUSHFRAME
+DEFVAR LF@b
+MOVE LF@b LF@%1
+
