@@ -1892,19 +1892,18 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
         goto err_sem;
 
     if (! print_or_append(code_buffer, in_stat,
-                          "STRLEN GF@$des GF@$tmp\n"
-                          "LT GF@$type GF@$eq GF@$des\n"      //position < strlen(string)
-                          "JUMPIFNEQ $ord$end%llu GF@$type bool@true\n"
-                     //     "GT GF@$type GF@$eq int@-1\n"
-                   //       "JUMPIFNEQ $ord$end%llu GF@$type bool@true\n"
+                          "STRLEN GF@$type GF@$tmp\n"
                           "MOVE GF@$des nil@nil\n"
-                          "JUMP $ord$end%llu\n"
+                          "LT GF@$type GF@$eq GF@$type\n"      //position < strlen(string)
+                          "JUMPIFNEQ $ord$end%llu GF@$type bool@true\n"
+                          "GT GF@$type GF@$eq int@-1\n"
+                          "JUMPIFNEQ $ord$end%llu GF@$type bool@true\n"
                           "LABEL $ord%llu\n"
                           "STRI2INT GF@$des GF@$tmp GF@$eq\n"
                           "LABEL $ord$end%llu\n"
                           "PUSHS GF@$des\n",
-                         // label_n,
-                         // label_n,
+                          label_n,
+                          label_n,
                           label_n,
                           label_n,
                           label_n,
