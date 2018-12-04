@@ -1,0 +1,531 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=latex 2018.12.3)  4 DEC 2018 23:27
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**dokumentace.tex
+(./dokumentace.tex
+LaTeX2e <2018-04-01> patch level 5
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo
+File: size11.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2018/04/06 v1.3b Input encoding file
+\inpenc@prehook=\toks14
+\inpenc@posthook=\toks15
+)
+(/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2018/04/16 v5.8 Page Geometry
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2017/03/15 v3.2 Provides the ifpdf switch
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifvtex.sty
+Package: ifvtex 2016/05/16 v1.6 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+\Gm@cnth=\count88
+\Gm@cntv=\count89
+\c@Gm@tempcnt=\count90
+\Gm@bindingoffset=\dimen103
+\Gm@wd@mp=\dimen104
+\Gm@odd@mp=\dimen105
+\Gm@even@mp=\dimen106
+\Gm@layoutwidth=\dimen107
+\Gm@layoutheight=\dimen108
+\Gm@layouthoffset=\dimen109
+\Gm@layoutvoffset=\dimen110
+\Gm@dimlist=\toks17
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2018/06/05 3.22 The Babel package
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/switch.def
+File: switch.def 2018/06/05 3.22 Babel switching mechanism
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel-czech/czech.ldf
+Language: czech 2008/07/06 v3.1a Czech support from the babel system
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2018/06/05 3.22 Babel common definitions
+\babel@savecnt=\count91
+\U@D=\dimen111
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@dirlevel=\count92
+)
+Package babel Info: Making " an active character on input line 172.
+\cs@wordlen=\count93
+Package babel Info: Making - an active character on input line 226.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2017/04/05 v2.0i Standard LaTeX package
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.def
+File: t1enc.def 2017/04/05 v2.0i Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/times.sty
+Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
+)
+(/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty
+Package: multirow 2018/08/03 v2.3 Span multiple rows of a table
+\multirow@colwidth=\skip43
+\multirow@cntb=\count94
+\multirow@dima=\skip44
+\bigstrutjot=\dimen112
+)
+(./algorithm2e.sty
+Package: algorithm2e 2008/00/00 v3.10 algorithms environments
+\c@AlgoLine=\count95
+ (/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/xspace.sty
+Package: xspace 2014/10/28 v1.13 Space after command names (DPC,MH)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/relsize/relsize.sty
+Package: relsize 2013/03/29 ver 4.1
+)
+********************************************************
+Package `algorithm2e' Release 4.01 -- december 14 2009 --
+- algorithm2e-announce@lirmm.fr mailing list for announcement about releases
+- algorithm2e-discussion@lirmm.fr mailing list for discussion about package
+subscribe by emailing sympa@lirmm.fr with 'subscribe <list> <firstname name>'
+- Author: Christophe Fiorio (fiorio@lirmm.fr)
+********************************************************
+\skiptotal=\skip45
+\skiplinenumber=\skip46
+\skiprule=\skip47
+\skiphlne=\skip48
+\skiptext=\skip49
+\skiplength=\skip50
+\algomargin=\skip51
+\skipalgocfslide=\skip52
+\algowidth=\dimen113
+\inoutsize=\dimen114
+\inoutline=\dimen115
+\interspacetitleruled=\dimen116
+\interspacealgoruled=\dimen117
+\interspacetitleboxruled=\dimen118
+\algocf@inoutbox=\box26
+\algocf@inputbox=\box27
+\AlCapSkip=\skip53
+\AlCapHSkip=\skip54
+\algocf@nlbox=\box28
+\algocf@hangingbox=\box29
+\algocf@capbox=\box30
+\algoheightruledefault=\skip55
+\algoheightrule=\skip56
+\algotitleheightruledefault=\skip57
+\algotitleheightrule=\skip58
+\c@algocfline=\count96
+\c@algocfproc=\count97
+\c@algocf=\count98
+\algocf@algoframe=\box31
+\algocf@algobox=\box32
+) (/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2017/06/25 v1.2c Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: dvips.def on input line 99.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/dvips.def
+File: dvips.def 2017/06/20 v3.1d Graphics/color driver for dvips
+))
+\Gin@req@height=\dimen119
+\Gin@req@width=\dimen120
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/pdflscape.sty
+Package: pdflscape 2016/05/14 v0.11 Display of landscape pages in PDF (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: dvips (dvips) on input line 125.
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2016/06/09 v1.18 At begin shipout hook (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2016/05/16 v1.4 Providing info/warning/error messages (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2016/05/16 v1.23 LaTeX kernel commands for general use (HO)
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/tools/tabularx.sty
+Package: tabularx 2016/02/03 v2.11b `tabularx' package (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2018/04/30 v2.4h Tabular extension package (FMi)
+\col@sep=\dimen121
+\ar@mcellbox=\box33
+\extrarowheight=\dimen122
+\NC@list=\toks18
+\extratabsurround=\skip59
+\backup@length=\skip60
+\ar@cellbox=\box34
+)
+\TX@col@width=\dimen123
+\TX@old@table=\dimen124
+\TX@old@col=\dimen125
+\TX@target=\dimen126
+\TX@delta=\dimen127
+\TX@cols=\count99
+\TX@ftn=\toks19
+)
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/adjustbox.sty
+Package: adjustbox 2018/04/08 v1.1 Adjusting TeX boxes (trim, clip, ...)
+
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
+
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks20
+\XKV@tempa@toks=\toks21
+)
+\XKV@depth=\count100
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/adjcalc.sty
+Package: adjcalc 2012/05/16 v1.1 Provides advanced setlength with multiple back
+-ends (calc, etex, pgfmath)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/trimclip.sty
+Package: trimclip 2018/04/08 v1.1 Trim and clip general TeX material
+
+(/usr/share/texlive/texmf-dist/tex/latex/collectbox/collectbox.sty
+Package: collectbox 2012/05/17 v0.4b Collect macro arguments as boxes
+\collectedbox=\box35
+)
+\tc@llx=\dimen128
+\tc@lly=\dimen129
+\tc@urx=\dimen130
+\tc@ury=\dimen131
+Package trimclip Info: Using driver 'tc-dvips.def'.
+
+(/usr/share/texlive/texmf-dist/tex/latex/adjustbox/tc-dvips.def
+File: tc-dvips.def 2018/04/08 v2.1 Clipping driver for dvips
+))
+\adjbox@Width=\dimen132
+\adjbox@Height=\dimen133
+\adjbox@Depth=\dimen134
+\adjbox@Totalheight=\dimen135
+\adjbox@pwidth=\dimen136
+\adjbox@pheight=\dimen137
+\adjbox@pdepth=\dimen138
+\adjbox@ptotalheight=\dimen139
+
+(/usr/share/texlive/texmf-dist/tex/latex/ifoddpage/ifoddpage.sty
+Package: ifoddpage 2016/04/23 v1.1 Conditionals for odd/even page detection
+\c@checkoddpage=\count101
+)
+(/usr/share/texlive/texmf-dist/tex/latex/varwidth/varwidth.sty
+Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
+\@vwid@box=\box36
+\sift@deathcycles=\count102
+\@vwid@loff=\dimen140
+\@vwid@roff=\dimen141
+))
+(/usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2018/05/02 v1.0c Color table columns (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: dvips.def on input line 147.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 2016/06/17 v3.0m Driver-dependent file (DPC,SPQR)
+))
+\everycr=\toks22
+\minrowclearance=\skip61
+)
+(./dokumentace.aux)
+\openout1 = `dokumentace.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Try loading font information for T1+ptm on input line 20.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
+)
+*geometry* driver: auto-detecting
+*geometry* detected driver: dvips
+*geometry* verbose mode - [ preamble ] result:
+* driver: dvips
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(56.9055pt, 483.69684pt, 56.90553pt)
+* v-part:(T,H,B)=(85.35826pt, 682.86613pt, 76.82245pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=483.69684pt
+* \textheight=682.86613pt
+* \oddsidemargin=-15.36449pt
+* \evensidemargin=-15.36449pt
+* \topmargin=-23.91173pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=11.0pt
+* \footskip=30.0pt
+* \marginparwidth=50.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+\AtBeginShipoutBox=\box37
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <24.88> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 34.
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 45.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <14.4> on input line 48.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 48.
+[1
+
+]
+LaTeX Font Info:    Try loading font information for T1+pcr on input line 87.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1pcr.fd
+File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
+)
+Underfull \hbox (badness 10000) in paragraph at lines 87--94
+
+ []
+
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 101.
+
+Underfull \hbox (badness 10000) in paragraph at lines 102--105
+
+ []
+
+[1]
+Overfull \hbox (16.61557pt too wide) in paragraph at lines 109--112
+\T1/ptm/m/n/10.95 chozí to-keny ze scan-neru, v£etn¥ ná-sled-ných ne-ter-mi-nál
+·, které vznik-nou p°i ana-ly-zo-vání vý-razu. [][]\T1/pcr/m/n/10.95 stack_tkn_
+t[]\T1/ptm/m/n/10.95 --
+ []
+
+[2]
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 158.
+
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 158.
+ [3]
+Overfull \hbox (47.4pt too wide) in paragraph at lines 277--277
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 280--280
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 283--283
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 286--286
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 289--289
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 292--292
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 295--295
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 298--298
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 301--301
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 304--304
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 307--307
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 310--310
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 313--313
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 316--316
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 319--319
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 322--322
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 325--325
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 328--328
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 331--331
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 334--334
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 337--337
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 340--340
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 343--343
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 346--346
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 349--349
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 352--352
+ []|[][]  
+ []
+
+
+Overfull \hbox (47.4pt too wide) in paragraph at lines 355--355
+ []|[][]  
+ []
+
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <10.95> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 357.
+[4]
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 366.
+ [5]
+
+LaTeX Warning: No positions in optional float specifier.
+               Default added (so using `tbp') on input line 404.
+
+
+Overfull \hbox (9.18501pt too wide) in paragraph at lines 408--422
+ [][] 
+ []
+
+[6] (./dokumentace.aux) ) 
+Here is how much of TeX's memory you used:
+ 4715 strings out of 494553
+ 65615 string characters out of 6176531
+ 166024 words of memory out of 5000000
+ 8272 multiletter control sequences out of 15000+600000
+ 39089 words of font info for 42 fonts, out of 8000000 for 9000
+ 24 hyphenation exceptions out of 8191
+ 34i,16n,31p,676b,405s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on dokumentace.dvi (7 pages, 30000 bytes).
