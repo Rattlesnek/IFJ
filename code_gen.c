@@ -1682,7 +1682,7 @@ token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
             goto err_internal;
     }
     else
-        goto err_sem_type;
+        goto err_sem;
 
     if (! print_or_append(code_buffer, in_stat, "STRLEN GF@$des GF@$tmp\n"
                           "PUSHS GF@$des\n"))
@@ -1706,14 +1706,6 @@ err_sem:
     destroyToken(des);
     info.ptr = NULL;
     des = createToken("ERR_SEM_UNDEF", info);
-    return des;
-
-err_sem_type:
-    label_n++;
-    destroyToken(par);
-    destroyToken(des);
-    info.ptr = NULL;
-    des = createToken("ERR_SEM_TYPE", info);
     return des;
 }
 
@@ -1760,7 +1752,7 @@ token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
             goto err_internal;
     }
     else
-        goto err_sem_type;
+        goto err_sem;
 
     if (! print_or_append(code_buffer, in_stat, "INT2CHAR GF@$des GF@$tmp\n"
                           "PUSHS GF@$des\n"))        //INT2CHAR takes value <0,255>
@@ -1784,14 +1776,6 @@ err_sem:
     destroyToken(des);
     info.ptr = NULL;
     des = createToken("ERR_SEM_UNDEF", info);
-    return des;
-
-err_sem_type:
-    label_n++;
-    destroyToken(par);
-    destroyToken(des);
-    info.ptr = NULL;
-    des = createToken("ERR_SEM_TYPE", info);
     return des;
 }
 
@@ -1841,7 +1825,7 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
             goto err_internal;
     }
     else
-        goto err_sem_type;
+        goto err_sem;
 //////////////////////**SECOND PARAMETR**////////////////////////////////
     if (strcmp(par2->name, "ID") == 0)
     {
@@ -1867,18 +1851,21 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
             goto err_internal;
     }
     else
-        goto err_sem_type;
+        goto err_sem;
 
     if (! print_or_append(code_buffer, in_stat,
-                          "STRLEN GF@$des GF@$tmp\n"
-                          "LT GF@$type GF@$eq GF@$des\n"      //position < strlen(string)
-                          "JUMPIFEQ $ord%llu GF@$type bool@true\n"
+                          "STRLEN GF@$type GF@$tmp\n"
                           "MOVE GF@$des nil@nil\n"
-                          "JUMP $ord$end%llu\n"
+                          "LT GF@$type GF@$eq GF@$type\n"      //position < strlen(string)
+                          "JUMPIFNEQ $ord$end%llu GF@$type bool@true\n"
+                          "GT GF@$type GF@$eq int@-1\n"
+                          "JUMPIFNEQ $ord$end%llu GF@$type bool@true\n"
                           "LABEL $ord%llu\n"
                           "STRI2INT GF@$des GF@$tmp GF@$eq\n"
                           "LABEL $ord$end%llu\n"
                           "PUSHS GF@$des\n",
+                          label_n,
+                          label_n,
                           label_n,
                           label_n,
                           label_n,
@@ -1906,15 +1893,6 @@ err_sem:
     destroyToken(des);
     info.ptr = NULL;
     des = createToken("ERR_SEM", info);
-    return des;
-
-err_sem_type:
-    label_n++;
-    destroyToken(par1);
-    destroyToken(par2);
-    destroyToken(des);
-    info.ptr = NULL;
-    des = createToken("ERR_SEM_TYPE", info);
     return des;
 }
 
@@ -1967,7 +1945,7 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
             goto err_internal;
     }
     else
-        goto err_sem_type;
+        goto err_sem;
 
     //////////////////////**SECOND PARAMETR**////////////////////////////////
     if (strcmp(begin->name, "ID") == 0)
@@ -1993,7 +1971,7 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
                begin->info.string);
     }
     else
-        goto err_sem_type;
+        goto err_sem;
 
     //////////////////////**THIRD PARAMETR**////////////////////////////////
     if (strcmp(end->name, "ID") == 0)
@@ -2021,7 +1999,7 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
             goto err_internal;
     }
     else
-        goto err_sem_type;
+        goto err_sem;
 /////////////////////////////**FINAL**////////////////////////////////////////
 
     /*
@@ -2111,16 +2089,6 @@ err_sem:
     destroyToken(des);
     info.ptr = NULL;
     des = createToken("ERR_SEM", info);
-    return des;
-
-err_sem_type:
-    label_n++;
-    destroyToken(string);
-    destroyToken(begin);
-    destroyToken(end);
-    destroyToken(des);
-    info.ptr = NULL;
-    des = createToken("ERR_SEM_TYPE", info);
     return des;
 }
 
