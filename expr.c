@@ -117,6 +117,10 @@ do {                                                                            
             case _print_ : if(num_params == 0) goto err_sem_func;                      \
         }                                                                              \
         result = genFuncCode(func_stack, is_builtin, var_symtab, code_buffer, in_stat);\
+        if(strcmp(result->name, "ERR_SEM_TYPE") == 0)                                  \
+            goto err_sem_type;                                                         \
+        else if(strcmp(result->name, "ERR_SEM_UNDEF") == 0)                            \
+            goto err_sem_undef;                                                        \
     }                                                                                  \
     else                                                                               \
     {                                                                                  \
@@ -219,45 +223,25 @@ token_t *genFuncCode(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, 
                 break;
             case _length_: array[0] = stcTkn_pop(stack);
                 result = length(code_buffer, in_stat, symtable, array[0]);
-                if (strcmp(result->name, "ERR_SEM") == 0)
-                {
-                    destroyToken(result);
-                    return NULL;
-                }
+                return result;
                 break;
             case _chr_   : array[0] = stcTkn_pop(stack);
                 result = chr(code_buffer, in_stat, symtable, array[0]);
-                if (strcmp(result->name, "ERR_SEM") == 0)
-                {
-                    destroyToken(result);
-                    return NULL;
-                }
+                return result;
                 break;
             case _ord_   : array[0] = stcTkn_pop(stack);
                 array[1] = stcTkn_pop(stack);
                 result = ord(code_buffer, in_stat, symtable, array[0], array[1]);
-                if (strcmp(result->name, "ERR_SEM") == 0)
-                {
-                    destroyToken(result);
-                    return NULL;
-                }
+                return result;
                 break;
             case _substr_: array[0] = stcTkn_pop(stack);
                 array[1] = stcTkn_pop(stack);
                 array[2] = stcTkn_pop(stack);
                 result = substr(code_buffer, in_stat, symtable, array[0], array[1], array[2]);
-                if (strcmp(result->name, "ERR_SEM") == 0)
-                {
-                    destroyToken(result);
-                    return NULL;
-                }
+                return result;
                 break;
             case _print_ : result = print(symtable, stack, code_buffer, in_stat);
-                if (strcmp(result->name, "ERR_SEM") == 0)
-                {
-                    destroyToken(result);
-                    return NULL;
-                }
+                return result;
                 break;
         }
 
