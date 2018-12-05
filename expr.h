@@ -74,11 +74,10 @@ typedef enum {
  *          symtable       Param for scanner
  *          loc_symtable   List of declared variables (either global or local)
  *          func_symtable  List of declared functions
- *          code_buffer  
- *          in_stat
- *           
- * @return  true         If analysed expression is correct  
- *          false        If analysed expression is incorrect  
+ *          code_buffer    Buffer for code when if-statement/while-loop 
+ *          in_stat        Determines whether in while-loop/if-statement
+ *          ret_token      Result of expression 
+ * @return  err code from error.h or SUCCES 
  */ 
 int sa_prec(dynamicStr_t *sc_str, queue_t *que, symtable_t *var_symtable, 
             symtable_t *func_symtable, token_t **ret_token, list_t *code_buffer, 

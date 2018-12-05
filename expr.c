@@ -30,7 +30,7 @@
 #include "token.h"
 #include "scanner.h"
 #include "code_gen.h"
-#include "stack_sa_prec.h"
+#include "stack_expr.h"
 #include "stack_tkn.h"
 #include "error.h"
 
@@ -84,6 +84,7 @@ char prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
 ///                     FUNCTION DEFINITIONS                         ///
 ////////////////////////////////////////////////////////////////////////
 
+/* Handle return value of function */
 #define handleError(err)            \
     if(err == ERR_SEM_TYPE)         \
         goto err_sem_type;          \
@@ -92,6 +93,7 @@ char prec_table[PREC_TABLE_ROWS][PREC_TABLE_COLS] = {
     else if(err == ERR_SYN)         \
         goto err_syn;               \
 
+/* Generate code for function call and check number of parameters */
 #define callFunc(is_builtin)                                                           \
 do {                                                                                   \
     if(is_builtin)                                                                     \
@@ -156,6 +158,7 @@ char *retType(char *type, char *gl_lf)
     return NULL;
 }
 
+/* Generate code for function call */
 token_t *genFuncCode(stack_tkn_t *stack, char is_builtin, symtable_t *symtable, list_t *code_buffer, bool in_stat)
 {
     if (!is_builtin)
@@ -464,6 +467,7 @@ int Check_err(token_t *token, token_t *token_arr[], int state, table_elem_t term
     return SUCCESS;
 }
 
+/* Generate code for expression */
 int idOperandId(stack_sa_t *stack, symtable_t *var_symtab, list_t *code_buffer, 
                 bool in_stat, table_elem_t operator) {
 

@@ -66,7 +66,7 @@ stack_sa_t *stc_init();
  * @brief      Pushes term to stack
  *
  * @param      stack  Pointer to stack
- * @param[in]  term   Term to be pushed to stack
+ * @param      term   Term to be pushed to stack
  *
  * @return     true   If term is pushed successfuly
  *             false  If error ocurres 
@@ -97,11 +97,31 @@ void stc_destroy(stack_sa_t *stack);
  */
 char stc_topTerm(stack_sa_t *stack);
 
-
+/*
+ * @brief Pushes element after terminal closest to the top of stack
+ * 
+ * @param  stack  Stack where the element should be pushed
+ *         term   Terminal after which the element should be pushed
+ *         rule   Element which should be pushed to the stack
+ * @return true   If success.
+ *         false  If error ocurred.
+ */
 bool stc_pushAfter(stack_sa_t *stack, table_elem_t term, table_elem_t rule);
+
+/*
+ * @brief Print stack to stdout
+ */
 void stc_print(stack_sa_t *stack);
 
+/* 
+ * @brief Return terminal or nonterminal from top of stack
+ */
 char stc_Top(stack_sa_t *stack);
+
+/*
+ * @brief Return token and terminal or nonterminal from top of stack
+ *        and pop it out.
+ */
 token_t *stc_tokPopTop(stack_sa_t *stack, table_elem_t *term);
 
 
