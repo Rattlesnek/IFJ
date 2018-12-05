@@ -10,7 +10,7 @@
 
   Author      [Adam Pankuch, Jindrich Sestak]
 
-  Login       [xpanku00]
+  Login       [xpanku00, xsesta05]
 
   Affiliation []
 

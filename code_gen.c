@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    []
+  FileName    [code_gen.c]
 
   SystemName  [IFJ - PROJECT]
 
@@ -8,7 +8,9 @@
 
   Synopsis    []
 
-  Author      [Lukas Valek]
+  Author      [Lukas Valek, Jindrich Sestak]
+
+  Login       [xvalek15, xsesta05]
 
   Affiliation []
 
@@ -2068,8 +2070,6 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
                           "LABEL $substr$reqsize%llu\n"
                           "LT GF@$type GF@$eq GF@$tmp\n"                              //BEGIN < IDX-max ==> again
                           "JUMPIFEQ $substr$nextchar%llu GF@$type bool@true\n"
-                          //    "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$end%llu\n"    //BEGIN == IDX-max ==> once more
-                          //   "JUMPIFEQ $substr$nextchar%llu %s@$substr$cmp%llu bool@true\n"
                           "JUMP $substr$end%llu\n"
 
                           "LABEL $substr$nextchar%llu\n"
@@ -2083,10 +2083,8 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
                           "MOVE GF@$tmp GF@$des\n"                //GF@$tmp = len(str)
                           "MOVE GF@$des string@\n"                                    //GF@$des = retval
                           "LABEL $substr$wholestr%llu\n"
-                          "LT GF@$type GF@$eq GF@$tmp\n"    //BEGIN < LEN(STR) ==> again
+                          "LT GF@$type GF@$eq GF@$tmp\n"                                //BEGIN < LEN(STR) ==> again
                           "JUMPIFEQ $substr$nextcharwhole%llu GF@$type bool@true\n"
-                          //    "EQ %s@$substr$cmp%llu %s@$substr$begin%llu %s@$substr$lenstr%llu\n"    //BEGIN == LEN(STR) ==> once more
-                          //    "JUMPIFEQ $substr$nextcharwhole%llu %s@$substr$cmp%llu bool@true\n"
                           "JUMP $substr$end%llu\n"
 
                           "LABEL $substr$nextcharwhole%llu\n"

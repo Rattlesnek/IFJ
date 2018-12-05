@@ -1,18 +1,20 @@
 /**CFile****************************************************************
 
-  FileName    []
+  FileName    [scanner.h]
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName []
+  PackageName [Scanner]
 
-  Synopsis    []
+  Synopsis    [Lexical analysis - reads input and create tokens]
 
-  Author      []
+  Author      [Jindrich Sestak]
+
+  Login       [xsesta05]
 
   Affiliation []
 
-  Date        [--/--/2018]
+  Date        [19/10/2018]
 
   Revision    []
 

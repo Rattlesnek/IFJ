@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    [sa_prec.c]
+  FileName    [expr.c]
 
   SystemName  [IFJ - PROJECT]
 

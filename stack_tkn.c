@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    [stack.c]
+  FileName    [stack_tkn.c]
 
   SystemName  [IFJ - PROJECT]
 

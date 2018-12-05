@@ -1,14 +1,16 @@
 /**CFile****************************************************************
 
-  FileName    []
+  FileName    [error.c]
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName []
+  PackageName [Error]
 
-  Synopsis    []
+  Synopsis    [Error messages]
 
   Author      [Adam Pankuch]
+
+  Login       [xpanku00]
 
   Affiliation []
 
