@@ -8,7 +8,9 @@
 
   Synopsis    []
 
-  Author      [Lukas Valek]
+  Author      [Lukas Valek, Jindrich Sestak]
+
+  Login       [xvalek15, xsesta05]
 
   Affiliation []
 
@@ -223,6 +225,10 @@ int type(token_t *param1, token_t *param2)
     {
         return NIL_ID;
     }
+    else if (strncmp(param1->name, "BOOL", 4) == 0)
+    {
+        return BOOL_ID;
+    }
 
     if (strncmp(param2->name, "INT", 3) == 0)
     {
@@ -243,6 +249,10 @@ int type(token_t *param1, token_t *param2)
     else if (strcmp(param2->name, "nil") == 0 )
     {
         return ID_NIL;
+    }
+    else if (strncmp(param2->name, "BOOL", 4) == 0)
+    {
+        return BOOL_ID;
     }
 
     return matrix[index_param1][index_param2];
@@ -316,10 +326,6 @@ char *params(symtable_t *symtab, char* param, token_t *par, bool id_variant)
         {
             strcpy(param, "string");
         }
-        else if (strcmp(par->name, "BOOL") == 0)
-        {
-            strcpy(param, "bool");
-        }
 
         print = malloc(sizeof(char) * (strlen(par->info.string) + 1));
         if (print == NULL)
@@ -329,6 +335,17 @@ char *params(symtable_t *symtab, char* param, token_t *par, bool id_variant)
         strcpy(print, par->info.string);
     }
     return print;
+}
+
+token_t *bool_bool(token_t *op, token_t *par1, token_t *par2)
+{
+    label_n++;
+    destroyToken(par1);
+    destroyToken(par2);
+    destroyToken(op);
+    token_info_t info1;
+    token_t *error = createToken("ERR_SEM", info1);
+    return error;
 }
 token_t *nil(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat)
 {
@@ -1550,9 +1567,9 @@ token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *sym
         case ID_ID:
             return id_id(op, param1, param2, symtab, 0, code_buffer, in_stat);
             break;
-        /*case NULL_NULL:
-        return null_null(param1, symtab);
-        break;*/
+        case BOOL_ID:
+            return bool_bool(op, param1, param2);
+            break;
         case ID_NIL:
             return nil(op, param2, param1, code_buffer, in_stat);
             break;

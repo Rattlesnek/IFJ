@@ -13,7 +13,9 @@
 \usepackage{tabularx}
 \usepackage{adjustbox}
 \usepackage{colortbl}
-\renewcommand{\algorithmcfname}{Pravidla}
+\usepackage{indentfirst}
+
+\renewcommand{\algorithmcfname}{Gramatika}
 
 
 \begin{document}
@@ -26,10 +28,13 @@
 {\huge   \textsc{Fakulta informačních technologií}
 }
 
+\vspace{1.5em}
+\begin{figure}[ht]
 \begin{center}
-\vspace{4em}
 \includegraphics[scale=0.13]{fit.png}
 \end{center}
+\end{figure}
+
 
 
 
@@ -72,7 +77,7 @@ Cílem projektu bylo vytvoření překladače pro jazyk IFJ18, který je podmno�
 
 \section{Etapy projektu}
 \begin{enumerate}
-  \item Návrh struktury programu (konečný automat, LL gramatika, precedenční tabulka)
+  \item Návrh struktury programu (konečný automat (viz obrázek \ref{pic:1}), LL gramatika (viz gramatika 1), LL tabulka (viz tabulka \ref{tab:1}), precedenční tabulka (viz tabulka 2))
   \vspace{-0.6em}
   \item Lexikální analýza
   \vspace{-0.6em}
@@ -90,6 +95,7 @@ Cílem projektu bylo vytvoření překladače pro jazyk IFJ18, který je podmno�
 
 
 \section{Datové struktury}
+\noindent
 \verb|token_t| -- Struktura uchovávající informace o tokenech. \newline
 \verb|stack_tkn_t| -- Zásobník tokenů. Využívaný především v prediktivní analýze. \newline
 \verb|stack_sa_t| -- Zásobník realizovaný pomocí obousmerně vázaného seznamu. \newline
@@ -112,22 +118,12 @@ Rozhodli jsme se použít prediktivní analýzu (dále jen PA), protože nám p�
 \subsection{Precedenční analýza}
 Výrazy jsou jsou zpracovávány metodou precedenční syntaktické analýzy pomocí algoritmu známého z přednášek. Analyzátor komunikuje se třemi hlavními moduly: scannerem, parserem a generátorem cílového kódu. Komunikace mezi těmito moduly probíhá převážně pomocí datového typu \verb|token_t|.
 
-Při implementaci jsou použity tyto pomocné datové struktury:
-       \verb|stack_sa_t| -- Zásobník uchovávající příchozí tokeny ze scanneru, včetně následných neterminálů, které vzniknou při analyzování výrazu.
-       \verb|stack_tkn_t|-- Zásobník uchovávající parametry, se kterými je volána funkce v zdrojovém kódu.
+Při implementaci jsou použity tyto pomocné datové struktury: \newline
+       \verb|stack_sa_t| -- Zásobník uchovávající příchozí tokeny ze scanneru, včetně následných neterminálů, které vzniknou při analyzování výrazu. \newline
+       \verb|stack_tkn_t|-- Zásobník uchovávající parametry, se kterými je volána funkce v zdrojovém kódu.\newline
 
 
-%zakomentovay kod, timhle by se mohla udelat gramatika
 
-
-\label{sec:3}
-Pokud budeme chtít vysázet algoritmus, můžeme použít prostředí \verb|algorithm|\footnote{Pro nápovědu, jak
-zacházet s prostředím \texttt{algorithm}, můžeme zkusit tuhle stránku: \newline
-http://ftp.cstug.cz/pub/tex/CTAN/macros/latex/contrib/algorithms/algorithms.pdf.}  nebo
-\verb|algorithm2e|\footnote{Pro \texttt{algorithm2e} zase tuhle:
-http://ftp.cstug.cz/pub/tex/CTAN/macros/latex/contrib/algorithm2e/algorithm2e.pdf.}. \newline
-Příklad použití prostředí \verb|algorithm2e| viz Algoritmus \ref{algoritmus:1}.
-\vspace{1.5em}
 
 
 
@@ -156,6 +152,7 @@ V rámci generování instrukcí pro výrazy se musela provádět sémantická a
 
 \newpage
 \section{Rozdělení práce}
+\noindent
 Lukáš Válek
 \vspace{-0.6em}
 \begin{itemize}
@@ -203,49 +200,6 @@ Jindřich Šesták
   \item{Implementace dynamického řetězce}
 \end{itemize}
 Dále se každý podílel na tvorbě dokumentace a tvorbě testovacích zdrojových kódů.
-\iffalse
-\begin{comment}
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[scale=0.4]{etiopan.eps}\hspace{-0.2em}
-\reflectbox{\includegraphics[scale=0.4]{etiopan.eps}}
-\caption{Malý Etiopánek a jeho bratříček}
-\label{pic:1}
-\end{center}
-\end{figure}
-
-\newpage
-Rozdíl mezi vektorovým\dots
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[scale=0.40]{oniisan.eps}
-\caption{Vektorový obrázek}
-\label{pic:2}
-\end{center}
-\end{figure}
-
-
-\noindent \dots a bitmapovým obrázkem
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[scale=0.59]{oniisan2.eps}
-\caption{Bitmapový obrázek}
-\label{pic:3}
-\end{center}
-\end{figure}
-
-\noindent se projeví například při zvětšení.
-
-Odkazy (nejen ty) na obrázky \ref{pic:1}, \ref{pic:2} a \ref{pic:3}, na  
-tabulky \ref{tab:1} a \ref{tab:2} a také na algoritmus \ref{algoritmus:1} jsou udělány pomocí~křížových odkazů. Pak je ovšem potřeba zdrojový soubor přeložit dvakrát.
-
-
-\end{figure}
-
-
-\end{comment}
-\fi
-
 \section{Rozšíření}
 \subsection{BASE}
 Toto rozšíření jsme řešili malou pouze malou úpravou v LA.  
@@ -265,17 +219,14 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 
 
 \newpage
-
-
 \begin{algorithm}[H]
-  \label{algoritmus:1}
+\label{tab:1}
   \SetInd{0em}{1em}
   \SetNlSty{}{}{:}
   \SetNlSkip{-1em}
   \Indp
   \Indp
   \BlankLine
-
   \begin{tabularx}{\textwidth}{l>{$}c<{$}X}
  {[st-list]} &\rightarrow& [stat] [EOL-EOF]
 \end{tabularx}\\
@@ -343,9 +294,6 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
   {[params-gen]} &\rightarrow& ( [p-brackets] 
 \end{tabularx}\\ 
   \begin{tabularx}{\textwidth}{l>{$}c<{$}X}
-  {[params-gen]} &\rightarrow& EOL
-\end{tabularx}\\ 
-  \begin{tabularx}{\textwidth}{l>{$}c<{$}X}
   {[p-brackets]}   &\rightarrow& ID [p-brackets-cont] 
 \end{tabularx}\\ 
   \begin{tabularx}{\textwidth}{l>{$}c<{$}X}
@@ -360,12 +308,37 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 
   \caption{\textsc{LL Gramatika}}
 \end{algorithm}
-\vspace{1em}
-\newpage
 
+
+
+\begin{table}[]
+\setlength{\tabcolsep}{4pt}
+\centering
+\arrayrulecolor[rgb]{0.6,0.6,0.6}
+\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l}
+                       & \textbf{if} & \textbf{else} & \textbf{elseif} & \textbf{end} & \textbf{while} & \textbf{def} & \textbf{EOL} & \textbf{EOF} & \textbf{=}  & \textbf{(}  & \textbf{)}  & \textbf{,}  & \textbf{ID} & \textbf{FUNC} & \textbf{"expr"} \\\hline
+\textbf{{[}st-list{]} }         & 1  & 0    & 0     & 0   & 1     & 1   & 2   & 3   & 0  & 1  & 0  & 0  & 1  & 1    & 1      \\\hline
+\textbf{{[}EOL-EOF{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 4   & 5   & 0  & 0  & 0  & 0  & 0  & 0    & 0      \\\hline
+\textbf{{[}stat{]}}             & 7  & 0    & 0     & 0   & 7     & 6   & 0   & 0   & 0  & 7  & 0  & 0  & 7  & 7    & 7      \\\hline
+\textbf{{[}command{]} }         & 9  & 0    & 0     & 0   & 8     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 10 & 0    & 0      \\\hline
+\textbf{{[}func-assign-expr{]}} & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 11 & 0  & 0  & 0  & 0  & 0    & 0      \\\hline
+\textbf{{[}end-list{]} }        & 12 & 0    & 0     & 14  & 12    & 0   & 13  & 0   & 0  & 12 & 0  & 0  & 12 & 12   & 12     \\\hline
+\textbf{{[}if-list{]}}          & 15 & 18   & 17    & 19  & 15    & 0   & 16  & 0   & 0  & 15 & 0  & 0  & 15 & 15   & 15     \\\hline
+\textbf{{[}id-func{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 20 & 21   & 0      \\\hline
+\textbf{{[}params-gen{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 22 & 0  & 0  & 0  & 0    & 0      \\\hline
+\textbf{{[}p-brackets{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 24 & 0  & 23 & 0    & 0      \\\hline
+\textbf{{[}p-brackets-cont{]}}  & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 26 & 25 & 0  & 0    & 0     
+\end{tabular}
+\label{tab:2}
+\caption{LL tabulka}
+\end{table}
+
+
+\begin{table}[]
 \renewcommand{\arraystretch}{2}
 %\begin{sidewaystable}
 \scriptsize
+
 \centering
 \begin{tabular}{ c | c c c c c c c c c c c c } 
 OP  & + & * & ( & ) & i & - & / & rel & f & , & \$ \\ \hline
@@ -384,44 +357,30 @@ i & \textgreater & \textgreater & X & \textgreater & X & \textgreater & \textgre
 / & \textgreater & \textgreater & \textless &  \textgreater & \textless & \textgreater 
   & \textgreater & \textgreater & X & \textgreater & \textgreater \\ \hline
 rel & \textless & \textless & \textless & \textgreater & \textless & \textless & \textless 
-    & X & X & \textgreater & \textgreater \\ \hline
+    &  \textless & X & \textgreater & \textgreater \\ \hline
 f   & X & X & = & X & \textless & X & X & X & X & \textless  & \textgreater \\ \hline
 , & \textless & \textless & \textless & = & \textless & \textless & \textless & \textless 
   & \textless & = & \textgreater \\ \hline
 \$ & \textless & \textless & \textless & X & \textless & \textless & \textless & \textless 
-   & \textless & X & X 
-\label{pic:1}
+   & \textless & X & X
+ 
 \end{tabular}
+\label{tab:3}
+\caption{Precedenční tabulka}
+\end{table}
 %\end{sidewaystable}
 \renewcommand{\arraystretch}{1}
-%\end{footnotesi
-
-\ref{pic:1} Precedenční
 
 
 
 
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[scale=0.58]{KA.jpg}
+\caption{Konečný automat}
+\label{pic:1}
+\end{center}
+\end{figure}
 
 
-
-\newpage
-\begin{table}[]
-\setlength{\tabcolsep}{4pt}
-\centering
-\arrayrulecolor[rgb]{0.6,0.6,0.6}
-\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l}
-                       & \textbf{if} & \textbf{else} & \textbf{elseif} & \textbf{end} & \textbf{while} & \textbf{def} & \textbf{EOL} & \textbf{EOF} & \textbf{=}  & \textbf{(}  & \textbf{)}  & \textbf{,}  & \textbf{ID} & \textbf{FUNC} & \textbf{"expr"} \\\hline
-\textbf{{[}st-list{]} }         & 1  & 0    & 0     & 0   & 1     & 1   & 2   & 3   & 0  & 1  & 0  & 0  & 1  & 1    & 1      \\\hline
-\textbf{{[}EOL-EOF{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 4   & 5   & 0  & 0  & 0  & 0  & 0  & 0    & 0      \\\hline
-\textbf{{[}stat{]}}             & 7  & 0    & 0     & 0   & 7     & 6   & 0   & 0   & 0  & 7  & 0  & 0  & 7  & 7    & 7      \\\hline
-\textbf{{[}command{]} }         & 9  & 0    & 0     & 0   & 8     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 10 & 0    & 0      \\\hline
-\textbf{{[}func-assign-expr{]}} & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 11 & 0  & 0  & 0  & 0  & 0    & 0      \\\hline
-\textbf{{[}end-list{]} }        & 12 & 0    & 0     & 14  & 12    & 0   & 13  & 0   & 0  & 12 & 0  & 0  & 12 & 12   & 12     \\\hline
-\textbf{{[}if-list{]}}          & 15 & 18   & 17    & 19  & 15    & 0   & 16  & 0   & 0  & 15 & 0  & 0  & 15 & 15   & 15     \\\hline
-\textbf{{[}id-func{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 20 & 21   & 0      \\\hline
-\textbf{{[}params-gen{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 23  & 0   & 0  & 22 & 0  & 0  & 0  & 0    & 0      \\\hline
-\textbf{{[}p-brackets{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 25 & 0  & 24 & 0    & 0      \\\hline
-\textbf{{[}p-brackets-cont{]}}  & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 27 & 26 & 0  & 0    & 0     
-\end{tabular}
-\end{table}
 \end{document}
