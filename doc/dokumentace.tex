@@ -26,10 +26,14 @@
 {\huge   \textsc{Fakulta informačních technologií}
 }
 
+\vspace{1.5em}
+\begin{figure}[ht]
 \begin{center}
-\vspace{4em}
 \includegraphics[scale=0.13]{fit.png}
+\label{pic:3}
 \end{center}
+\end{figure}
+
 
 
 
@@ -126,7 +130,7 @@ zacházet s prostředím \texttt{algorithm}, můžeme zkusit tuhle stránku: \ne
 http://ftp.cstug.cz/pub/tex/CTAN/macros/latex/contrib/algorithms/algorithms.pdf.}  nebo
 \verb|algorithm2e|\footnote{Pro \texttt{algorithm2e} zase tuhle:
 http://ftp.cstug.cz/pub/tex/CTAN/macros/latex/contrib/algorithm2e/algorithm2e.pdf.}. \newline
-Příklad použití prostředí \verb|algorithm2e| viz Algoritmus \ref{algoritmus:1}.
+Příklad použití prostředí \verb|algorithm2e| viz Algoritmus \ref{sec:3}.
 \vspace{1.5em}
 
 
@@ -265,8 +269,6 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 
 
 \newpage
-
-
 \begin{algorithm}[H]
   \label{algoritmus:1}
   \SetInd{0em}{1em}
@@ -275,7 +277,6 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
   \Indp
   \Indp
   \BlankLine
-
   \begin{tabularx}{\textwidth}{l>{$}c<{$}X}
  {[st-list]} &\rightarrow& [stat] [EOL-EOF]
 \end{tabularx}\\
@@ -360,8 +361,30 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 
   \caption{\textsc{LL Gramatika}}
 \end{algorithm}
-\vspace{1em}
-\newpage
+
+
+
+\begin{table}[]
+\setlength{\tabcolsep}{4pt}
+\centering
+\arrayrulecolor[rgb]{0.6,0.6,0.6}
+\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l}
+                       & \textbf{if} & \textbf{else} & \textbf{elseif} & \textbf{end} & \textbf{while} & \textbf{def} & \textbf{EOL} & \textbf{EOF} & \textbf{=}  & \textbf{(}  & \textbf{)}  & \textbf{,}  & \textbf{ID} & \textbf{FUNC} & \textbf{"expr"} \\\hline
+\textbf{{[}st-list{]} }         & 1  & 0    & 0     & 0   & 1     & 1   & 2   & 3   & 0  & 1  & 0  & 0  & 1  & 1    & 1      \\\hline
+\textbf{{[}EOL-EOF{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 4   & 5   & 0  & 0  & 0  & 0  & 0  & 0    & 0      \\\hline
+\textbf{{[}stat{]}}             & 7  & 0    & 0     & 0   & 7     & 6   & 0   & 0   & 0  & 7  & 0  & 0  & 7  & 7    & 7      \\\hline
+\textbf{{[}command{]} }         & 9  & 0    & 0     & 0   & 8     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 10 & 0    & 0      \\\hline
+\textbf{{[}func-assign-expr{]}} & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 11 & 0  & 0  & 0  & 0  & 0    & 0      \\\hline
+\textbf{{[}end-list{]} }        & 12 & 0    & 0     & 14  & 12    & 0   & 13  & 0   & 0  & 12 & 0  & 0  & 12 & 12   & 12     \\\hline
+\textbf{{[}if-list{]}}          & 15 & 18   & 17    & 19  & 15    & 0   & 16  & 0   & 0  & 15 & 0  & 0  & 15 & 15   & 15     \\\hline
+\textbf{{[}id-func{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 20 & 21   & 0      \\\hline
+\textbf{{[}params-gen{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 23  & 0   & 0  & 22 & 0  & 0  & 0  & 0    & 0      \\\hline
+\textbf{{[}p-brackets{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 25 & 0  & 24 & 0    & 0      \\\hline
+\textbf{{[}p-brackets-cont{]}}  & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 27 & 26 & 0  & 0    & 0     
+\end{tabular}
+\end{table}
+
+
 
 \renewcommand{\arraystretch}{2}
 %\begin{sidewaystable}
@@ -390,38 +413,21 @@ f   & X & X & = & X & \textless & X & X & X & X & \textless  & \textgreater \\ \
   & \textless & = & \textgreater \\ \hline
 \$ & \textless & \textless & \textless & X & \textless & \textless & \textless & \textless 
    & \textless & X & X 
-\label{pic:1}
+\label{tab:1}
 \end{tabular}
 %\end{sidewaystable}
 \renewcommand{\arraystretch}{1}
-%\end{footnotesi
-
-\ref{pic:1} Precedenční
 
 
+Precedenční tabulka
+
+\begin{figure}[ht]
+\begin{center}
+\includegraphics[scale=0.58]{KA.jpg}
+\caption{Konecný automat}
+\label{pic:3}
+\end{center}
+\end{figure}
 
 
-
-
-
-\newpage
-\begin{table}[]
-\setlength{\tabcolsep}{4pt}
-\centering
-\arrayrulecolor[rgb]{0.6,0.6,0.6}
-\begin{tabular}{l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l}
-                       & \textbf{if} & \textbf{else} & \textbf{elseif} & \textbf{end} & \textbf{while} & \textbf{def} & \textbf{EOL} & \textbf{EOF} & \textbf{=}  & \textbf{(}  & \textbf{)}  & \textbf{,}  & \textbf{ID} & \textbf{FUNC} & \textbf{"expr"} \\\hline
-\textbf{{[}st-list{]} }         & 1  & 0    & 0     & 0   & 1     & 1   & 2   & 3   & 0  & 1  & 0  & 0  & 1  & 1    & 1      \\\hline
-\textbf{{[}EOL-EOF{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 4   & 5   & 0  & 0  & 0  & 0  & 0  & 0    & 0      \\\hline
-\textbf{{[}stat{]}}             & 7  & 0    & 0     & 0   & 7     & 6   & 0   & 0   & 0  & 7  & 0  & 0  & 7  & 7    & 7      \\\hline
-\textbf{{[}command{]} }         & 9  & 0    & 0     & 0   & 8     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 10 & 0    & 0      \\\hline
-\textbf{{[}func-assign-expr{]}} & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 11 & 0  & 0  & 0  & 0  & 0    & 0      \\\hline
-\textbf{{[}end-list{]} }        & 12 & 0    & 0     & 14  & 12    & 0   & 13  & 0   & 0  & 12 & 0  & 0  & 12 & 12   & 12     \\\hline
-\textbf{{[}if-list{]}}          & 15 & 18   & 17    & 19  & 15    & 0   & 16  & 0   & 0  & 15 & 0  & 0  & 15 & 15   & 15     \\\hline
-\textbf{{[}id-func{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 20 & 21   & 0      \\\hline
-\textbf{{[}params-gen{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 23  & 0   & 0  & 22 & 0  & 0  & 0  & 0    & 0      \\\hline
-\textbf{{[}p-brackets{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 25 & 0  & 24 & 0    & 0      \\\hline
-\textbf{{[}p-brackets-cont{]}}  & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 27 & 26 & 0  & 0    & 0     
-\end{tabular}
-\end{table}
 \end{document}
