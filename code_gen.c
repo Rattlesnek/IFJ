@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    []
+  FileName    [code_gen.c]
 
   SystemName  [IFJ - PROJECT]
 
