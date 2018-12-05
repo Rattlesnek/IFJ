@@ -118,9 +118,15 @@ do {                                                                            
         }                                                                              \
         result = genFuncCode(func_stack, is_builtin, var_symtab, code_buffer, in_stat);\
         if(strcmp(result->name, "ERR_SEM_TYPE") == 0)                                  \
+        {                                                                              \
+            destroyToken(result);                                                      \
             goto err_sem_type;                                                         \
+        }                                                                              \
         else if(strcmp(result->name, "ERR_SEM_UNDEF") == 0)                            \
+        {                                                                              \
+            destroyToken(result);                                                      \
             goto err_sem_undef;                                                        \
+        }                                                                              \
     }                                                                                  \
     else                                                                               \
     {                                                                                  \
