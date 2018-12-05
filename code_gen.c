@@ -8,7 +8,9 @@
 
   Synopsis    []
 
-  Author      [Lukas Valek]
+  Author      [Lukas Valek, Jindrich Sestak]
+
+  Login       [xvalek15, xsesta05]
 
   Affiliation []
 

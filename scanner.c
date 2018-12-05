@@ -6,9 +6,11 @@
 
   PackageName [Scanner]
 
-  Synopsis    []
+  Synopsis    [Lexical analysis - reads input and create tokens]
 
   Author      [Jindrich Sestak]
+
+  Login       [xsesta05]
 
   Affiliation []
 
@@ -77,6 +79,7 @@ bool Str_with_hex(dynamicStr_t *sc_str,unsigned int position)
 
     sprintf(hex, "%li", ret); 
 
+    //re-write last characters ("\xhh) with number ("\xiii")
     sc_str->length = position;
     if (strlen(hex) < 2)
     {   
@@ -267,13 +270,8 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                         state = State_S;
                     else if (c == '"')
                         state = State_QUATATION1;
-
                     else if (c == '-')
-                    {
                         state = State_MINUS;
-                        if(!dynamicStr_add(sc_str, c)) 
-                            goto err_internal;
-                    }
                         
                     else if (c == '0')
                     {
@@ -701,8 +699,9 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                             name = inKeyword(sc_str->str, keywords);
                             if (strcmp(name, "do") == 0 || strcmp(name, "else")==0 ||strcmp(name, "end")==0 || strcmp(name, "then")==0)
                             {
-                                if ( !isspace(c) || c == '#')  //after "do", "else" ....must be \n or comment
+                                if ( !isspace(c))  //after "do", "else" ....must be \n
                                 {
+                                    printf("DPRINT int@5\n");
                                     state = State_ERR;
                                     break;
                                 }

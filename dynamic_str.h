@@ -1,14 +1,16 @@
 /**CFile****************************************************************
 
-  FileName    [dynamicStr.h]
+  FileName    [dynamic_str.h]
 
   SystemName  [IFJ - PROJECT]
 
-  PackageName [Data type]
+  PackageName [Dynamic string]
 
-  Synopsis    [Dynamic string implementation]
+  Synopsis    [Dynamic string to reads input and save it]
 
   Author      [Jindrich Sestak]
+
+  Login       [xsesta05]
 
   Affiliation []
 
