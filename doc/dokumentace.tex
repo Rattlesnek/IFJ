@@ -77,7 +77,7 @@ Cílem projektu bylo vytvoření překladače pro jazyk IFJ18, který je podmno�
 
 \section{Etapy projektu}
 \begin{enumerate}
-  \item Návrh struktury programu (konečný automat (viz obrázek \ref{pic:1}), LL gramatika (viz gramatika 1), LL tabulka (viz gramatika \ref{tab:1}), precedenční tabulka (viz tabulka 2))
+  \item Návrh struktury programu (konečný automat (viz obrázek \ref{pic:1}), LL gramatika (viz gramatika 1), LL tabulka (viz tabulka \ref{tab:1}), precedenční tabulka (viz tabulka 2))
   \vspace{-0.6em}
   \item Lexikální analýza
   \vspace{-0.6em}
@@ -118,9 +118,9 @@ Rozhodli jsme se použít prediktivní analýzu (dále jen PA), protože nám p�
 \subsection{Precedenční analýza}
 Výrazy jsou jsou zpracovávány metodou precedenční syntaktické analýzy pomocí algoritmu známého z přednášek. Analyzátor komunikuje se třemi hlavními moduly: scannerem, parserem a generátorem cílového kódu. Komunikace mezi těmito moduly probíhá převážně pomocí datového typu \verb|token_t|.
 
-Při implementaci jsou použity tyto pomocné datové struktury:
-       \verb|stack_sa_t| -- Zásobník uchovávající příchozí tokeny ze scanneru, včetně následných neterminálů, které vzniknou při analyzování výrazu.
-       \verb|stack_tkn_t|-- Zásobník uchovávající parametry, se kterými je volána funkce v zdrojovém kódu.
+Při implementaci jsou použity tyto pomocné datové struktury: \newline
+       \verb|stack_sa_t| -- Zásobník uchovávající příchozí tokeny ze scanneru, včetně následných neterminálů, které vzniknou při analyzování výrazu. \newline
+       \verb|stack_tkn_t|-- Zásobník uchovávající parametry, se kterými je volána funkce v zdrojovém kódu.\newline
 
 
 
