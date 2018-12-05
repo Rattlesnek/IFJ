@@ -1676,7 +1676,7 @@ token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
     if (strcmp(par->name, "ID") == 0)
     {
         if (symtab_find(symtab, par->info.ptr->var.key) == NULL)    //ID has not been declareted
-            goto err_sem;   // undefined ID
+            goto err_sem_undef;   // undefined ID
 
         if (! print_or_append(code_buffer, in_stat,
                               "MOVE GF@$tmp %s@%s\n"
@@ -1697,7 +1697,7 @@ token_t *length(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
             goto err_internal;
     }
     else
-        goto err_sem;
+        goto err_sem_type;
 
     if (! print_or_append(code_buffer, in_stat, "STRLEN GF@$des GF@$tmp\n"
                           "PUSHS GF@$des\n"))
@@ -1715,12 +1715,20 @@ err_internal:
     des = createToken("ERR_INTERNAL", info);
     return des;
 
-err_sem:
+err_sem_undef:
     label_n++;
     destroyToken(par);
     destroyToken(des);
     info.ptr = NULL;
-    des = createToken("ERR_SEM", info);
+    des = createToken("ERR_SEM_UNDEF", info);
+    return des;
+
+err_sem_type:
+    label_n++;
+    destroyToken(par);
+    destroyToken(des);
+    info.ptr = NULL;
+    des = createToken("ERR_SEM_TYPE", info);
     return des;
 }
 
@@ -1745,7 +1753,7 @@ token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
     if (strcmp(par->name, "ID") == 0)
     {
         if (symtab_find(symtab, par->info.ptr->var.key) == NULL)    //ID has not been declareted
-            goto err_sem;   // undefined ID
+            goto err_sem_undef;   // undefined ID
 
         if (! print_or_append(code_buffer, in_stat,
                               "MOVE GF@$tmp %s@%s\n"
@@ -1767,7 +1775,7 @@ token_t *chr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
             goto err_internal;
     }
     else
-        goto err_sem;
+        goto err_sem_type;
 
     if (! print_or_append(code_buffer, in_stat, "INT2CHAR GF@$des GF@$tmp\n"
                           "PUSHS GF@$des\n"))        //INT2CHAR takes value <0,255>
@@ -1785,12 +1793,20 @@ err_internal:
     des = createToken("ERR_INTERNAL", info);
     return des;
 
-err_sem:
+err_sem_undef:
     label_n++;
     destroyToken(par);
     destroyToken(des);
     info.ptr = NULL;
-    des = createToken("ERR_SEM", info);
+    des = createToken("ERR_SEM_UNDEF", info);
+    return des;
+
+err_sem_type:
+    label_n++;
+    destroyToken(par);
+    destroyToken(des);
+    info.ptr = NULL;
+    des = createToken("ERR_SEM_TYPE", info);
     return des;
 }
 
@@ -1820,7 +1836,7 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
     if (strcmp(par1->name, "ID") == 0)
     {
         if (symtab_find(symtab, par1->info.ptr->var.key) == NULL)
-            goto err_sem; // undefined ID
+            goto err_sem_undef; // undefined ID
 
         if (! print_or_append(code_buffer, in_stat,
                               "MOVE GF@$tmp %s@%s\n"
@@ -1840,12 +1856,12 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
             goto err_internal;
     }
     else
-        goto err_sem;
+        goto err_sem_type;
 //////////////////////**SECOND PARAMETR**////////////////////////////////
     if (strcmp(par2->name, "ID") == 0)
     {
         if (symtab_find(symtab, par2->info.ptr->var.key) == NULL)
-            goto err_sem;   //undefined ID
+            goto err_sem_undef;   //undefined ID
 
         if (! print_or_append(code_buffer, in_stat,
                               "MOVE GF@$eq %s@%s\n"
@@ -1866,7 +1882,7 @@ token_t *ord(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *par
             goto err_internal;
     }
     else
-        goto err_sem;
+        goto err_sem_type;
 
     if (! print_or_append(code_buffer, in_stat,
                           "STRLEN GF@$type GF@$tmp\n"
@@ -1901,13 +1917,22 @@ err_internal:
     des = createToken("ERR_INTERNAL", info);
     return des;
 
-err_sem:
+err_sem_undef:
     label_n++;
     destroyToken(par1);
     destroyToken(par2);
     destroyToken(des);
     info.ptr = NULL;
-    des = createToken("ERR_SEM", info);
+    des = createToken("ERR_SEM_UNDEF", info);
+    return des;
+
+err_sem_type:
+    label_n++;
+    destroyToken(par1);
+    destroyToken(par2);
+    destroyToken(des);
+    info.ptr = NULL;
+    des = createToken("ERR_SEM_TYPE", info);
     return des;
 }
 
@@ -1939,7 +1964,7 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
     if (strcmp(string->name, "ID") == 0)
     {
         if (symtab_find(symtab, string->info.ptr->var.key) == NULL)
-            goto err_sem;       //undefined ID
+            goto err_sem_undef;       //undefined ID
 
         if (! print_or_append(code_buffer, in_stat,
                               "MOVE GF@$jump %s@%s\n"
@@ -1960,13 +1985,13 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
             goto err_internal;
     }
     else
-        goto err_sem;
+        goto err_sem_type;
 
     //////////////////////**SECOND PARAMETR**////////////////////////////////
     if (strcmp(begin->name, "ID") == 0)
     {
         if (symtab_find(symtab, begin->info.ptr->var.key) == NULL)
-            goto err_sem;       //Undefined ID
+            goto err_sem_undef;       //Undefined ID
 
         if (! print_or_append(code_buffer, in_stat,
                               "MOVE GF@$eq %s@%s\n"
@@ -1986,13 +2011,13 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
                begin->info.string);
     }
     else
-        goto err_sem;
+        goto err_sem_type;
 
     //////////////////////**THIRD PARAMETR**////////////////////////////////
     if (strcmp(end->name, "ID") == 0)
     {
         if (symtab_find(symtab, end->info.ptr->var.key) == NULL)
-            goto err_sem; // Undefined ID
+            goto err_sem_undef; // Undefined ID
 
         if (! print_or_append(code_buffer, in_stat,
                               "MOVE GF@$tmp %s@%s\n"
@@ -2014,7 +2039,7 @@ token_t *substr(list_t *code_buffer, bool in_stat, symtable_t *symtab, token_t *
             goto err_internal;
     }
     else
-        goto err_sem;
+        goto err_sem_type;
 /////////////////////////////**FINAL**////////////////////////////////////////
 
     /*
@@ -2096,14 +2121,24 @@ err_internal:
     des = createToken("ERR_INTERNAL", info);
     return des;
 
-err_sem:
+err_sem_undef:
     label_n++;
     destroyToken(string);
     destroyToken(begin);
     destroyToken(end);
     destroyToken(des);
     info.ptr = NULL;
-    des = createToken("ERR_SEM", info);
+    des = createToken("ERR_SEM_UNDEF", info);
+    return des;
+
+err_sem_type:
+    label_n++;
+    destroyToken(string);
+    destroyToken(begin);
+    destroyToken(end);
+    destroyToken(des);
+    info.ptr = NULL;
+    des = createToken("ERR_SEM_TYPE", info);
     return des;
 }
 
