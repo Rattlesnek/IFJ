@@ -240,6 +240,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
     }
     if (que_empty(que))
     { 
+      //MAIN LOOP - according to KA  
         while( (c=getc(stdin)) != EOF)
         { 
             switch(state){
@@ -792,7 +793,7 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                     break;
 
                 case State_FUNC:
-                    if ( c == '(' || c == ' ')
+                    if ( c == '(' || isspace(c))
                     {
                         state = State_S;
                         sc_unget(c);
@@ -1409,11 +1410,6 @@ token_t* scanner_get(dynamicStr_t *sc_str, queue_t *que)
                 case State_IDEXL:
                     if(!dynamicStr_add(sc_str, '!'))
                         goto err_internal;
-
-                    token_info_t sc_info2;
-                    sc_info2.ptr = NULL;
-                    token_t *sc_token2 = createToken("EOL", sc_info2);
-                    que_up(que, sc_token2, sc_str->str);
 
                     state = State_S;
                     sc_info.ptr = NULL;
