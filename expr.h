@@ -1,3 +1,4 @@
+
 /**CFile****************************************************************
   FileName    [sa_prec.h]
 
@@ -7,8 +8,7 @@
 
   Synopsis    []
 
-  Author      [Lukas Valek, Adam Pankuch, Jindrich Sestak, 
-               Lukas Piwowarski]
+  Author      [Lukas Piwowarski (xpiwow00)]
 
   Affiliation []
 

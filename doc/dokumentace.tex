@@ -14,14 +14,14 @@
 \usepackage{adjustbox}
 \usepackage{colortbl}
 \usepackage{indentfirst}
-
+\usepackage{listings}
 \renewcommand{\algorithmcfname}{Gramatika}
 
 
 \begin{document}
 \begin{titlepage}
 \begin{center}
-  
+
 {\Huge \textsc{Vysoké učení technické v Brně \\
 \vspace{0.5em}
 }}
@@ -73,11 +73,11 @@ Jindřích Šesták  & -- & xsesta05  &  25 \,\%
 
 %sem piste svoje texty k domunetaci. Zatim tady nechavam nektere veci z I
 \section{Úvod}
-Cílem projektu bylo vytvoření překladače pro jazyk IFJ18, který je podmnožinou jazyka Ruby. Vybrali jsme si variantu II. - tabulka s rozptýlenými položkami.
+Cílem projektu bylo vytvoření překladače pro jazyk IFJ18, který je podmnožinou jazyka Ruby. Vybrali jsme si II. variantu (tabulku s rozptýlenými položkami).
 
 \section{Etapy projektu}
 \begin{enumerate}
-  \item Návrh struktury programu (konečný automat (viz obrázek \ref{pic:1}), LL gramatika (viz gramatika 1), LL tabulka (viz tabulka \ref{tab:1}), precedenční tabulka (viz tabulka 2))
+  \item Návrh struktury programu (konečný automat (viz obrázek \ref{pic:1}), LL gramatika (viz gramatika 1), LL-tabulka (viz tabulka \ref{tab:1}), precedenční tabulka (viz tabulka 2))
   \vspace{-0.6em}
   \item Lexikální analýza
   \vspace{-0.6em}
@@ -97,60 +97,53 @@ Cílem projektu bylo vytvoření překladače pro jazyk IFJ18, který je podmno�
 \section{Datové struktury}
 \noindent
 \verb|token_t| -- Struktura uchovávající informace o tokenech. \newline
-\verb|stack_tkn_t| -- Zásobník tokenů. Využívaný především v prediktivní analýze. \newline
-\verb|stack_sa_t| -- Zásobník realizovaný pomocí obousmerně vázaného seznamu. \newline
-\verb|stack_str_t| -- Zásobník řetězců. Využívaný především při generování kódu. \newline
-\verb|queue_t| -- Fronta tokenů a řetězců. Využívaný v lexikální analýze.\newline
+\verb|stack_tkn_t| -- Zásobník tokenů využívaný především v prediktivní analýze. \newline
+\verb|stack_sa_t| -- Zásobník realizovaný pomocí obousmerně vázaného seznamu využívaný v prec. analýze. \newline
+\verb|stack_str_t| -- Zásobník řetězců využívaný především při generování kódu. \newline
+\verb|queue_t| -- Fronta tokenů a řetězců využívaná v lexikální analýze.\newline
 \verb|list_t| -- Fronta řetězců realizována pomocí jednosměrně vázaného seznamu.\newline
 \verb|symtable_t| -- Tabulka s rozptýlenými položkami.\newline
+\verb|dynamic_arr_t| -- Dynamické pole parametrů funkce.\newline
+\verb|dynamic_str_t| -- Dynamický řetězec využívaný v lexikální analýze k ukládání lexémů. 
 
+\section{Lexikální analýza}
+Lexikální analyzátor (dále jen LA) představoval první část projektu, kterou bylo nutno implementovat. Zavedli jsme obousměrnou komunikaci mezi LA a syntaktickým analyzátorem (dále jen SA), kdy SA může číst token, ale také vrátit token zpět do LA. Při dalším volání LA není token čten ze standartního vstupu, ale z fronty, ve které jsou uchovávány dříve vrácené tokeny. Toto je realizováno pomocí datové struktur~\verb|queue_t|. 
+Dále lexikální analyzátor zajišťuje ignorování komentářů. Produktem LA je datová struktura \verb|token_t|, se kterou se pak dále pracuje v ostatních částech překladače.
 
-\section{Lexikální analyzátor (LA)}
-Lexikální analyzátor (dále jen LA) představoval první část projektu, kterou bylo nutno implementovat. Zavedli jsme obousměrnou komunikaci, mezi LA a syntaktickým analyzátorem (dále jen SA), kdy SA může číst token, ale také vrátit token zpět do LA. Při dalším volání LA není token čten ze standartního vstupu, ale z fronty, ve kterém jsou uchovávány dříve vrácené tokeny. Toto je realizováno pomocí datové struktury:\verb|queue_t|. 
-Dále lexikální analyzátor zajišťuje ignorování komentářů. 
-
-\section{Syntaktický analyzátor (SA)}
+\section{Syntaktický analýza}
 \subsection{Prediktivní analýza}
-Rozhodli jsme se použít prediktivní analýzu (dále jen PA), protože nám přišla sofistikovanější a také větší výzva na implementaci. LL tabulka společně s pravidly LL gramatiky jsou umístěny přímo v kódě překladače. LL tabulka je implementována jako matice integerů. Každý integer prezentuje číslo pravidla, které se použije. Pravidla LL gramatiky jsou implentovány jako matice řetzců. Každý řádek matice reprezentuje jedno pravidlo. V LA používáme tyto datové struktury:\newline
-\verb|stack_str_t| -- Zásobník ukládající generovaný kód při if-statement, while-loop a definicích funkcí.\newline
-\verb|stack_tkn_t| -- Nutný pro implementaci algoritmu prediktivní analýzy. \newline
+Rozhodli jsme se použít prediktivní analýzu (dále jen PA), protože nám přišla sofistikovanější a také jako větší výzva na implementaci. Pravidla LL gramatiky společně s LL-tabulkou jsou umístěny přímo v kódě překladače, a to přesně v takové podobě, v jaké jsou uvedené v příloze. Poslední sloupec v LL-tabulce pojmenovaný "expr" nekoresponduje s žádným terminálem používaným v LL gramatice, ale souhrně reprezentuje všechny tokeny, kterými může precedenční analýza výrazů začínat (v případě výrazu, který následně není přiřazený žádné proměnné). V PA používáme tyto datové struktury:\newline
+
+\noindent\verb|stack_str_t| -- Zásobník ukládající generovaný kód při if-statement, while-loop a definicích funkcí.\newline
+\verb|stack_tkn_t| -- Zásobník nutný pro implementaci algoritmu prediktivní analýzy. \newline
 
 \subsection{Precedenční analýza}
-Výrazy jsou jsou zpracovávány metodou precedenční syntaktické analýzy pomocí algoritmu známého z přednášek. Analyzátor komunikuje se třemi hlavními moduly: scannerem, parserem a generátorem cílového kódu. Komunikace mezi těmito moduly probíhá převážně pomocí datového typu \verb|token_t|.
+Výrazy jsou jsou zpracovávány metodou precedenční syntaktické analýzy pomocí algoritmu známého z přednášek. Analyzátor komunikuje se třemi hlavními moduly: scannerem, prediktivním analyzátorem a generátorem cílového kódu. Při implementaci jsou použity tyto pomocné datové struktury: \newline
 
-Při implementaci jsou použity tyto pomocné datové struktury: \newline
-       \verb|stack_sa_t| -- Zásobník uchovávající příchozí tokeny ze scanneru, včetně následných neterminálů, které vzniknou při analyzování výrazu. \newline
-       \verb|stack_tkn_t|-- Zásobník uchovávající parametry, se kterými je volána funkce v zdrojovém kódu.\newline
-
+\noindent\verb|stack_sa_t| -- Zásobník uchovávající příchozí tokeny (terminály) ze scanneru, včetně následných~neterminálů, které vzniknou při analyzování výrazu. \newline
+\verb|stack_tkn_t|-- Zásobník uchovávající parametry, se kterými je volána funkce v zdrojovém kódu.
 
 
+\section{Sémantická analýza}
+Sémantická analýza probíhá ve třech modulech, a to v: predektivním analyzátoru, precedenčním analyzátoru a v generátoru cílového kódu (pro vestavěné funkce a výrazy). 
+
+Prediktivní analyzátor společně s precedenčním analyzátorem je odpovědný za ověřování správného počtu parametrů při volání funkcí, za ověřování redefinice funkcí a kolize jmen proměnných a funkcí. 
+
+Generátor vnitřního kódu kontroluje datové typy operandů, pokud je to možné. V případě, že alespoň jeden operand je proměnná, dochází k sémantické kontrole za běhu. Dále zajišťuje běhovou kontrolu dělení nulou. 
+
+\section{Implementace tabulky symbolů}
+Tabulka symbolů je implementována jako tabulka s rozptýlenými položkami s explicitně zřetězenými synonymy. Synonyma jsou vkládána do jednosměrně vázaného lineárního seznamu, přičemž nové položky jsou vkládány na jeho začátek. V programu se pracuje se dvěma druhy tabulek symbolů a to s tabulkou pro funkce a tabulkou pro proměnné. Tabulek proměnných může být několik, protože každá odpovídá za proměnné v jednom bloku kódu. Tabulka funkcí je pouze jedna a slouží k zaznamenávání informací o funkcích, které jsou přístupné z kterékoliv úrovně kódu. 
 
 
+\section{Generování kódu}
+Pro potřeby tohoto projektu jsme zvolili přímé generování tří adresného kódu, protože jiné metody neposkytovaly žádnou výhodu jen časové zdržení. Instrukce generujeme do abstraktního datového typu \verb|list_t|, protože je potřeba zamezit vícenásobné deklaraci v cyklech. Pokud se analýza nachazí ve while-loop nebo if-statement, tak budou veškeré instrukce deklarace proměnných vytisknuty před začátkem while-loop respektive if-statement.
 
-
-\subsection{Sémantická analýza}
-Sémantická analýza probíhá ve třech modulech, a to v: predektivním analyzátoru, precedenčním analyzátoru, generátoru vnitřního kódu. 
-
-Prediktivní analyzátor společně s precedenčním analyzátorem je zodpovědný za ověřování správného počtu parametrů při volání funkce, za ověřování redefinice funkcí a kolize jmen proměnných a funkcí. 
-
-Generátor vnitřního kódu kontroluje datové typy operandů, pokud je to možné. V případě, že alespoň jeden operand je proměnná, dochází k sémantické kontrole za běhu. Dále se generuje běhová kontrola dělení nulou. 
-
-\subsection{Implementace TS}
-Tabulka symbolů je implementována jako tabulka s rozptýlenými položkaci s explicitně zřetězenými synonymy. Synonyma jsou svázána do jednosměrného seznamu. Položky jsou vkládány na začátek seznamu. Jako mapovací funkci jsme použili funkci z předmětu IJC.
-
-\subsection{Generování kódu}
-Pro potřeby tohoto projektu jsme zvolili přímé generování tří adresného kódu, protože jiné metody neposkytovaly žádnou výhodu jen časové zdržení. Instrukce generujeme do abstraktního datového typu List, protože je potřeba zamezit vícenásobné deklaraci v cyklech. Pokud se analýza nachazí v cyklu, budou veškeré instrukce deklarace proměnných vytisknuty před začátkem cyklu.
-
-Generování kódu probíhá v těchto modulech: prediktivní analyzátor a precedenční analyzátor. 
-
-Prediktivní analyzátor generuje cílový kód pro definice funkcí, if-statement, while-loop a definování proměnných.
-
-Precedenční analyzátor generuje cílový kód pro volání funkcí, volání vestavěných funkcí, výrazy.  
-
-\subsubsection{Generování výrazů}
-V rámci generování instrukcí pro výrazy se musela provádět sémantická analýza. Tu jsem provedli použitím instrukcí pro zjištění typu proměnných, jejich přetypování a následných skoků. Při generování kódu jsme se rozhodli pro lehkou optimalizaci. Ta spočívá v tom, že na základě kombinace datových typů operandů, získaných z precedenční analýzy, se vygenerují jen ty nejnutnější instrukce. Tím se omezí množství skoků a testů ve výsledném programu. Vygenerovaný kód je přehlednější a dosáhne se zrychlení běhu programu. 
+Generování kódu probíhá v těchto modulech: prediktivní analyzátor a precedenční analyzátor. Prediktivní analyzátor generuje cílový kód pro definice funkcí, if-statement, while-loop a definování proměnných. Precedenční analyzátor generuje cílový kód pro volání funkcí, volání vestavěných funkcí a výrazy.  
 
 \newpage
+\subsection{Generování cílového kódu pro výrazy}
+V rámci generování instrukcí pro výrazy se musela provádět sémantická analýza. Tu jsem provedli použitím instrukcí pro zjištění typu proměnných, jejich přetypováním a následných skoků. Při generování kódu jsme se rozhodli pro lehkou optimalizaci. Ta spočívá v tom, že na základě datových typů operandů, získaných z precedenční analýzy, se vygenerují jen ty nejnutnější instrukce. Tím se omezí množství skoků a testů ve výsledném programu. 
+
 \section{Rozdělení práce}
 \noindent
 Lukáš Válek
@@ -164,7 +157,7 @@ Lukáš Válek
   \vspace{-0.6em}
   \item{Generování cílového kódu pro vestavěné funkce}
   \vspace{-0.6em}
-  \item{Implementace dynamického listu parametrů}
+  \item{Implementace dynamického pole parametrů}
 \end{itemize}
 Lukáš Piwowarski
 \vspace{-0.6em}
@@ -202,7 +195,7 @@ Jindřich Šesták
 Dále se každý podílel na tvorbě dokumentace a tvorbě testovacích zdrojových kódů.
 \section{Rozšíření}
 \subsection{BASE}
-Toto rozšíření jsme řešili malou pouze malou úpravou v LA.  
+Toto rozšíření jsme řešili pouze malou úpravou v LA.  
 \subsection{IFTHEN}
 Už v návrhu LL gramatiky jsme počítali s tímto rozšířením, proto nebyly potřebné pozdější úpravy.  
 
@@ -213,10 +206,6 @@ Jako verzovací systém jsme použili Git hostovaný na službě Github.
 
 \section{Shrnutí}
 Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na větším týmovém projektu, proto nám proces tvoření překladače přinesl spoustu nových znalostí, nejen z oblasti formálních jazyků, programování v jazyce C, návrhu komplexnějšího programu, ale také z oblasti týmové práce a uskalými s ní spojenými, jako je například komunikace. Určitě byl pro nás projekt přínosem. 
-
-
-
-
 
 \newpage
 \begin{algorithm}[H]
@@ -309,8 +298,6 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
   \caption{\textsc{LL Gramatika}}
 \end{algorithm}
 
-
-
 \begin{table}[]
 \setlength{\tabcolsep}{4pt}
 \centering
@@ -343,11 +330,11 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 \begin{tabular}{ c | c c c c c c c c c c c c } 
 OP  & + & * & ( & ) & i & - & / & rel & f & , & \$ \\ \hline
 + & \textgreater & \textless & \textless &  \textgreater & \textless & \textgreater & \textless 
-  & \textgreater & \textless  &  \textgreater &  \textgreater   \\ \hline
+  & \textgreater & X &  \textgreater &  \textgreater   \\ \hline
 * & \textgreater & \textgreater & \textless & \textgreater & \textless & \textgreater   
-  & \textgreater  & \textgreater  & \textless & \textgreater & \textgreater \\ \hline
+  & \textgreater  & \textgreater  & X & \textgreater & \textgreater \\ \hline
 ( & \textless & \textless & \textless & = & \textless & \textless & \textless & \textless 
-   & \textless & = & X \\ \hline
+   & X & = & X \\ \hline
 ) & \textgreater & \textgreater & X & \textgreater & X & \textgreater & \textgreater 
   & \textgreater  & X & \textgreater & \textgreater \\ \hline
 i & \textgreater & \textgreater & X & \textgreater & X & \textgreater & \textgreater 
@@ -359,8 +346,7 @@ i & \textgreater & \textgreater & X & \textgreater & X & \textgreater & \textgre
 rel & \textless & \textless & \textless & \textgreater & \textless & \textless & \textless 
     &  \textless & X & \textgreater & \textgreater \\ \hline
 f   & X & X & = & X & \textless & X & X & X & X & \textless  & \textgreater \\ \hline
-, & \textless & \textless & \textless & = & \textless & \textless & \textless & \textless 
-  & \textless & = & \textgreater \\ \hline
+, & X & X & X & = & \textless & X & X & X & X & = & \textgreater \\ \hline
 \$ & \textless & \textless & \textless & X & \textless & \textless & \textless & \textless 
    & \textless & X & X
  
