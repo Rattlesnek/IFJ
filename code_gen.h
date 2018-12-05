@@ -74,7 +74,8 @@ typedef enum index_switch {
   ID_STR,
   ID_ID,
   NIL_ID,
-  ID_NIL
+  ID_NIL,
+  BOOL_ID
 } index_switch_t;
 
 
