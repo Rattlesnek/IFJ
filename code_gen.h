@@ -140,58 +140,47 @@ bool isDBL_ID(token_t *token);
 bool isSTR_ID(token_t *token);
 
 /**
- * @brief      { function_description }
+ * @brief      Finds out matematical operator
  *
  * @param      op  The parameter 1
  * @param      alternative  The parameter 2
  *
- * @return     { description_of_the_return_value }
+ * @return     Description of operations
  */
 char *operator(char *op, bool alternative);
 /**
- * @brief      { function_description }
+ * @brief      Finds out what types are parametres
  *
  * @param      param1  The parameter 1
  * @param      param2  The parameter 2
  *
- * @return     { description_of_the_return_value }
+ * @return     Enum in matrix according to indexes of types of parametres
  */
 int type(token_t *param1, token_t *param2);
 /**
- * @brief      { function_description }
+ * @brief      Generates code in IFJcode18 according to operation with nil parametres
  *
  * @param      op      The operation
  * @param      par1    The par 1
  * @param      par2    The par 2
  * @param      symtab  The symtab
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or error
  */
 token_t *nil(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat);
 /**
- * @brief      { function_description }
+ * @brief      Generates code in IFJcode18 according to operation with "INT" and "INT" parametres
  *
  * @param      op      The operation
  * @param      par1    The par 1
  * @param      par2    The par 2
  * @param      symtab  The symtab
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or "DBL_ID" or "INT_ID" or error
  */
 token_t *int_int(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool variant, list_t *code_buffer, bool in_stat);
 /**
- * @brief      { function_description }
- *
- * @param      op      The operation
- * @param      par1    The par 1
- * @param      par2    The par 2
- * @param      symtab  The symtab
- *
- * @return     { description_of_the_return_value }
- */
-token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, list_t *code_buffer, bool in_stat);
-/**
- * @brief      { function_description }
+ * @brief      Generates code in IFJcode18 according to operation with "INT" and "DBL" parametres
  *
  * @param      op        The operation
  * @param      par1      The par 1
@@ -199,23 +188,23 @@ token_t *dbl_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
  * @param      symtab    The symtab
  * @param[in]  switched  The switched
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or "DBL_ID" or error
  */
 token_t *int_dbl(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
- * @brief      { function_description }
+ * @brief      Only if comparism between "INT" and "ID" parametres
  *
  * @param      op      The operation
  * @param      par1    The par 1
  * @param      par2    The par 2
  * @param      symtab  The symtab
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or error
  */
 token_t *int_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer, bool in_stat);
 
 /**
- * @brief      { function_description }
+ * @brief      Generates code in IFJcode18 according to operation with "INT" and "ID" parametres
  *
  * @param      op        The operation
  * @param      par1      The par 1
@@ -223,11 +212,11 @@ token_t *int_str(token_t *op, token_t *par1, token_t *par2, list_t *code_buffer,
  * @param      symtab    The symtab
  * @param[in]  switched  The switched
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or "INT_ID" or error
  */
 token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
- * @brief      { function_description }
+ * @brief      Generates code in IFJcode18 according to operation with "FLOAT" and "ID" parametres
  *
  * @param      op        The operation
  * @param      par1      The par 1
@@ -235,22 +224,22 @@ token_t *int_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
  * @param      symtab    The symtab
  * @param[in]  switched  The switched
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or "DBL_ID" or error
  */
 token_t *dbl_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
- * @brief      { function_description }
+ * @brief      Generates code in IFJcode18 according to operation with string and string parametres
  *
  * @param      op      The operation
  * @param      par1    The par 1
  * @param      par2    The par 2
  * @param      symtab  The symtab
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or "STR_ID" or error
  */
 token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, list_t *code_buffer, bool in_stat);
 /**
- * @brief      { function_description }
+ * @brief      Generates code in IFJcode18 according to operation with string and "ID" parametres
  *
  * @param      op        The operation
  * @param      par1      The par 1
@@ -258,11 +247,11 @@ token_t *str_str(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, 
  * @param      symtab    The symtab
  * @param[in]  switched  The switched
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or "STR_ID" or erro
  */
 token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
- * @brief      { function_description }
+ * @brief      Generates code in IFJcode18 according to operation with "ID" parametres
  *
  * @param      op        The operation
  * @param      par1      The par 1
@@ -270,18 +259,18 @@ token_t *str_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, b
  * @param      symtab    The symtab
  * @param[in]  switched  The switched
  *
- * @return     { description_of_the_return_value }
+ * @return     New token "BOOL_ID" or error
  */
 token_t *id_id(token_t *op, token_t *par1, token_t *par2, symtable_t *symtab, bool switched, list_t *code_buffer, bool in_stat);
 /**
- * @brief      { function_description }
+ * @brief      Function calls other function according to types of parametres
  *
  * @param      op      The operation
  * @param      param1  The parameter 1
  * @param      param2  The parameter 2
  * @param      symtab  The symtab
  *
- * @return     { description_of_the_return_value }
+ * @return     Calls function that generates new token
  */
 token_t *gen_expr(token_t *op, token_t *param1, token_t *param2, symtable_t *symtab, list_t *code_buffer, bool in_stat);
 
