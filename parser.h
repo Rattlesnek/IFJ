@@ -99,11 +99,10 @@ typedef enum {
     ID_FUNC_20,
     ID_FUNC_21,
     PARAMS_GEN_22,
-    PARAMS_GEN_23,
+    P_BRACKETS_23,
     P_BRACKETS_24,
-    P_BRACKETS_25,
-    P_BRACKETS_CONT_27,
-    P_BRACKETS_CONT_28,
+    P_BRACKETS_CONT_25,
+    P_BRACKETS_CONT_26,
 } rules_t;
 
 
@@ -117,7 +116,7 @@ typedef enum {
 #define LL_ROWS 11
 #define LL_COLS 15
 
-#define RULES_ROWS 28
+#define RULES_ROWS 27
 #define RULES_COLS 6
 
 

@@ -66,9 +66,9 @@ int ll_table[LL_ROWS][LL_COLS] = {
     {   12, 0,  0,  14, 12, 0,  13, 0,  0,  12, 0,  0,  12, 12, 12, },  // [end-list]
     {   15, 18, 17, 19, 15, 0,  16, 0,  0,  15, 0,  0,  15, 15, 15, },  // [if-list]
     {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  20, 21, 0,  },  // [id-func]
-    {   0,  0,  0,  0,  0,  0,  23, 0,  0,  22, 0,  0,  0,  0,  0,  },  // [params-gen]
-    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  25, 0,  24, 0,  0,  },  // [p-brackets]
-    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  27, 26, 0,  0,  0,  }   // [p-brackets-cont]
+    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  22, 0,  0,  0,  0,  0,  },  // [params-gen]
+    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  24, 0,  23, 0,  0,  },  // [p-brackets]
+    {   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  26, 25, 0,  0,  0,  }   // [p-brackets-cont]
 };
 
 
@@ -96,11 +96,10 @@ char *reverted_rules[RULES_ROWS][RULES_COLS] = {
     /*ID_FUNC_20*/          { "ID", },
     /*ID_FUNC_21*/          { "FUNC", },
     /*PARAMS_GEN_22*/       { "[p-brackets]", "(", },
-    /*PARAMS_GEN_23*/       { "EOL", },
-    /*P_BRACKETS_24*/       { "[p-brackets-cont]", "ID", },
-    /*P_BRACKETS_25*/       { "EOL", ")", },
-    /*P_BRACKETS_CONT_26*/  { "[p-brackets-cont]", "ID", ",", },
-    /*P_BRACKETS_CONT_27*/  { "EOL", ")", }
+    /*P_BRACKETS_23*/       { "[p-brackets-cont]", "ID", },
+    /*P_BRACKETS_24*/       { "EOL", ")", },
+    /*P_BRACKETS_CONT_25*/  { "[p-brackets-cont]", "ID", ",", },
+    /*P_BRACKETS_CONT_26*/  { "EOL", ")", }
 };
 
 ////////////////////////////////////////////////////////////////////////
