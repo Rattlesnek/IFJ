@@ -29,7 +29,7 @@
 #include <stdbool.h>
 
 #include "scanner.h"
-#include "sa_prec.h"
+#include "expr.h"
 
 #include "parser_gen.h"
 #include "error.h"

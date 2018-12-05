@@ -26,8 +26,8 @@
 #include <stdbool.h>
 
 #include "error.h"
-#include "stack_sa_prec.h"
-#include "sa_prec.h"
+#include "stack_expr.h"
+#include "expr.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
@@ -277,23 +277,7 @@ void stc_print(stack_sa_t *stack)
 
     return;
 }
-#if 0
-int main()
-{
-    stack_sa_t *stack = stc_init();    
-    
-    for(int i = 0; i < 20; i++)
-        stc_push(stack, i);
 
-    printf("topTerm: %d\n", stc_topTerm(stack));
-
-    for(int i = 0; i < 20; i++)
-        printf("%d\n", stc_popTop(stack));
-
-    stc_destroy(stack);
-    return 0;
-}
-#endif 
 ////////////////////////////////////////////////////////////////////////
 ///                       END OF FILE                                ///
 ////////////////////////////////////////////////////////////////////////
