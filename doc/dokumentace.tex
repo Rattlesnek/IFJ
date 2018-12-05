@@ -30,7 +30,6 @@
 \begin{figure}[ht]
 \begin{center}
 \includegraphics[scale=0.13]{fit.png}
-\label{pic:3}
 \end{center}
 \end{figure}
 
@@ -121,17 +120,7 @@ Při implementaci jsou použity tyto pomocné datové struktury:
        \verb|stack_tkn_t|-- Zásobník uchovávající parametry, se kterými je volána funkce v zdrojovém kódu.
 
 
-%zakomentovay kod, timhle by se mohla udelat gramatika
 
-
-\label{sec:3}
-Pokud budeme chtít vysázet algoritmus, můžeme použít prostředí \verb|algorithm|\footnote{Pro nápovědu, jak
-zacházet s prostředím \texttt{algorithm}, můžeme zkusit tuhle stránku: \newline
-http://ftp.cstug.cz/pub/tex/CTAN/macros/latex/contrib/algorithms/algorithms.pdf.}  nebo
-\verb|algorithm2e|\footnote{Pro \texttt{algorithm2e} zase tuhle:
-http://ftp.cstug.cz/pub/tex/CTAN/macros/latex/contrib/algorithm2e/algorithm2e.pdf.}. \newline
-Příklad použití prostředí \verb|algorithm2e| viz Algoritmus \ref{sec:3}.
-\vspace{1.5em}
 
 
 
@@ -207,49 +196,6 @@ Jindřich Šesták
   \item{Implementace dynamického řetězce}
 \end{itemize}
 Dále se každý podílel na tvorbě dokumentace a tvorbě testovacích zdrojových kódů.
-\iffalse
-\begin{comment}
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[scale=0.4]{etiopan.eps}\hspace{-0.2em}
-\reflectbox{\includegraphics[scale=0.4]{etiopan.eps}}
-\caption{Malý Etiopánek a jeho bratříček}
-\label{pic:1}
-\end{center}
-\end{figure}
-
-\newpage
-Rozdíl mezi vektorovým\dots
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[scale=0.40]{oniisan.eps}
-\caption{Vektorový obrázek}
-\label{pic:2}
-\end{center}
-\end{figure}
-
-
-\noindent \dots a bitmapovým obrázkem
-\begin{figure}[ht]
-\begin{center}
-\includegraphics[scale=0.59]{oniisan2.eps}
-\caption{Bitmapový obrázek}
-\label{pic:3}
-\end{center}
-\end{figure}
-
-\noindent se projeví například při zvětšení.
-
-Odkazy (nejen ty) na obrázky \ref{pic:1}, \ref{pic:2} a \ref{pic:3}, na  
-tabulky \ref{tab:1} a \ref{tab:2} a také na algoritmus \ref{algoritmus:1} jsou udělány pomocí~křížových odkazů. Pak je ovšem potřeba zdrojový soubor přeložit dvakrát.
-
-
-\end{figure}
-
-
-\end{comment}
-\fi
-
 \section{Rozšíření}
 \subsection{BASE}
 Toto rozšíření jsme řešili malou pouze malou úpravou v LA.  
@@ -270,7 +216,6 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 
 \newpage
 \begin{algorithm}[H]
-  \label{algoritmus:1}
   \SetInd{0em}{1em}
   \SetNlSty{}{}{:}
   \SetNlSkip{-1em}
@@ -344,9 +289,6 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
   {[params-gen]} &\rightarrow& ( [p-brackets] 
 \end{tabularx}\\ 
   \begin{tabularx}{\textwidth}{l>{$}c<{$}X}
-  {[params-gen]} &\rightarrow& EOL
-\end{tabularx}\\ 
-  \begin{tabularx}{\textwidth}{l>{$}c<{$}X}
   {[p-brackets]}   &\rightarrow& ID [p-brackets-cont] 
 \end{tabularx}\\ 
   \begin{tabularx}{\textwidth}{l>{$}c<{$}X}
@@ -378,9 +320,9 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 \textbf{{[}end-list{]} }        & 12 & 0    & 0     & 14  & 12    & 0   & 13  & 0   & 0  & 12 & 0  & 0  & 12 & 12   & 12     \\\hline
 \textbf{{[}if-list{]}}          & 15 & 18   & 17    & 19  & 15    & 0   & 16  & 0   & 0  & 15 & 0  & 0  & 15 & 15   & 15     \\\hline
 \textbf{{[}id-func{]}}          & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 0  & 0  & 20 & 21   & 0      \\\hline
-\textbf{{[}params-gen{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 23  & 0   & 0  & 22 & 0  & 0  & 0  & 0    & 0      \\\hline
-\textbf{{[}p-brackets{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 25 & 0  & 24 & 0    & 0      \\\hline
-\textbf{{[}p-brackets-cont{]}}  & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 27 & 26 & 0  & 0    & 0     
+\textbf{{[}params-gen{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 22 & 0  & 0  & 0  & 0    & 0      \\\hline
+\textbf{{[}p-brackets{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 24 & 0  & 23 & 0    & 0      \\\hline
+\textbf{{[}p-brackets-cont{]}}  & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 26 & 25 & 0  & 0    & 0     
 \end{tabular}
 \end{table}
 
@@ -407,13 +349,12 @@ i & \textgreater & \textgreater & X & \textgreater & X & \textgreater & \textgre
 / & \textgreater & \textgreater & \textless &  \textgreater & \textless & \textgreater 
   & \textgreater & \textgreater & X & \textgreater & \textgreater \\ \hline
 rel & \textless & \textless & \textless & \textgreater & \textless & \textless & \textless 
-    & X & X & \textgreater & \textgreater \\ \hline
+    &  \textless & X & \textgreater & \textgreater \\ \hline
 f   & X & X & = & X & \textless & X & X & X & X & \textless  & \textgreater \\ \hline
 , & \textless & \textless & \textless & = & \textless & \textless & \textless & \textless 
   & \textless & = & \textgreater \\ \hline
 \$ & \textless & \textless & \textless & X & \textless & \textless & \textless & \textless 
    & \textless & X & X 
-\label{tab:1}
 \end{tabular}
 %\end{sidewaystable}
 \renewcommand{\arraystretch}{1}
@@ -425,7 +366,6 @@ Precedenční tabulka
 \begin{center}
 \includegraphics[scale=0.58]{KA.jpg}
 \caption{Konecný automat}
-\label{pic:3}
 \end{center}
 \end{figure}
 
