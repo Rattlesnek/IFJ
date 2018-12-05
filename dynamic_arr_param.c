@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    [dynamicparamsInt.c]
+  FileName    [dynamic_arr_params.c]
 
   SystemName  [IFJ - PROJECT]
 
@@ -9,6 +9,8 @@
   Synopsis    [Dynamic paramsay of integers implementation]
 
   Author      [Adam Pankuch, Lukas Valek]
+
+  Login       [xpanku00, xvalek15]
 
   Affiliation []
 

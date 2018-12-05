@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    [scanner.c]
+  FileName    [scanner.h]
 
   SystemName  [IFJ - PROJECT]
 

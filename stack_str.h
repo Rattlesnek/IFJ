@@ -1,6 +1,6 @@
 /**CFile****************************************************************
 
-  FileName    [stack_gen.h]
+  FileName    [stack_str.h]
 
   SystemName  [IFJ - PROJECT]
 
@@ -9,6 +9,8 @@
   Synopsis    [Stack for code generation]
 
   Author      [Lukas Valek]
+
+  Login       [xvalek15]
 
   Affiliation []
 

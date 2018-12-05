@@ -10,7 +10,7 @@
 
   Author      [Adam Pankuch, Lukas Piwowarski]
 
-  Affiliation []
+  Affiliation [xpanku00, xpiwow00]
 
   Date        [29/10/2018]
 
