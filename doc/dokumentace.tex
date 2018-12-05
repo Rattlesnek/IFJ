@@ -13,7 +13,9 @@
 \usepackage{tabularx}
 \usepackage{adjustbox}
 \usepackage{colortbl}
-\renewcommand{\algorithmcfname}{Pravidla}
+\usepackage{indentfirst}
+
+\renewcommand{\algorithmcfname}{Gramatika}
 
 
 \begin{document}
@@ -75,7 +77,7 @@ Cílem projektu bylo vytvoření překladače pro jazyk IFJ18, který je podmno�
 
 \section{Etapy projektu}
 \begin{enumerate}
-  \item Návrh struktury programu (konečný automat, LL gramatika, precedenční tabulka)
+  \item Návrh struktury programu (konečný automat (viz obrázek \ref{pic:1}), LL gramatika(viz gramatika 1), LL tabulka(viz gramatika \ref{tab:1}), precedenční tabulka(viz tabulka 2))
   \vspace{-0.6em}
   \item Lexikální analýza
   \vspace{-0.6em}
@@ -93,6 +95,7 @@ Cílem projektu bylo vytvoření překladače pro jazyk IFJ18, který je podmno�
 
 
 \section{Datové struktury}
+\noindent
 \verb|token_t| -- Struktura uchovávající informace o tokenech. \newline
 \verb|stack_tkn_t| -- Zásobník tokenů. Využívaný především v prediktivní analýze. \newline
 \verb|stack_sa_t| -- Zásobník realizovaný pomocí obousmerně vázaného seznamu. \newline
@@ -216,6 +219,7 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 
 \newpage
 \begin{algorithm}[H]
+\label{tab:1}
   \SetInd{0em}{1em}
   \SetNlSty{}{}{:}
   \SetNlSkip{-1em}
@@ -324,13 +328,16 @@ Projekt byl pro nás zcela novou zkušeností. Nikdo z nás nikdy nepracoval na 
 \textbf{{[}p-brackets{]}}       & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 24 & 0  & 23 & 0    & 0      \\\hline
 \textbf{{[}p-brackets-cont{]}}  & 0  & 0    & 0     & 0   & 0     & 0   & 0   & 0   & 0  & 0  & 26 & 25 & 0  & 0    & 0     
 \end{tabular}
+\label{tab:2}
+\caption{LL tabulka}
 \end{table}
 
 
-
+\begin{table}[]
 \renewcommand{\arraystretch}{2}
 %\begin{sidewaystable}
 \scriptsize
+
 \centering
 \begin{tabular}{ c | c c c c c c c c c c c c } 
 OP  & + & * & ( & ) & i & - & / & rel & f & , & \$ \\ \hline
@@ -354,18 +361,23 @@ f   & X & X & = & X & \textless & X & X & X & X & \textless  & \textgreater \\ \
 , & \textless & \textless & \textless & = & \textless & \textless & \textless & \textless 
   & \textless & = & \textgreater \\ \hline
 \$ & \textless & \textless & \textless & X & \textless & \textless & \textless & \textless 
-   & \textless & X & X 
+   & \textless & X & X
+ 
 \end{tabular}
+\label{tab:3}
+\caption{Precedenční tabulka}
+\end{table}
 %\end{sidewaystable}
 \renewcommand{\arraystretch}{1}
 
 
-Precedenční tabulka
+
 
 \begin{figure}[ht]
 \begin{center}
 \includegraphics[scale=0.58]{KA.jpg}
-\caption{Konecný automat}
+\caption{Konečný automat}
+\label{pic:1}
 \end{center}
 \end{figure}
 
