@@ -25,7 +25,7 @@
 #define STACK_SA_PREC_H
 
 #include <stdbool.h>
-#include "sa_prec.h"
+#include "expr.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                         BASIC TYPES                              ///

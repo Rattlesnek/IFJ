@@ -8,8 +8,7 @@
 
   Synopsis    []
 
-  Author      [Lukas Valek, Adam Pankuch, Jindrich Sestak, 
-               Lukas Piwowarski]
+  Author      [Lukas Piwowarski]
 
   Affiliation []
 
@@ -26,7 +25,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "sa_prec_new.h"
+#include "expr.h"
 
 #include "token.h"
 #include "scanner.h"

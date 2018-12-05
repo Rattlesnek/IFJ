@@ -27,7 +27,7 @@
 
 #include "error.h"
 #include "stack_sa_prec.h"
-#include "sa_prec.h"
+#include "expr.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                       GLOBAL VARIABLES                           ///
