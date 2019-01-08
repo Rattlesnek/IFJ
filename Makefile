@@ -9,11 +9,6 @@ parser: clean main.c parser.c parser.h code_gen.c code_gen.h scanner.c scanner.h
 test:
 	python3	./tests/main_test.py
 
-
 clean:
 	rm -f parser
 
-clean_all:
-	rm -f parser
-	rm -f scanner
-	rm -f sa_prec
